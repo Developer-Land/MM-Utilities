@@ -12,12 +12,8 @@ import { Event } from './Event';
 
 const globPromise = promisify(glob);
 
-export class ExtendedClient extends Client {
+export class ExtendedClient extends Client<true> {
   commands: Collection<string, CommandType> = new Collection();
-
-  constructor() {
-    super({ intents: 32767 });
-  }
 
   start() {
     this.registerModules();
