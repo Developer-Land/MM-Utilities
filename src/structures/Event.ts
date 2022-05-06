@@ -1,8 +1,8 @@
-import { ClientEvents } from 'discord.js';
-
-export class Event<Key extends keyof ClientEvents> {
+import { EventEmitter } from 'stream';
+export class Event<Key extends string | symbol> {
   constructor(
+    public emitter: EventEmitter,
     public event: Key,
-    public run: (...args: ClientEvents[Key]) => any
+    public run: (...args: any) => any
   ) {}
 }

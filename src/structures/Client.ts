@@ -1,7 +1,6 @@
 import {
   ApplicationCommandDataResolvable,
   Client,
-  ClientEvents,
   Collection,
 } from 'discord.js';
 import { CommandType } from '../typings/Command';
@@ -26,7 +25,9 @@ export class ExtendedClient extends Client<true> {
   async registerCommands({ commands, guildId }: RegisterCommandsOptions) {
     if (guildId) {
       this.guilds.cache.get(guildId)?.commands.set(commands);
-      console.log(`Registering commands to ${guildId}`);
+      console.log(
+        `Registering commands to ${this.guilds.cache.get(guildId).name}`
+      );
     } else {
       this.application?.commands.set(commands);
       console.log('Registering global commands');
@@ -42,7 +43,6 @@ export class ExtendedClient extends Client<true> {
     commandFiles.forEach(async (filePath) => {
       const command: CommandType = await this.importFile(filePath);
       if (!command.name) return;
-      console.log(command);
 
       this.commands.set(command.name, command);
       slashCommands.push(command);
@@ -61,8 +61,8 @@ export class ExtendedClient extends Client<true> {
     // Event
     const eventFiles = await globPromise(`${__dirname}/../events/*{.ts,.js}`);
     eventFiles.forEach(async (filePath) => {
-      const event: Event<keyof ClientEvents> = await this.importFile(filePath);
-      this.on(event.event, event.run);
+      const event: Event<string | symbol> = await this.importFile(filePath);
+      event.emitter.on(event.event, event.run);
     });
   }
 }
