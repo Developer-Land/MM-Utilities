@@ -44,6 +44,7 @@ export class ExtendedClient extends Client<true> {
     );
     commandFiles.forEach(async (filePath) => {
       const command: CommandType = await this.importFile(filePath);
+      if (command.init) command.init(this);
       if (!command.name) return;
 
       this.commands.set(command.name, command);
@@ -61,7 +62,9 @@ export class ExtendedClient extends Client<true> {
     });
 
     // Event
-    const eventFiles = await globPromise(`${__dirname}/../events/*{.ts,.js}`);
+    const eventFiles = await globPromise(
+      `${__dirname}/../events/**/*{.ts,.js}`
+    );
     eventFiles.forEach(async (filePath) => {
       const event: Event<string | symbol> = await this.importFile(filePath);
       event.emitter.on(event.event, event.run);

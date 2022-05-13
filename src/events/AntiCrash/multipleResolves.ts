@@ -1,4 +1,4 @@
-import { Event } from '../structures/Event';
+import { Event } from '../../structures/Event';
 
 export default new Event(
   process,

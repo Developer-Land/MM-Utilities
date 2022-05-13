@@ -19,18 +19,12 @@ export interface ExtendedInteraction extends CommandInteraction {
   member: GuildMember;
 }
 
-interface RunOptions {
-  client: ExtendedClient;
-  interaction: ExtendedInteraction;
-}
-
-type RunFunction = (options: RunOptions) => any;
-
 export type CommandType = {
   userPermissions?: PermissionResolvable[];
   developersOnly?: boolean;
   category?: string;
-  subcommands?: string;
+  subcommands?: string[];
   options?: { userPermissions?: PermissionResolvable[] }[];
-  run: RunFunction;
+  init?: (client: ExtendedClient) => any;
+  run: (client: ExtendedClient, interaction: ExtendedInteraction) => any;
 } & ChatInputApplicationCommandData;

@@ -1,8 +1,8 @@
 import { MessageEmbed, PermissionResolvable } from 'discord.js';
-import { client } from '..';
-import { Event } from '../structures/Event';
-import { ExtendedInteraction } from '../typings/Command';
-import { developerID } from '../config.json';
+import { client } from '../..';
+import { Event } from '../../structures/Event';
+import { ExtendedInteraction } from '../../typings/Command';
+import { developerID } from '../../config.json';
 
 export default new Event(
   client,
@@ -93,10 +93,9 @@ export default new Event(
         return;
       }
 
-      command.run({
-        client,
-        interaction,
-      });
+      command.init(client);
+
+      command.run(client, interaction);
     }
   }
 );
