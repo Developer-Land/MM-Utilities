@@ -93,8 +93,6 @@ export default new Event(
         return;
       }
 
-      command.init(client);
-
       command.run(client, interaction);
     }
   }
