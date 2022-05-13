@@ -2,19 +2,21 @@ import {
   ApplicationCommandDataResolvable,
   Client,
   Collection,
+  ColorResolvable,
 } from 'discord.js';
 import { CommandType } from '../typings/Command';
 import glob from 'glob';
 import { promisify } from 'util';
 import { RegisterCommandsOptions } from '../typings/client';
 import { Event } from './Event';
+import { Config } from '../typings/Config';
 
 const globPromise = promisify(glob);
 
 export class ExtendedClient extends Client<true> {
   commands: Collection<string, CommandType> = new Collection();
-
-  start() {
+  config: Config;
+  async start() {
     this.registerModules();
     this.login(process.env.botToken);
   }
@@ -64,5 +66,8 @@ export class ExtendedClient extends Client<true> {
       const event: Event<string | symbol> = await this.importFile(filePath);
       event.emitter.on(event.event, event.run);
     });
+
+    // Config
+    this.config = await this.importFile(`${__dirname}/../config.json`);
   }
 }

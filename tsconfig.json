@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ESNext"],
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "ESNext",
@@ -15,6 +15,6 @@
     "resolveJsonModule": true,
     "importHelpers": true
   },
-  "include": ["src", "environment.d.ts"],
+  "include": ["src", "environment.d.ts", "src/**/*.json"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
