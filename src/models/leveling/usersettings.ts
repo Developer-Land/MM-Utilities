@@ -1,6 +1,15 @@
 import mongoose from 'mongoose';
 
-let Schema = new mongoose.Schema({
+interface levelUserSettingsInterface {
+  guildID: string;
+  userID: string;
+  levelUpMsg: string;
+  rankcardBg: string;
+  rankcardColor: string;
+  rankcardAvatar: string;
+}
+
+let Schema = new mongoose.Schema<levelUserSettingsInterface>({
   guildID: { type: String },
   userID: { type: String },
   levelUpMsg: { type: String },
@@ -9,4 +18,6 @@ let Schema = new mongoose.Schema({
   rankcardAvatar: { type: String },
 });
 
-export default mongoose.model('levelUserSettings', Schema);
+let levelUserSettings = mongoose.model('levelUserSettings', Schema);
+
+export { levelUserSettings, levelUserSettingsInterface };

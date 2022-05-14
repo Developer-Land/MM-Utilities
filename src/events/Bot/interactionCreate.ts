@@ -1,5 +1,5 @@
 import { MessageEmbed, PermissionResolvable } from 'discord.js';
-import { client } from '../..';
+import { client } from '../../index';
 import { Event } from '../../structures/Event';
 import { ExtendedInteraction } from '../../typings/Command';
 import { developerID } from '../../config.json';

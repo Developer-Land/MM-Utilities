@@ -1,8 +1,15 @@
 import mongoose from 'mongoose';
 
-let Schema = new mongoose.Schema({
+interface levelRolesInterface {
+  guildID: string;
+  levelRoles: string;
+}
+
+let Schema = new mongoose.Schema<levelRolesInterface>({
   guildID: { type: String },
   levelRoles: { type: String },
 });
 
-export default mongoose.model('levelroles', Schema);
+let levelRoles = mongoose.model('levelroles', Schema);
+
+export { levelRoles, levelRolesInterface };

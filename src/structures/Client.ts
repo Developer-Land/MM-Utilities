@@ -2,7 +2,6 @@ import {
   ApplicationCommandDataResolvable,
   Client,
   Collection,
-  ColorResolvable,
 } from 'discord.js';
 import { CommandType } from '../typings/Command';
 import glob from 'glob';
@@ -10,6 +9,7 @@ import { promisify } from 'util';
 import { RegisterCommandsOptions } from '../typings/client';
 import { Event } from './Event';
 import { Config } from '../typings/Config';
+import mongoose from 'mongoose';
 
 const globPromise = promisify(glob);
 
@@ -72,5 +72,11 @@ export class ExtendedClient extends Client<true> {
 
     // Config
     this.config = await this.importFile(`${__dirname}/../config.json`);
+
+    // Mongoose
+    if (!process.env.mongooseConnectionString) return;
+    mongoose
+      .connect(process.env.mongooseConnectionString)
+      .then(() => console.log('Connected to mongodb'));
   }
 }
