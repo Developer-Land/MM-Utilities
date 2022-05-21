@@ -1,10 +1,19 @@
 import mongoose from 'mongoose';
 
-let Schema = new mongoose.Schema({
+interface suggestionInterface {
+  SuggestionMessageID: string;
+  SuggestionAuthorID: string;
+  SuggestionMessage: string;
+  SuggestionNumber: string;
+}
+
+let Schema = new mongoose.Schema<suggestionInterface>({
   SuggestionMessageID: String,
   SuggestionAuthorID: String,
   SuggestionMessage: String,
   SuggestionNumber: String,
 });
 
-export default mongoose.model('suggestion', Schema);
+let Suggestion = mongoose.model('suggestion', Schema);
+
+export { Suggestion, suggestionInterface };

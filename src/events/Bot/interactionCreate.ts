@@ -2,7 +2,7 @@ import { MessageEmbed, PermissionResolvable } from 'discord.js';
 import { client } from '../../index';
 import { Event } from '../../structures/Event';
 import { ExtendedInteraction } from '../../typings/Command';
-import { developerID } from '../../config.json';
+import { DeveloperIDs } from '../../config.json';
 
 export default new Event(
   client,
@@ -16,13 +16,13 @@ export default new Event(
 
       // Developer Only Commands
       if (command.developersOnly) {
-        if (!developerID.includes(interaction.user.id)) {
-          let developersOnly_embed: MessageEmbed = new MessageEmbed()
+        if (!DeveloperIDs.includes(interaction.user.id)) {
+          let developersOnly_embed = new MessageEmbed()
             .setTitle(`:x: | Only Developers Can Use That Command!`)
             .setDescription(
-              `Developers: ${developerID.map((v) => `<@${v}>`).join(', ')}`
+              `Developers: ${DeveloperIDs.map((v) => `<@${v}>`).join(', ')}`
             )
-            .setColor('RED')
+            .setColor(client.config.botColor)
             .setFooter({
               text: `${client.user.tag}`,
               iconURL: `${client.user.displayAvatarURL({

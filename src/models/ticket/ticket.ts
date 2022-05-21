@@ -1,6 +1,15 @@
 import mongoose from 'mongoose';
 
-let Schema = new mongoose.Schema({
+interface ticketInterface {
+  TicketChannelID: string;
+  TicketMessageID: string;
+  TicketAuthorID: string;
+  TicketReason: string;
+  TicketStatus: string;
+  TicketNumber: string;
+}
+
+let Schema = new mongoose.Schema<ticketInterface>({
   TicketChannelID: String,
   TicketMessageID: String,
   TicketAuthorID: String,
@@ -9,4 +18,6 @@ let Schema = new mongoose.Schema({
   TicketNumber: String,
 });
 
-export default mongoose.model('ticket', Schema);
+let Ticket = mongoose.model('ticket', Schema);
+
+export { Ticket, ticketInterface };

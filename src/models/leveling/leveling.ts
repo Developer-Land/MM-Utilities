@@ -5,7 +5,7 @@ interface levelingInterface {
   guildID: string;
   xp: number;
   level: number;
-  lastUpdated: { type: Date; default: Date };
+  lastUpdated: Date;
 }
 
 let Schema = new mongoose.Schema<levelingInterface>({

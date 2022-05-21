@@ -5,6 +5,6 @@ export type Config = {
   activityName: string;
   botColor: ColorResolvable;
   errColor: ColorResolvable;
-  developerID: string[];
+  DeveloperIDs: string[];
   mongooseConnectionString: string;
 };

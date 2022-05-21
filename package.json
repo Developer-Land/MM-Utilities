@@ -26,6 +26,7 @@
     "ffmpeg-static": "^4.4.1",
     "forever": "^4.0.3",
     "glob": "^7.2.0",
+    "mal-scraper": "^2.11.4",
     "moment": "^2.29.1",
     "mongoose": "^6.2.0",
     "node-fetch": "^2.6.7",

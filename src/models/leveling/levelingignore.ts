@@ -1,8 +1,15 @@
 import mongoose from 'mongoose';
 
-let Schema = new mongoose.Schema({
+interface levelingIgnoreInterface {
+  guildID: string;
+  ID: string;
+}
+
+let Schema = new mongoose.Schema<levelingIgnoreInterface>({
   guildID: { type: String },
   ID: { type: String }, // Channel Id or Role Id
 });
 
-export default mongoose.model('levelingignore', Schema);
+let levelingIgnore = mongoose.model('levelingignore', Schema);
+
+export { levelingIgnore, levelingIgnoreInterface };

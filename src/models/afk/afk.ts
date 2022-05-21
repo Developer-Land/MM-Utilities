@@ -1,10 +1,19 @@
 import mongoose from 'mongoose';
 
-let Schema = new mongoose.Schema({
+interface afkInterface {
+  userID: string;
+  guildID: string;
+  message: string;
+  time: Date;
+}
+
+let Schema = new mongoose.Schema<afkInterface>({
   userID: { type: String },
   guildID: { type: String },
   message: { type: String, default: 'AFK' },
   time: { type: Date, default: Date.now },
 });
 
-export default mongoose.model('afk', Schema);
+let Afk = mongoose.model('afk', Schema);
+
+export { Afk, afkInterface };
