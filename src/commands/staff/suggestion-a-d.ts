@@ -1,6 +1,7 @@
-import { MessageEmbed } from 'discord.js';
+import { GuildTextBasedChannel, MessageEmbed } from 'discord.js';
+import { Command } from '../../structures/Command';
 
-module.exports = {
+export default new Command({
   name: 'suggestion',
   description: 'Approve/Decline a suggestion',
   options: [
@@ -42,13 +43,15 @@ module.exports = {
   category: 'Moderation & Management',
   subcommands: ['suggestion approve', 'suggestion decline'],
   run: async (client, interaction) => {
-    const { options, guild, user } = interaction;
+    let { options, guild, user } = interaction;
 
-    const errEmbed = new MessageEmbed().setColor(client.config.errColor);
+    let errEmbed = new MessageEmbed().setColor(client.config.errColor);
 
-    const messageId = options.getString('message');
-    const channel = guild.channels.cache.find((c) => c.name === 'suggestions');
-    const targetMessage = await channel.messages.fetch(messageId, {
+    let messageId = options.getString('message');
+    let channel = guild.channels.cache.find(
+      (c) => c.name === 'suggestions'
+    ) as GuildTextBasedChannel;
+    let targetMessage = await channel.messages.fetch(messageId, {
       cache: true,
       force: true,
     });
@@ -71,10 +74,10 @@ module.exports = {
       return;
     }
 
-    const SE = targetMessage.embeds[0];
+    let SE = targetMessage.embeds[0];
 
     if (options.getSubcommand() === 'approve') {
-      const approvedEmbed = new MessageEmbed()
+      let approvedEmbed = new MessageEmbed()
         .setAuthor({
           name: SE.author.name,
           iconURL:
@@ -97,7 +100,7 @@ module.exports = {
     }
 
     if (options.getSubcommand() === 'decline') {
-      const approvedEmbed = new MessageEmbed()
+      let approvedEmbed = new MessageEmbed()
         .setAuthor({
           name: SE.author.name,
           iconURL:
@@ -120,4 +123,4 @@ module.exports = {
       return;
     }
   },
-};
+});

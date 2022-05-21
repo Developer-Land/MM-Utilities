@@ -113,10 +113,10 @@ export default new Command({
   category: 'Moderation & Management',
   subcommands: ['buttonrole add'],
   run: async (client, interaction) => {
-    const { options } = interaction;
+    let { options } = interaction;
 
-    const errSend = (message) => {
-      const errEmbed = new MessageEmbed()
+    let errSend = (message) => {
+      let errEmbed = new MessageEmbed()
         .setColor(client.config.errColor)
         .setDescription(message);
 
@@ -126,13 +126,13 @@ export default new Command({
       });
     };
 
-    const message_url = options.getString('message_url');
-    const role = options.getRole('role') as Role;
-    const role2 = options.getRole('role_2');
-    const role3 = options.getRole('role_3');
-    const role4 = options.getRole('role_4');
-    const role5 = options.getRole('role_5');
-    const type = options.getString('type');
+    let message_url = options.getString('message_url');
+    let role = options.getRole('role') as Role;
+    let role2 = options.getRole('role_2');
+    let role3 = options.getRole('role_3');
+    let role4 = options.getRole('role_4');
+    let role5 = options.getRole('role_5');
+    let type = options.getString('type');
     let emoji = options.getString('emoji')?.toLowerCase();
     let label = options.getString('label');
     let style = options.getString('style') as
@@ -140,7 +140,7 @@ export default new Command({
       | string;
 
     try {
-      const isMsgUrl = (s) => {
+      let isMsgUrl = (s) => {
         var regexp =
           /https:\/\/(canary\.|ptb\.)?discord(app)?.com\/channels\/(\d?..................)\/(\d?..................)\/(\d?..................)/gi;
         return regexp.test(s);
@@ -150,14 +150,14 @@ export default new Command({
         return errSend('Invalid message url!');
       }
 
-      const ids = message_url.split('/');
+      let ids = message_url.split('/');
 
-      const channel = interaction.guild.channels.cache.get(
+      let channel = interaction.guild.channels.cache.get(
         ids[ids.length - 2]
       ) as GuildTextBasedChannel;
       if (!channel) return errSend('Unknown message!');
 
-      const targetMessage = await channel.messages.fetch(ids[ids.length - 1], {
+      let targetMessage = await channel.messages.fetch(ids[ids.length - 1], {
         cache: true,
         force: true,
       });
@@ -247,7 +247,7 @@ export default new Command({
       if (role4) customIdArray.push(role4?.id + btnType);
       if (role5) customIdArray.push(role5?.id + btnType);
 
-      const button = new MessageButton()
+      let button = new MessageButton()
         .setLabel(label)
         .setStyle(style as MessageButtonStyleResolvable)
         .setEmoji(emoji)
@@ -308,7 +308,7 @@ export default new Command({
         .map((x) => x.replace(/a|r|t/g, ''))
         .join('>, <@&');
 
-      const replyEmbed = new MessageEmbed()
+      let replyEmbed = new MessageEmbed()
         .setColor(client.config.botColor)
         .setDescription('**Button Role successfully added.**')
         .addField('Role', '<@&' + rolesinrp + '>')
@@ -317,7 +317,7 @@ export default new Command({
         .addField('Emoji', emojiinrp)
         .addField('Label', labelinrp);
 
-      const messageUrlButton = new MessageActionRow().addComponents(
+      let messageUrlButton = new MessageActionRow().addComponents(
         new MessageButton()
           .setStyle('LINK')
           .setURL(targetMessage.url)

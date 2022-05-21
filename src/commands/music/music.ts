@@ -134,7 +134,7 @@ export default new Command({
 
   run: async (client, interaction) => {
     if (interaction.options.getSubcommand() === 'play') {
-      const track = interaction.options.getString('query');
+      let track = interaction.options.getString('query');
 
       if (!interaction.member.voice.channel)
         return interaction.reply({
@@ -143,7 +143,7 @@ export default new Command({
 
       await interaction.deferReply();
 
-      const searchResult = await lavalink.search(track);
+      let searchResult = await lavalink.search(track);
 
       if (searchResult.loadType === 'LOAD_FAILED') {
         return interaction.editReply(
@@ -153,7 +153,7 @@ export default new Command({
         return interaction.editReply(':x: No matches!');
       }
 
-      const player = lavalink.createPlayer({
+      let player = lavalink.createPlayer({
         guildId: interaction.guild.id,
         voiceChannelId: interaction.member.voice.channelId,
         textChannelId: interaction.channel.id,
@@ -163,7 +163,7 @@ export default new Command({
       player.connect();
 
       if (searchResult.loadType === 'PLAYLIST_LOADED') {
-        for (const track of searchResult.tracks) {
+        for (let track of searchResult.tracks) {
           track.setRequester(interaction.user.tag);
           player.queue.push(track);
         }
@@ -172,7 +172,7 @@ export default new Command({
           `Playlist \`${searchResult.playlistInfo.name}\` loaded!`
         );
       } else {
-        const track = searchResult.tracks[0];
+        let track = searchResult.tracks[0];
         track.setRequester(interaction.user.tag);
 
         player.queue.push(track);
@@ -182,10 +182,10 @@ export default new Command({
       return;
     }
 
-    const player = lavalink.players.get(interaction.guild.id);
+    let player = lavalink.players.get(interaction.guild.id);
 
     if (interaction.options.getSubcommand() === 'leave') {
-      const connection = await getVoiceConnection(interaction.guild.id);
+      let connection = await getVoiceConnection(interaction.guild.id);
       if (player) {
         player.destroy();
       } else if (connection) {
@@ -213,7 +213,7 @@ export default new Command({
         content: 'No track is currently being played',
       });
     if (interaction.options.getSubcommand() === 'nowplaying') {
-      const millisecondsToMinutesSeconds = (ms) => {
+      let millisecondsToMinutesSeconds = (ms) => {
         let duration = moment.duration(ms, 'milliseconds');
         let fromMinutes = Math.floor(duration.asMinutes());
         let fromSeconds = Math.floor(duration.asSeconds() - fromMinutes * 60);
@@ -244,8 +244,8 @@ export default new Command({
       return;
     }
     if (interaction.options.getSubcommand() === 'queue') {
-      const currentTrack = player.current;
-      const tracks = player.queue.slice(0, 10).map((m, i) => {
+      let currentTrack = player.current;
+      let tracks = player.queue.slice(0, 10).map((m, i) => {
         return `${i + 1}. **[${m.title}](${m.uri})** - ${m.requester}`;
       });
 
@@ -291,7 +291,7 @@ export default new Command({
       return;
     }
     if (interaction.options.getSubcommand() === 'remove') {
-      const position = interaction.options.getInteger('position');
+      let position = interaction.options.getInteger('position');
       if (position > player.queue.length)
         return interaction.reply({
           content: 'Invalid position',
@@ -304,7 +304,7 @@ export default new Command({
       return;
     }
     if (interaction.options.getSubcommand() === 'loop') {
-      const mode = interaction.options.getString('mode');
+      let mode = interaction.options.getString('mode');
       if (!mode)
         return interaction.reply({
           content: `Track loop is ${
@@ -335,7 +335,7 @@ export default new Command({
       return;
     }
     if (interaction.options.getSubcommand() === 'volume') {
-      const volumePercentage = interaction.options.getInteger('percentage');
+      let volumePercentage = interaction.options.getInteger('percentage');
 
       if (!volumePercentage)
         return interaction.reply({

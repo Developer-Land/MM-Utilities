@@ -1,7 +1,7 @@
-import { MessageEmbed } from 'discord.js';
+import { GuildTextBasedChannel, MessageEmbed } from 'discord.js';
+import { Command } from '../../structures/Command';
 
-module.exports = {
-  ephemeral: true,
+export default new Command({
   name: 'report',
   description: 'Report a user',
   options: [
@@ -21,15 +21,17 @@ module.exports = {
 
   category: 'Utilities',
   run: async (client, interaction) => {
-    const user = interaction.options.getUser('target');
-    const reason = interaction.options.getString('reason');
+    let user = interaction.options.getUser('target');
+    let reason = interaction.options.getString('reason');
     if (user.id === interaction.member.id)
       return interaction.reply({
         content: "You can't report yourself, silly!",
         ephemeral: true,
       });
-    const channel = interaction.guild.channels.cache.get('913129319063232533');
-    const reportEmbed = new MessageEmbed()
+    let channel = interaction.guild.channels.cache.get(
+      '913129319063232533'
+    ) as GuildTextBasedChannel;
+    let reportEmbed = new MessageEmbed()
       .setAuthor({
         name: `${interaction.user.tag} (ID: ${interaction.member.id})`,
         iconURL: `${interaction.member.user.displayAvatarURL({
@@ -56,4 +58,4 @@ module.exports = {
       ephemeral: true,
     });
   },
-};
+});

@@ -29,13 +29,13 @@ export default new Command({
   category: 'Utilities',
   run: async (client, interaction) => {
     if (interaction.options.getSubcommand() === 'afk') {
-      const afk = await Afk.findOne({
+      let afk = await Afk.findOne({
         userID: interaction.user.id,
         guildID: interaction.guildId,
       });
       let message = interaction.options.getString('message');
       if (!afk) {
-        const newAfk = new Afk({
+        let newAfk = new Afk({
           userID: interaction.user.id,
           guildID: interaction.guildId,
           message: message,

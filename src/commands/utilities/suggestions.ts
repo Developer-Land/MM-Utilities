@@ -16,11 +16,11 @@ export default new Command({
 
   category: 'Utilities',
   run: async (client, interaction) => {
-    const channel = interaction.guild.channels.cache.find(
+    let channel = interaction.guild.channels.cache.find(
       (c) => c.name === 'suggestions'
     ) as GuildTextBasedChannel;
 
-    const errorembed = new MessageEmbed()
+    let errorembed = new MessageEmbed()
       .setDescription(
         "<:TickRed:904760060725571615> Suggestions channel doesn't exist! \n\nPlease create a channel named `suggestions`."
       )
@@ -29,11 +29,11 @@ export default new Command({
     if (!channel)
       return interaction.reply({ embeds: [errorembed], ephemeral: true });
 
-    const oldSuggestion = await Suggestion.findOne().sort('-_id');
+    let oldSuggestion = await Suggestion.findOne().sort('-_id');
 
-    const message = interaction.options.getString('suggestion');
+    let message = interaction.options.getString('suggestion');
 
-    const embed = new MessageEmbed()
+    let embed = new MessageEmbed()
       .setColor('#37B3C8')
       .setTitle(
         `Suggestion #${String(

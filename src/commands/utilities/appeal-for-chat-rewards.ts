@@ -74,18 +74,18 @@ export default new Command({
 
   category: 'Utilities',
   run: async (client, interaction) => {
-    const appealChannel = interaction.guild.channels.cache.get(
+    let appealChannel = interaction.guild.channels.cache.get(
       '926160270643052585'
     ) as GuildTextBasedChannel;
 
-    const { options, user } = interaction;
+    let { options, user } = interaction;
 
-    const gamertag = options.getString('gamertag');
-    const goal = options.getString('goal_you_reached');
-    const cords = options.getString('coordinates');
+    let gamertag = options.getString('gamertag');
+    let goal = options.getString('goal_you_reached');
+    let cords = options.getString('coordinates');
 
     try {
-      const appealEmbed = new MessageEmbed()
+      let appealEmbed = new MessageEmbed()
         .setAuthor({
           name: `${user.tag}〡Chat Rewards`,
           iconURL: user.displayAvatarURL({ size: 128, dynamic: true }),
@@ -108,7 +108,7 @@ export default new Command({
         .setTimestamp()
         .setFooter({ text: 'Timestamp・' });
 
-      const claimedButton = new MessageActionRow().addComponents(
+      let claimedButton = new MessageActionRow().addComponents(
         new MessageButton()
           .setStyle('SECONDARY')
           .setLabel('Claimed')
@@ -120,7 +120,7 @@ export default new Command({
         components: [claimedButton],
       });
 
-      const sucEmbed = new MessageEmbed()
+      let sucEmbed = new MessageEmbed()
         .setColor(client.config.botColor)
         .setAuthor({
           name: 'Rewards',

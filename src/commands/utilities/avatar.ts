@@ -22,7 +22,7 @@ export default new Command({
 
     let avatar = user.displayAvatarURL({ size: 4096, dynamic: true });
 
-    const embed = new MessageEmbed()
+    let embed = new MessageEmbed()
       .setTitle(`${user.tag}'s avatar`)
       .setDescription(`[Avatar URL of ${user.tag}](${avatar})`)
       .setColor(client.config.botColor)

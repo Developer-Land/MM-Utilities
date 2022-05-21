@@ -1,6 +1,7 @@
-import { MessageEmbed } from 'discord.js';
+import { GuildTextBasedChannel, MessageEmbed } from 'discord.js';
+import { Command } from '../../structures/Command';
 
-module.exports = {
+export default new Command({
   name: 'components',
   description: 'description',
   options: [
@@ -23,10 +24,10 @@ module.exports = {
   category: 'Moderation & Management',
   subcommands: ['components remove'],
   run: async (client, interaction) => {
-    const message_url = interaction.options.getString('message_url');
+    let message_url = interaction.options.getString('message_url');
 
-    const errSend = (message) => {
-      const errEmbed = new MessageEmbed()
+    let errSend = (message) => {
+      let errEmbed = new MessageEmbed()
         .setColor(client.config.errColor)
         .setDescription(message);
 
@@ -35,7 +36,7 @@ module.exports = {
         ephemeral: true,
       });
     };
-    const isMsgUrl = (s: string) => {
+    let isMsgUrl = (s: string) => {
       var regexp =
         /https:\/\/(canary\.|ptb\.)?discord(app)?.com\/channels\/(\d?..................)\/(\d?..................)\/(\d?..................)/gi;
       return regexp.test(s);
@@ -45,12 +46,14 @@ module.exports = {
       return errSend('Invalid message url!');
     }
 
-    const ids = message_url.split('/');
+    let ids = message_url.split('/');
 
-    const channel = interaction.guild.channels.cache.get(ids[ids.length - 2]);
+    let channel = interaction.guild.channels.cache.get(
+      ids[ids.length - 2]
+    ) as GuildTextBasedChannel;
     if (!channel) return errSend('Unknown message!');
 
-    const targetMessage = await channel.messages.fetch(ids[ids.length - 1], {
+    let targetMessage = await channel.messages.fetch(ids[ids.length - 1], {
       cache: true,
       force: true,
     });
@@ -71,4 +74,4 @@ module.exports = {
       ephemeral: true,
     });
   },
-};
+});

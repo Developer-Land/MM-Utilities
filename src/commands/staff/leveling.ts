@@ -215,9 +215,9 @@ export default new Command({
   run: async (client, interaction) => {
     if (interaction.options.getSubcommandGroup() === 'staff') {
       if (interaction.options.getSubcommand() === 'ignore') {
-        const type = interaction.options.getString('type');
-        const channel = interaction.options.getChannel('channel');
-        const role = interaction.options.getRole('role');
+        let type = interaction.options.getString('type');
+        let channel = interaction.options.getChannel('channel');
+        let role = interaction.options.getRole('role');
         if (!channel && !role)
           return interaction.reply({
             content: 'select atleast one role or channel',
@@ -234,7 +234,7 @@ export default new Command({
         } else {
           id = channel.id;
         }
-        const found = await levelingIgnore.findOne({
+        let found = await levelingIgnore.findOne({
           guildID: interaction.guild.id,
           ID: id,
         });
@@ -246,7 +246,7 @@ export default new Command({
               } already exists in database`,
               ephemeral: true,
             });
-          const ignore = new levelingIgnore({
+          let ignore = new levelingIgnore({
             guildID: interaction.guild.id,
             ID: id,
           });
@@ -273,14 +273,14 @@ export default new Command({
         }
       }
       if (interaction.options.getSubcommand() === 'setlevel') {
-        const user = interaction.options.getUser('user');
-        const level = interaction.options.getNumber('level');
-        const findUser = await leveling.findOne({
+        let user = interaction.options.getUser('user');
+        let level = interaction.options.getNumber('level');
+        let findUser = await leveling.findOne({
           userID: user.id,
           guildID: interaction.guildId,
         });
         if (!findUser) {
-          const newUser = new leveling({
+          let newUser = new leveling({
             userID: user.id,
             guildID: interaction.guildId,
             xp: level * level * 100,
@@ -304,14 +304,14 @@ export default new Command({
         });
       }
       if (interaction.options.getSubcommand() === 'setxp') {
-        const user = interaction.options.getUser('user');
-        const xp = interaction.options.getNumber('xp');
-        const findUser = await leveling.findOne({
+        let user = interaction.options.getUser('user');
+        let xp = interaction.options.getNumber('xp');
+        let findUser = await leveling.findOne({
           userID: user.id,
           guildID: interaction.guildId,
         });
         if (!findUser) {
-          const newUser = new leveling({
+          let newUser = new leveling({
             userID: user.id,
             guildID: interaction.guildId,
             xp: xp,
@@ -333,7 +333,7 @@ export default new Command({
         });
       }
       if (interaction.options.getSubcommand() === 'levelroles') {
-        const findLevelRoles = await levelRoles.findOne({
+        let findLevelRoles = await levelRoles.findOne({
           guildID: interaction.guildId,
         });
         if (interaction.options.getString('type') === 'view') {
@@ -341,32 +341,32 @@ export default new Command({
             interaction.reply({ content: 'No level roles set' });
             return;
           }
-          const RolesJson = findLevelRoles.levelRoles;
-          const RolesObj = JSON.parse(RolesJson);
-          const RolesMap = new Map(Object.entries(RolesObj));
-          const Roles = Array.from(RolesMap.values());
-          const RolesString = Roles.join('>, <@&');
+          let RolesJson = findLevelRoles.levelRoles;
+          let RolesObj = JSON.parse(RolesJson);
+          let RolesMap = new Map(Object.entries(RolesObj));
+          let Roles = Array.from(RolesMap.values());
+          let RolesString = Roles.join('>, <@&');
           interaction.reply({ content: `Level Roles: <@&${RolesString}>` });
           return;
         }
-        const level = interaction.options.getNumber('level');
+        let level = interaction.options.getNumber('level');
         if (!level)
           return interaction.reply({
             content: 'Please enter a level',
             ephemeral: true,
           });
         if (interaction.options.getString('type') === 'add') {
-          const role = interaction.options.getRole('role');
+          let role = interaction.options.getRole('role');
           if (!role)
             return interaction.reply({
               content: 'select a role',
               ephemeral: true,
             });
           if (!findLevelRoles) {
-            const RoleObj = {};
+            let RoleObj = {};
             RoleObj[level] = role.id;
-            const RolesJson = JSON.stringify(RoleObj);
-            const newLevelRoles = new levelRoles({
+            let RolesJson = JSON.stringify(RoleObj);
+            let newLevelRoles = new levelRoles({
               guildID: interaction.guildId,
               levelRoles: RolesJson,
             });
@@ -375,7 +375,7 @@ export default new Command({
               .catch((e) => console.log(`Failed to save new level roles.`));
           } else {
             let RolesJson = findLevelRoles.levelRoles;
-            const RolesObj = JSON.parse(RolesJson);
+            let RolesObj = JSON.parse(RolesJson);
             RolesObj[level] = role.id;
             RolesJson = JSON.stringify(RolesObj);
             findLevelRoles.levelRoles = RolesJson;
@@ -395,7 +395,7 @@ export default new Command({
             });
           } else {
             let RolesJson = findLevelRoles.levelRoles;
-            const RolesObj = JSON.parse(RolesJson);
+            let RolesObj = JSON.parse(RolesJson);
             delete RolesObj[level];
             RolesJson = JSON.stringify(RolesObj);
             findLevelRoles.levelRoles = RolesJson;
@@ -410,7 +410,7 @@ export default new Command({
       }
     }
     if (interaction.options.getSubcommandGroup() === 'user') {
-      const findUser = await levelUserSettings.findOne({
+      let findUser = await levelUserSettings.findOne({
         userID: interaction.user.id,
         guildID: interaction.guildId,
       });
@@ -421,7 +421,7 @@ export default new Command({
             .save()
             .catch((e) => console.log(`Failed to set level up message: ${e}`));
         } else {
-          const newUser = new levelUserSettings({
+          let newUser = new levelUserSettings({
             userID: interaction.user.id,
             guildID: interaction.guildId,
             levelUpMsg: interaction.options.getString('change'),
@@ -442,7 +442,7 @@ export default new Command({
         if (!image) {
           image = 'none';
         } else {
-          const imageUrlRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/;
+          let imageUrlRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/;
           if (!imageUrlRegex.test(image))
             return interaction.reply({
               content: 'Invalid URL',
@@ -457,7 +457,7 @@ export default new Command({
               console.log(`Failed to set rank card background: ${e}`)
             );
         } else {
-          const newUser = new levelUserSettings({
+          let newUser = new levelUserSettings({
             userID: interaction.user.id,
             guildID: interaction.guildId,
             rankcardBg: image,
@@ -478,7 +478,7 @@ export default new Command({
         if (!hex.startsWith('#')) {
           hex = `#${interaction.options.getString('hex')}`;
         }
-        const hexRegex = /^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/gi;
+        let hexRegex = /^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/gi;
         if (!hexRegex.test(hex))
           return interaction.reply({
             content: 'Please enter a valid hex color',
@@ -490,7 +490,7 @@ export default new Command({
             .save()
             .catch((e) => console.log(`Failed to set rank card color: ${e}`));
         } else {
-          const newUser = new levelUserSettings({
+          let newUser = new levelUserSettings({
             userID: interaction.user.id,
             guildID: interaction.guildId,
             rankcardColor: hex,
@@ -510,7 +510,7 @@ export default new Command({
             .save()
             .catch((e) => console.log(`Failed to set rank card avatar: ${e}`));
         } else {
-          const newUser = new levelUserSettings({
+          let newUser = new levelUserSettings({
             userID: interaction.user.id,
             guildID: interaction.guildId,
             rankcardAvatar: interaction.options.getString('shape'),

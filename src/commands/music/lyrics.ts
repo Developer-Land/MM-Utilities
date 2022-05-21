@@ -1,36 +1,37 @@
 import { lavalink } from '../../Utils/lavalink';
 import axios from 'axios';
 import { MessageEmbed } from 'discord.js';
+import { Command } from '../../structures/Command';
 
-const getLyrics = (title) =>
+let getLyrics = (title) =>
   new Promise(async (ful, rej) => {
-    const url = new URL('https://some-random-api.ml/lyrics');
+    let url = new URL('https://some-random-api.ml/lyrics');
     url.searchParams.append('title', title);
 
     try {
-      const { data } = await axios.get(url.href);
+      let { data } = await axios.get(url.href);
       ful(data);
     } catch (error) {
       rej(error);
     }
   });
 
-const substring = (length, value) => {
-  const replaced = value.replace(/\n/g, '--');
-  const regex = `.{1,${length}}`;
-  const lines = replaced
+let substring = (length, value) => {
+  let replaced = value.replace(/\n/g, '--');
+  let regex = `.{1,${length}}`;
+  let lines = replaced
     .match(new RegExp(regex, 'g'))
     .map((line) => line.replace(/--/g, '\n'));
 
   return lines;
 };
 
-const createResponse = async (title) => {
+let createResponse = async (title) => {
   try {
-    const data = (await getLyrics(title)) as any;
+    let data = (await getLyrics(title)) as any;
 
-    const embeds = substring(4096, data.lyrics).map((value, index) => {
-      const isFirst = index === 0;
+    let embeds = substring(4096, data.lyrics).map((value, index) => {
+      let isFirst = index === 0;
 
       return new MessageEmbed({
         title: isFirst ? `${data.title} - ${data.author}` : null,
@@ -45,7 +46,7 @@ const createResponse = async (title) => {
   }
 };
 
-module.exports = {
+export default new Command({
   name: 'lyrics',
   description: 'display lyrics for the current song or a specific song',
   options: [
@@ -58,9 +59,9 @@ module.exports = {
   ],
   category: 'Music',
   run: async (client, interaction) => {
-    const player = lavalink.players.get(interaction.guild.id);
-    const title = interaction.options.getString('title');
-    const sendLyrics = (songTitle) => {
+    let player = lavalink.players.get(interaction.guild.id);
+    let title = interaction.options.getString('title');
+    let sendLyrics = (songTitle) => {
       return createResponse(songTitle)
         .then((res) => {
           console.log({ res });
@@ -78,4 +79,4 @@ module.exports = {
 
     return sendLyrics(player.current.title);
   },
-};
+});

@@ -42,7 +42,7 @@ export default new Command({
       .setDescription(
         'Click <:MM_tickets:919904410803519498> to create/open a new ticket.'
       )
-      .setColor('#37B3C8')
+      .setColor(client.config.botColor)
       .setImage(
         'https://cdn.discordapp.com/attachments/911913804110102548/919917341012279336/20211213_171235.jpg'
       );
