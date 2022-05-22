@@ -17,7 +17,8 @@ export default new Event(leveling.watch(), 'change', async (data) => {
     let RolesArray: string[];
     let RemoveRolesArray: string[];
     let RoleToAdd: string;
-    const Document: HydratedDocument<levelingInterface> = data.fullDocument;
+    const Document: HydratedDocument<levelingInterface> =
+      await leveling.findById(data.documentKey._id);
     if (Document.guildID !== '485463924007763970') return;
     const guild: Guild = client.guilds.cache.get(Document.guildID);
     const member: GuildMember = guild.members.cache.get(Document.userID);

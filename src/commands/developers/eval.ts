@@ -15,6 +15,7 @@ export default new Command({
   developersOnly: true,
   category: 'Developers',
   run: async (client, interaction) => {
+    await interaction.reply({ content: 'Trying to eval' });
     let code = interaction.options.getString('code');
     try {
       let evaled = await eval(code);
@@ -25,10 +26,9 @@ export default new Command({
         .addField('Input', `\`\`\`${code}\`\`\``)
         .addField('Output', `\`\`\`${evaled}\`\`\``)
         .setColor(client.config.botColor);
-      await interaction.reply({ content: 'Trying to eval' });
-      await interaction.editReply({ embeds: [embed] });
+      await interaction.editReply({ content: 'Evaled', embeds: [embed] });
     } catch (err) {
-      interaction.reply({ content: `\`Error\` \`\`\`js\n${err}\n\`\`\`` });
+      interaction.editReply({ content: `\`Error\` \`\`\`js\n${err}\n\`\`\`` });
     }
   },
 });
