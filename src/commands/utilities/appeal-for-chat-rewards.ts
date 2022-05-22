@@ -21,6 +21,7 @@ export default new Command({
       type: 'STRING',
       name: 'goal_you_reached',
       description: 'The goal you reached',
+      required: true,
       choices: [
         {
           name: '200 messages',

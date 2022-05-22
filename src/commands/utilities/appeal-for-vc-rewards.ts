@@ -21,6 +21,7 @@ export default new Command({
       type: 'STRING',
       name: 'goal_you_reached',
       description: 'The goal you reached',
+      required: true,
       choices: [
         {
           name: '2 hours',
@@ -67,7 +68,6 @@ export default new Command({
           value: '300',
         },
       ],
-      required: true,
     },
     {
       type: 'STRING',

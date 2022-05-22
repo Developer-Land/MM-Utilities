@@ -1,6 +1,6 @@
 import { GuildTextBasedChannel } from 'discord.js';
 import { Node, Player, Track } from 'vulkava';
-import { client } from '../../index.js';
+import { client } from '../../index';
 import { lavalink } from '../../Utils/lavalink';
 import { Events } from '../../structures/Events';
 

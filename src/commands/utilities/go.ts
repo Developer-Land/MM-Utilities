@@ -1,5 +1,5 @@
-import { Afk } from '../../models/afk/afk.js';
-import { Command } from '../../structures/Command.js';
+import { Afk } from '../../models/afk/afk';
+import { Command } from '../../structures/Command';
 
 export default new Command({
   name: 'go',

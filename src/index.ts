@@ -1,8 +1,10 @@
-import 'dotenv/config';
-import { ExtendedClient } from './structures/Client';
-import YouTubeNotifier from 'youtube-notification';
+import { config } from 'dotenv';
 import express from 'express';
 import { AddressInfo } from 'net';
+import YouTubeNotifier from 'youtube-notification';
+import { ExtendedClient } from './structures/Client';
+
+config();
 
 const client = new ExtendedClient({
   intents: 32767,

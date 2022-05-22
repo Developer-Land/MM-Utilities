@@ -7,7 +7,7 @@ export const lavalink = new Vulkava({
     {
       id: 'Lavalink',
       hostname: process.env.LAVALINK_HOST,
-      port: 443,
+      port: 27263,
       password: process.env.LAVALINK_PASSWORD,
       secure: true,
       resumeKey: 'MM-Utilities',

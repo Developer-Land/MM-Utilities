@@ -38,6 +38,9 @@ export class ExtendedClient extends Client<true> {
   }
 
   async registerModules() {
+    // Config
+    this.config = await this.importFile(`${__dirname}/../config.json`);
+
     // Commands
     const slashCommands: ApplicationCommandDataResolvable[] = [];
     const commandFiles = await globPromise(
@@ -68,26 +71,22 @@ export class ExtendedClient extends Client<true> {
     );
     eventFiles.forEach(async (filePath) => {
       const event: Event | Events = await this.importFile(filePath);
-      const { emitter } = event;
       if (event instanceof Event) {
-        if (event.options.once) {
-          emitter.once(event.event, event.run);
+        if (event.options?.once) {
+          event.emitter.once(event.event, event.run);
         } else {
-          emitter.on(event.event, event.run);
+          event.emitter.on(event.event, event.run);
         }
       } else if (event instanceof Events) {
-        event.events.forEach(async (event) => {
-          if (event.options.once) {
-            emitter.once(event.event, event.run);
+        event.events.forEach(async (events) => {
+          if (events.options?.once) {
+            event.emitter.once(events.event, events.run);
           } else {
-            emitter.on(event.event, event.run);
+            event.emitter.on(events.event, events.run);
           }
         });
       }
     });
-
-    // Config
-    this.config = await this.importFile(`${__dirname}/../config.json`);
 
     // Mongoose
     if (!process.env.mongooseConnectionString) return;

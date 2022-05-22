@@ -1,5 +1,6 @@
 import {
   ButtonInteraction,
+  ColorResolvable,
   GuildMember,
   GuildMemberRoleManager,
   GuildTextBasedChannel,
@@ -17,8 +18,8 @@ import { Event } from '../../structures/Event';
 import { ExtendedInteraction } from '../../typings/Command';
 import { Ticket } from '../../models/ticket/ticket';
 import { createTranscript } from 'discord-html-transcripts';
-const { DeveloperIDs } = client.config;
 const cooldownOfStaffList = new Set();
+const { DeveloperIDs } = client.config;
 
 export default new Event(
   client,
@@ -64,10 +65,9 @@ export default new Event(
             !(interaction.member.permissions as Readonly<Permissions>).has(
               perms
             ) ||
-            (interaction.channel.type !== 'DM' &&
-              !interaction.channel
-                .permissionsFor((interaction as ExtendedInteraction).member)
-                .has(perms))
+            !(interaction.channel as GuildTextBasedChannel)
+              .permissionsFor((interaction as ExtendedInteraction).member)
+              .has(perms)
           ) {
             MissingPermissionsArray.push(perms);
           }
@@ -88,10 +88,9 @@ export default new Event(
               !(interaction.member.permissions as Readonly<Permissions>).has(
                 perms
               ) ||
-              (interaction.channel.type !== 'DM' &&
-                !interaction.channel
-                  .permissionsFor((interaction as ExtendedInteraction).member)
-                  .has(perms))
+              !(interaction.channel as GuildTextBasedChannel)
+                .permissionsFor((interaction as ExtendedInteraction).member)
+                .has(perms)
             ) {
               MissingPermissionsArray.push(perms);
             }
@@ -100,7 +99,7 @@ export default new Event(
       }
       if (MissingPermissionsArray?.length) {
         const MissingPermissionsEmbed = new MessageEmbed()
-          .setColor(client.config.errColor)
+          .setColor(client.config.errColor as ColorResolvable)
           .setDescription(
             ` You're missing the following permission(s): \n\`${MissingPermissionsArray.map(
               (x) => x
