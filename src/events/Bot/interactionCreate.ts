@@ -76,8 +76,9 @@ export default new Event(
       for (let i = 0; i < command.options?.length; i++) {
         if (
           command.options[i].userPermissions?.length &&
-          (interaction.options?.getSubcommand() === command.options[i].name ||
-            interaction.options?.getSubcommandGroup() ===
+          (interaction.options?.getSubcommand(false) ===
+            command.options[i].name ||
+            interaction.options?.getSubcommandGroup(false) ===
               command.options[i].name)
         ) {
           if (!MissingPermissionsArray) {

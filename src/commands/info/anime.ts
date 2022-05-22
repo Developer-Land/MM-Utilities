@@ -56,8 +56,8 @@ export default new Command({
               content: 'no Animes found',
               embeds: [],
             });
-          let first5AnimeSearch = mat.categories.items.slice(0, 5);
-          let second5AnimeSearch = mat.categories.items.slice(5, 10);
+          let first5AnimeSearch = mat.categories[0].items.slice(0, 5);
+          let second5AnimeSearch = mat.categories[0].items.slice(5, 10);
           let AnimeData = [];
           first5AnimeSearch.forEach(async (anime) => {
             AnimeData.push(await getInfoFromURL(anime.url));

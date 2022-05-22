@@ -18,6 +18,8 @@ export default new Command({
     let code = interaction.options.getString('code');
     try {
       let evaled = await eval(code);
+      if (typeof evaled !== 'string')
+        evaled = require('util').inspect(evaled, { depth: 1 });
       let embed = new MessageEmbed()
         .setAuthor({ name: 'Eval', iconURL: interaction.user.avatarURL() })
         .addField('Input', `\`\`\`${code}\`\`\``)
@@ -26,7 +28,7 @@ export default new Command({
       await interaction.reply({ content: 'Trying to eval' });
       await interaction.editReply({ embeds: [embed] });
     } catch (err) {
-      interaction.reply({ content: `\`ERROR\` \`\`\`js\n${err}\n\`\`\`` });
+      interaction.reply({ content: `\`Error\` \`\`\`js\n${err}\n\`\`\`` });
     }
   },
 });
