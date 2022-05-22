@@ -10,6 +10,7 @@ import { RegisterCommandsOptions } from '../typings/client';
 import { Event } from './Event';
 import { Config } from '../typings/Config';
 import mongoose from 'mongoose';
+import { Events } from './Events';
 
 const globPromise = promisify(glob);
 
@@ -66,8 +67,23 @@ export class ExtendedClient extends Client<true> {
       `${__dirname}/../events/**/*{.ts,.js}`
     );
     eventFiles.forEach(async (filePath) => {
-      const event: Event<string | symbol> = await this.importFile(filePath);
-      event.emitter.on(event.event, event.run);
+      const event: Event | Events = await this.importFile(filePath);
+      const { emitter } = event;
+      if (event instanceof Event) {
+        if (event.options.once) {
+          emitter.once(event.event, event.run);
+        } else {
+          emitter.on(event.event, event.run);
+        }
+      } else if (event instanceof Events) {
+        event.events.forEach(async (event) => {
+          if (event.options.once) {
+            emitter.once(event.event, event.run);
+          } else {
+            emitter.on(event.event, event.run);
+          }
+        });
+      }
     });
 
     // Config

@@ -67,32 +67,8 @@ declare module 'youtube-notification' {
    * @name Notifier#options
    * @type {NotifierOptions}
    */
+  import { EventEmitter } from 'stream';
   export default class Notifier extends EventEmitter {
-    /**
-     * Emitted when a new video is uploaded
-     * @event Notifier#notified
-     */
-    on(
-      event: 'notified',
-      listener: (notification: Notification) => unknown
-    ): this;
-    /**
-     * Emitted when a new subscription is added
-     * @event Notifier#subscribe
-     */
-    on(
-      event: 'subscribe',
-      listener: (data: SubscriptionUpdate) => unknown
-    ): this;
-    /**
-     * Emitted when a subscription is removed
-     * @event Notifier#unsubscribe
-     */
-    on(
-      event: 'unsubscribe',
-      listener: (data: SubscriptionUpdate) => unknown
-    ): this;
-
     /**
      * The ip/domain name that will be used as a callback URL by the hub
      *

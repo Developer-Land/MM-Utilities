@@ -10,14 +10,17 @@ import {
 import { client } from '../../index';
 import { HydratedDocument } from 'mongoose';
 import { Guild, GuildMember, GuildTextBasedChannel } from 'discord.js';
+import { Event } from '../../structures/Event';
 
-leveling.watch().on('change', async (data) => {
+export default new Event(leveling.watch(), 'change', async (data) => {
   if (data.updateDescription?.updatedFields?.level) {
     let RolesArray: string[];
     let RemoveRolesArray: string[];
     let RoleToAdd: string;
     const Document: HydratedDocument<levelingInterface> = data.fullDocument;
     if (Document.guildID !== '485463924007763970') return;
+    const guild: Guild = client.guilds.cache.get(Document.guildID);
+    const member: GuildMember = guild.members.cache.get(Document.userID);
     const findUserSettings: HydratedDocument<levelUserSettingsInterface> =
       await levelUserSettings.findOne({
         userID: Document.userID,
@@ -44,8 +47,6 @@ leveling.watch().on('change', async (data) => {
         }
       }
       RoleToAdd = RolesArray[RolesArray.length - 1];
-      const guild: Guild = client.guilds.cache.get(Document.guildID);
-      const member: GuildMember = guild.members.cache.get(Document.userID);
       if (RolesArray?.length > 1) {
         RolesArray.pop();
         await member.roles.remove(
@@ -70,7 +71,9 @@ leveling.watch().on('change', async (data) => {
       content: `<@${Document.userID}> has just reached ${
         Document.level
       } level!${
-        RoleToAdd ? ` And they have been given the role <@&${RoleToAdd}>` : ''
+        !member.roles.cache.has(RoleToAdd)
+          ? ` And they have been given the role <@&${RoleToAdd}>`
+          : ''
       }`,
       allowedMentions: {
         users:

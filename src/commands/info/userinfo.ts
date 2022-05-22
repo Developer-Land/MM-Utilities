@@ -19,9 +19,9 @@ export default new Command({
     if (!user) {
       user = interaction.user;
     }
-    let target = (await interaction.guild.members.fetch(
-      user.id
-    )) as GuildMember;
+    let target = (await interaction.guild.members
+      .fetch(user.id)
+      .catch(() => {})) as GuildMember;
     let avatar = user.displayAvatarURL({ size: 4096, dynamic: true });
     let daysSinceCreation = moment(new Date()).diff(user.createdAt, 'days');
     let startCreated = moment();

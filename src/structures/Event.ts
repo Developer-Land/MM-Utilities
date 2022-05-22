@@ -1,8 +1,10 @@
 import { EventEmitter } from 'stream';
-export class Event<Key extends string | symbol> {
+
+export class Event {
   constructor(
     public emitter: EventEmitter,
-    public event: Key,
-    public run: (...args: any) => any
+    public event: string | symbol,
+    public run: (...args: any) => any,
+    public options?: { once: boolean }
   ) {}
 }
