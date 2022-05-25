@@ -14,8 +14,8 @@ import { Event } from '../../structures/Event';
 
 export default new Event(leveling.watch(), 'change', async (data) => {
   if (data.updateDescription?.updatedFields?.level) {
-    let RolesArray: string[];
-    let RemoveRolesArray: string[];
+    let RolesArray: string[] = [];
+    let RemoveRolesArray: string[] = [];
     let RoleToAdd: string;
     const Document: HydratedDocument<levelingInterface> =
       await leveling.findById(data.documentKey._id);
@@ -61,7 +61,7 @@ export default new Event(leveling.watch(), 'change', async (data) => {
           'Leveling System role remove on level down'
         );
       }
-      if (!member.roles.cache.has(RoleToAdd)) {
+      if (RoleToAdd && !member.roles.cache.has(RoleToAdd)) {
         member.roles.add(RoleToAdd, 'Leveling System level up role');
       }
     }
@@ -72,7 +72,7 @@ export default new Event(leveling.watch(), 'change', async (data) => {
       content: `<@${Document.userID}> has just reached ${
         Document.level
       } level!${
-        !member.roles.cache.has(RoleToAdd)
+        RoleToAdd && !member.roles.cache.has(RoleToAdd)
           ? ` And they have been given the role <@&${RoleToAdd}>`
           : ''
       }`,

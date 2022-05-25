@@ -13,6 +13,6 @@ export default new Command({
       )
       .setColor(client.config.botColor);
 
-    interaction.reply({ embeds: [embed], ephemeral: true });
+    interaction.reply({ embeds: [embed] });
   },
 });

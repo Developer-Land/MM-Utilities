@@ -131,14 +131,16 @@ export default new Event(
           } \n\nInteraction Name -> ${
             interaction.commandName
           } \n\nInteraction Options -> ${
-            interaction.options?.getSubcommand()
-              ? interaction.options?.getSubcommand() + ' '
-              : ''
-          }${
             interaction.options?.data.length === 0
               ? 'No options provided'
               : interaction.options?.data
-                  .map((x) => x.name + ': ' + x.value)
+                  .map((x) =>
+                    x.type === 'SUB_COMMAND' || x.type === 'SUB_COMMAND_GROUP'
+                      ? x.name +
+                        ' ' +
+                        x.options.map((y) => y.name + ': ' + y.value).join(', ')
+                      : x.name + ': ' + x.value
+                  )
                   .join(', ')
           } \n\nerror code -> ${error.code || 'No code'}\`\`\``
         );

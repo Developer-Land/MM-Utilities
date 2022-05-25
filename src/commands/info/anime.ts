@@ -50,8 +50,8 @@ export default new Command({
         `https://myanimelist.net/search/prefix.json?type=anime&keyword=${query}`
       )
         .then((res) => res.json())
-        .then((mat) => {
-          if (mat?.length === 0)
+        .then(async (mat) => {
+          if (mat.categories[0].items.length === 0)
             return interaction.editReply({
               content: 'no Animes found',
               embeds: [],
@@ -59,12 +59,12 @@ export default new Command({
           let first5AnimeSearch = mat.categories[0].items.slice(0, 5);
           let second5AnimeSearch = mat.categories[0].items.slice(5, 10);
           let AnimeData = [];
-          first5AnimeSearch.forEach(async (anime) => {
+          for (const anime of first5AnimeSearch) {
             AnimeData.push(await getInfoFromURL(anime.url));
-          });
-          second5AnimeSearch.forEach(async (anime) => {
+          }
+          for (const anime of second5AnimeSearch) {
             AnimeData.push(await getInfoFromURL(anime.url));
-          });
+          }
           let titles = AnimeData.map((m, i) => {
             let line = `${i + 1} - ${m.title}`;
             return line;
