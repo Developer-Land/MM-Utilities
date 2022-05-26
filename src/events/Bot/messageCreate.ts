@@ -1,13 +1,13 @@
 import { client } from '../../index';
 import { Message, Client, MessageEmbed } from 'discord.js';
-import fetch from 'node-fetch';
+import fetch, { Response } from 'node-fetch';
 import { leveling } from '../../models/leveling/leveling';
 import { levelingIgnore } from '../../models/leveling/levelingignore';
 const earnedXpRecently = new Set();
 import { Afk } from '../../models/afk/afk';
 import { Event } from '../../structures/Event';
 
-export default new Event(client, 'messageCreate', async (message) => {
+export default new Event(client, 'messageCreate', async (message: Message) => {
   const args = message.content.trim().split(/ +/g);
   // ChatBot
   if (
@@ -26,12 +26,12 @@ export default new Event(client, 'messageCreate', async (message) => {
         .replace(/@(everyone)/gi, 'everyone')
         .replace(/@(here)/gi, 'here')
         .replace(/<@911312019112734760> |<@!911312019112734760> /i, '');
-      if (mentioned_users?.length) {
+      mentioned_users.forEach((displayName) => {
         message.content = message.content.replace(
           /<@!*&*[0-9]+>/gi,
-          mentioned_users
+          displayName
         );
-      }
+      });
       message.channel.sendTyping();
       if (!message.content)
         return message.channel.send('Please say something.');
@@ -50,7 +50,7 @@ export default new Event(client, 'messageCreate', async (message) => {
             allowedMentions: { repliedUser: true },
           })
         )
-        .then((res) => res.json())
+        .then((res) => (res as Response).json())
         .then((data) => {
           message.reply({
             content: `${data.message}`,
@@ -153,7 +153,7 @@ export default new Event(client, 'messageCreate', async (message) => {
         if (afk) {
           message.reply({
             content: `<@${user.id}> is AFK! with reason: ${afk.message}`,
-            allowedMentions: { users: false },
+            allowedMentions: { users: [] },
           });
         }
       });

@@ -135,7 +135,18 @@ export default new Event(
               ? 'No options provided'
               : interaction.options?.data
                   .map((x) =>
-                    x.type === 'SUB_COMMAND' || x.type === 'SUB_COMMAND_GROUP'
+                    x.type === 'SUB_COMMAND_GROUP'
+                      ? x.name +
+                        ' ' +
+                        x.options.map(
+                          (y) =>
+                            y.name +
+                            ' ' +
+                            y.options
+                              .map((z) => z.name + ': ' + z.value)
+                              .join(', ')
+                        )
+                      : x.type === 'SUB_COMMAND'
                       ? x.name +
                         ' ' +
                         x.options.map((y) => y.name + ': ' + y.value).join(', ')
