@@ -2,6 +2,11 @@ import { lavalink } from '../../Utils/lavalink';
 import { getVoiceConnection } from '@discordjs/voice';
 import moment from 'moment';
 import { Command } from '../../structures/Command';
+import {
+  MessageActionRow,
+  MessageSelectMenu,
+  SelectMenuInteraction,
+} from 'discord.js';
 
 export default new Command({
   name: 'music',
@@ -10,11 +15,24 @@ export default new Command({
     {
       type: 'SUB_COMMAND',
       name: 'play',
-      description: 'play a song',
+      description: 'play a track',
       options: [
         {
           name: 'query',
-          description: 'The song you want to play',
+          description: 'The track you want to play',
+          type: 'STRING',
+          required: true,
+        },
+      ],
+    },
+    {
+      type: 'SUB_COMMAND',
+      name: 'search',
+      description: 'search tracks',
+      options: [
+        {
+          name: 'query',
+          description: 'The tracks you want to search',
           type: 'STRING',
           required: true,
         },
@@ -23,12 +41,12 @@ export default new Command({
     {
       type: 'SUB_COMMAND',
       name: 'nowplaying',
-      description: 'shows information about the current song',
+      description: 'shows information about the current track',
     },
     {
       type: 'SUB_COMMAND',
       name: 'queue',
-      description: 'display the song queue',
+      description: 'display the track queue',
     },
     {
       type: 'SUB_COMMAND',
@@ -61,7 +79,7 @@ export default new Command({
     {
       type: 'SUB_COMMAND',
       name: 'loop',
-      description: 'loop Off/Song/Queue',
+      description: 'loop Off/Track/Queue',
       options: [
         {
           name: 'mode',
@@ -74,7 +92,7 @@ export default new Command({
               value: '0',
             },
             {
-              name: 'Song',
+              name: 'Track',
               value: '1',
             },
             {
@@ -94,12 +112,12 @@ export default new Command({
     {
       type: 'SUB_COMMAND',
       name: 'pause',
-      description: 'pause the current song',
+      description: 'pause the current track',
     },
     {
       type: 'SUB_COMMAND',
       name: 'volume',
-      description: 'change or check the volume of the current song',
+      description: 'change or check the volume of the current track',
       options: [
         {
           name: 'percentage',
@@ -114,7 +132,7 @@ export default new Command({
     {
       type: 'SUB_COMMAND',
       name: 'resume',
-      description: 'resume the current song',
+      description: 'resume the current track',
     },
   ],
 
@@ -134,16 +152,16 @@ export default new Command({
 
   run: async (client, interaction) => {
     if (interaction.options.getSubcommand() === 'play') {
-      let track = interaction.options.getString('query');
+      let query = interaction.options.getString('query');
 
       if (!interaction.member.voice.channel)
         return interaction.reply({
           content: 'Please join a voice channel first!',
         });
 
-      await interaction.deferReply();
+      await interaction.reply({ content: 'Searching...' });
 
-      let searchResult = await lavalink.search(track);
+      let searchResult = await lavalink.search(query);
 
       if (searchResult.loadType === 'LOAD_FAILED') {
         return interaction.editReply(
@@ -179,6 +197,88 @@ export default new Command({
         interaction.editReply(`Queued \`${track.title}\``);
       }
       if (!player.playing) player.play();
+      return;
+    }
+    if (interaction.options.getSubcommand() === 'search') {
+      let query = interaction.options.getString('query');
+
+      if (!interaction.member.voice.channel)
+        return interaction.reply({
+          content: 'Please join a voice channel first!',
+        });
+
+      await interaction.reply({ content: 'Searching...' });
+
+      let searchResult = await lavalink.search(query);
+
+      if (searchResult.loadType === 'LOAD_FAILED') {
+        return interaction.editReply(
+          `:x: Load failed. Error: ${searchResult.exception.message}`
+        );
+      } else if (searchResult.loadType === 'NO_MATCHES') {
+        return interaction.editReply(':x: No matches!');
+      }
+
+      let player = lavalink.createPlayer({
+        guildId: interaction.guild.id,
+        voiceChannelId: interaction.member.voice.channelId,
+        textChannelId: interaction.channel.id,
+        selfDeaf: true,
+      });
+
+      player.connect();
+
+      let menu = new MessageSelectMenu()
+        .setCustomId('music_search')
+        .setPlaceholder('Select tracks')
+        .setMinValues(1)
+        .addOptions(
+          searchResult.tracks.map((track) => {
+            return {
+              label: track.title,
+              value: track.uri,
+            };
+          })
+        );
+      let raw = new MessageActionRow().addComponents(menu);
+      await interaction.editReply({
+        content: 'Select tracks from menu',
+        components: [raw],
+      });
+      let filter = (i: SelectMenuInteraction) =>
+        i.user.id === interaction.user.id;
+      let collector = interaction.channel.createMessageComponentCollector({
+        componentType: 'SELECT_MENU',
+        filter,
+        max: 1,
+        time: 15000,
+      });
+      collector.on('collect', (i) => {
+        if (i.customId === 'music_search') {
+          collector.stop('collected');
+        }
+      });
+      collector.on('end', (collected, reason) => {
+        if (reason === 'collected') {
+          collected.first().values.forEach((uri) => {
+            let track = searchResult.tracks.find((t) => t.uri === uri);
+            track.setRequester(interaction.user.tag);
+            player.queue.push(track);
+          });
+          interaction.editReply({
+            content: `Queued \`${collected
+              .first()
+              .values.map(
+                (x) => searchResult.tracks.find((t) => t.uri === x).title
+              )
+              .join('`, `')}\``,
+            components: [],
+          });
+          if (!player.playing) player.play();
+        } else {
+          interaction.editReply({ content: 'Timed out!', components: [] });
+        }
+      });
       return;
     }
 
@@ -252,7 +352,7 @@ export default new Command({
       interaction.reply({
         embeds: [
           {
-            title: 'Song Queue',
+            title: 'Track Queue',
             description: `${tracks.join('\n')}${
               player.queue.length > tracks.length
                 ? `\n...${
