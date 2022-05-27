@@ -23,6 +23,12 @@ export default new Command({
           type: 'STRING',
           required: true,
         },
+        {
+          name: 'force',
+          description: 'Force the track to play',
+          type: 'BOOLEAN',
+          required: false,
+        },
       ],
     },
     {
@@ -105,9 +111,8 @@ export default new Command({
     },
     {
       type: 'SUB_COMMAND',
-      name: 'leave',
-      description: 'clear the queue and disconnect from vc',
-      userPermissions: ['MOVE_MEMBERS'],
+      name: 'resume',
+      description: 'resume the current track',
     },
     {
       type: 'SUB_COMMAND',
@@ -131,28 +136,36 @@ export default new Command({
     },
     {
       type: 'SUB_COMMAND',
-      name: 'resume',
-      description: 'resume the current track',
+      name: 'shuffle',
+      description: 'shuffle the queue',
+    },
+    {
+      type: 'SUB_COMMAND',
+      name: 'leave',
+      description: 'clear the queue and disconnect from vc',
+      userPermissions: ['MOVE_MEMBERS'],
     },
   ],
 
   category: 'Music',
   subcommands: [
     'music play',
+    'music search',
     'music nowplaying',
     'music queue',
     'music skip',
     'music remove',
     'music loop',
-    'music leave',
+    'music resume',
     'music pause',
     'music volume',
-    'music resume',
+    'music leave',
   ],
 
   run: async (client, interaction) => {
     if (interaction.options.getSubcommand() === 'play') {
       let query = interaction.options.getString('query');
+      let force = interaction.options.getBoolean('force');
 
       if (!interaction.member.voice.channel)
         return interaction.reply({
@@ -183,7 +196,11 @@ export default new Command({
       if (searchResult.loadType === 'PLAYLIST_LOADED') {
         for (let track of searchResult.tracks) {
           track.setRequester(interaction.user.tag);
-          player.queue.push(track);
+          if (force) {
+            player.queue.unshift(track);
+          } else {
+            player.queue.push(track);
+          }
         }
 
         interaction.editReply(
@@ -192,11 +209,15 @@ export default new Command({
       } else {
         let track = searchResult.tracks[0];
         track.setRequester(interaction.user.tag);
-
-        player.queue.push(track);
+        if (force) {
+          player.queue.unshift(track);
+        } else {
+          player.queue.push(track);
+        }
         interaction.editReply(`Queued \`${track.title}\``);
       }
       if (!player.playing) player.play();
+      if (force) player.skip();
       return;
     }
     if (interaction.options.getSubcommand() === 'search') {
@@ -448,6 +469,10 @@ export default new Command({
         content: `Volume has been set to \`${volumePercentage}%\``,
       });
       return;
+    }
+    if (interaction.options.getSubcommand() === 'shuffle') {
+      player.shuffleQueue();
+      interaction.reply({ content: 'Shuffled the queue!' });
     }
   },
 });
