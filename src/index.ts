@@ -28,11 +28,7 @@ app.get('/', (_request, response) => {
   response.end('Nothing');
 });
 
-const listener = app.listen(process.env.PORT, function () {
-  console.log(
-    `Your app is listening on port ` + (listener.address() as AddressInfo).port
-  );
-});
+const listener = app.listen(process.env.PORT);
 
 notifier.subscribe('UCyAUC1ykgM_VWD-5ka804kg');
 app.use('/yt', notifier.listener());

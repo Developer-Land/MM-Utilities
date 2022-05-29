@@ -11,6 +11,7 @@ import { Event } from './Event';
 import { Config } from '../typings/Config';
 import mongoose from 'mongoose';
 import { Events } from './Events';
+import chalk from 'chalk';
 
 const globPromise = promisify(glob);
 
@@ -28,12 +29,8 @@ export class ExtendedClient extends Client<true> {
   async registerCommands({ commands, guildId }: RegisterCommandsOptions) {
     if (guildId) {
       this.guilds.cache.get(guildId)?.commands.set(commands);
-      console.log(
-        `Registering commands to ${this.guilds.cache.get(guildId).name}`
-      );
     } else {
       this.application?.commands.set(commands);
-      console.log('Registering global commands');
     }
   }
 
@@ -42,6 +39,11 @@ export class ExtendedClient extends Client<true> {
     this.config = await this.importFile(`${__dirname}/../config.json`);
 
     // Commands
+    console.log(
+      chalk.white.bold('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫') +
+        chalk.blue.bold('Slash Commands') +
+        chalk.white.bold('┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    );
     const slashCommands: ApplicationCommandDataResolvable[] = [];
     const commandFiles = await globPromise(
       `${__dirname}/../commands/*/*{.ts,.js}`
@@ -49,7 +51,27 @@ export class ExtendedClient extends Client<true> {
     commandFiles.forEach(async (filePath) => {
       const command: CommandType = await this.importFile(filePath);
       if (command.init) command.init(this);
-      if (!command.name) return;
+      if (!command.name) {
+        return console.log(
+          chalk.red('[FAILED]') +
+            chalk.white.bold(' | ') +
+            chalk.blue(`${new Date().toLocaleDateString()}`) +
+            chalk.white.bold(' | ') +
+            chalk.cyan('Slash Command Load') +
+            chalk.white.bold(' | ') +
+            chalk.blue(command.name || 'MISSING')
+        );
+      } else {
+        console.log(
+          chalk.green('[SUCCESS]') +
+            chalk.white.bold(' | ') +
+            chalk.blue(`${new Date().toLocaleDateString()}`) +
+            chalk.white.bold(' | ') +
+            chalk.cyan('Slash Command Load') +
+            chalk.white.bold(' | ') +
+            chalk.blue(command.name)
+        );
+      }
 
       this.commands.set(command.name, command);
       slashCommands.push(command);
@@ -63,6 +85,10 @@ export class ExtendedClient extends Client<true> {
           guildId: guildId,
         });
       });
+      // Mongoose
+      if (process.env.mongooseConnectionString) {
+        mongoose.connect(process.env.mongooseConnectionString);
+      }
     });
 
     // Event
@@ -87,11 +113,5 @@ export class ExtendedClient extends Client<true> {
         });
       }
     });
-
-    // Mongoose
-    if (!process.env.mongooseConnectionString) return;
-    mongoose
-      .connect(process.env.mongooseConnectionString)
-      .then(() => console.log('Connected to mongodb'));
   }
 }

@@ -3,17 +3,38 @@ import { client } from '../../index';
 import { lavalink } from '../../Utils/lavalink';
 import { ExcludeEnum } from 'discord.js';
 import { ActivityTypes } from 'discord.js/typings/enums';
+import chalk from 'chalk';
 
 export default new Event(
   client,
   'ready',
   () => {
-    lavalink.start(client.user.id);
-    console.log(`Logged in as ${client.user.tag}!`);
-    const Guilds = client.guilds.cache.map(
-      (x) => 'Name: ' + x.name + ', Id: ' + x.id
+    console.log(
+      chalk.white.bold('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫') +
+        chalk.blue.bold('Client Status') +
+        chalk.white.bold('┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
     );
-    Guilds.forEach((element) => console.log(element));
+    console.log(
+      chalk.cyan('[INFO]') +
+        chalk.white.bold(' | ') +
+        chalk.blue(`${new Date().toLocaleDateString()}`) +
+        chalk.white.bold(' | ') +
+        chalk.cyan('Logged in as') +
+        chalk.white(': ') +
+        chalk.greenBright(`${client.user.tag}`)
+    );
+
+    console.log(
+      chalk.cyan('[INFO]') +
+        chalk.white.bold(' | ') +
+        chalk.blue(`${new Date().toLocaleDateString()}`) +
+        chalk.white.bold(' | ') +
+        chalk.cyan('Guilds') +
+        chalk.white(': ') +
+        chalk.greenBright(
+          `${client.guilds.cache.map((guild) => guild.name).join(', ')}`
+        )
+    );
 
     client.user.setPresence({
       status: 'online',
@@ -25,6 +46,7 @@ export default new Event(
       >,
       url: `https://www.youtube.com/watch?v=dbpMXfbS-Sc`,
     });
+    lavalink.start(client.user.id);
   },
   { once: true }
 );

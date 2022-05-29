@@ -3,6 +3,7 @@ import { Node, Player, Track } from 'vulkava';
 import { client } from '../../index';
 import { lavalink } from '../../Utils/lavalink';
 import { Events } from '../../structures/Events';
+import chalk from 'chalk';
 
 export default new Events(lavalink, [
   {
@@ -26,9 +27,45 @@ export default new Events(lavalink, [
     },
   },
   {
+    event: 'nodeConnect',
+    run: (node: Node) => {
+      console.log(
+        chalk.cyan('[INFO]') +
+          chalk.white.bold(' | ') +
+          chalk.blue(`${new Date().toLocaleDateString()}`) +
+          chalk.white.bold(' | ') +
+          chalk.cyan(`Lavalink Node ${node.identifier} Connection`) +
+          chalk.white(': ') +
+          chalk.greenBright(`Connected`)
+      );
+    },
+  },
+  {
+    event: 'nodeDisconnect',
+    run: (node: Node) => {
+      console.log(
+        chalk.cyan('[INFO]') +
+          chalk.white.bold(' | ') +
+          chalk.blue(`${new Date().toLocaleDateString()}`) +
+          chalk.white.bold(' | ') +
+          chalk.cyan(`Lavalink Node ${node.identifier} Connection`) +
+          chalk.white(': ') +
+          chalk.greenBright(`Disconnected`)
+      );
+    },
+  },
+  {
     event: 'error',
     run: (node: Node, err: Error) => {
-      console.error(`[Lavalink] Error on node ${node.identifier}`, err.message);
+      console.log(
+        chalk.red('[ERROR]') +
+          chalk.white.bold(' | ') +
+          chalk.blue(`${new Date().toLocaleDateString()}`) +
+          chalk.white.bold(' | ') +
+          chalk.cyan(`Lavalink Node ${node.identifier} Error`) +
+          chalk.white(': ') +
+          chalk.white(err.message)
+      );
     },
   },
 ]);
