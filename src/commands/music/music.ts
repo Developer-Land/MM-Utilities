@@ -7,6 +7,7 @@ import {
   MessageSelectMenu,
   SelectMenuInteraction,
 } from 'discord.js';
+import { Track } from 'vulkava';
 
 export default new Command({
   name: 'music',
@@ -272,7 +273,7 @@ export default new Command({
         componentType: 'SELECT_MENU',
         filter,
         max: 1,
-        time: 15000,
+        time: 60000,
       });
       collector.on('collect', (i) => {
         if (i.customId === 'music_search') {
@@ -290,7 +291,7 @@ export default new Command({
             content: `Queued \`${collected
               .first()
               .values.map(
-                (x) => searchResult.tracks.find((t) => t.uri === x).title
+                (x) => searchResult.tracks.find((t: Track) => t.uri === x).title
               )
               .join('`, `')}\``,
             components: [],
@@ -306,7 +307,7 @@ export default new Command({
     let player = lavalink.players.get(interaction.guild.id);
 
     if (interaction.options.getSubcommand() === 'leave') {
-      let connection = await getVoiceConnection(interaction.guild.id);
+      let connection = getVoiceConnection(interaction.guild.id);
       if (player) {
         player.destroy();
       } else if (connection) {
@@ -375,9 +376,9 @@ export default new Command({
       interaction.reply({
         embeds: [
           {
-            title: `Track Queue${player.paused ? ' (Paused)' : ''}${
-              player.trackRepeat ? ' (Track loop)' : ''
-            }${player.queueRepeat ? ' (Queue loop)' : ''}`,
+            title: `Track Queue${player.trackRepeat ? ' (Track loop)' : ''}${
+              player.queueRepeat ? ' (Queue loop)' : ''
+            }`,
             description: `${tracks.join('\n')}${
               player.queue.length > tracks.length
                 ? `\n...${
@@ -387,7 +388,7 @@ export default new Command({
                   }`
                 : ''
             }`,
-            color: 'RANDOM',
+            color: client.config.botColor,
             fields: [
               {
                 name: 'Now Playing',

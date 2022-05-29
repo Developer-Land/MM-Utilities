@@ -4,8 +4,9 @@ import fetch, { Response } from 'node-fetch';
 import { leveling } from '../../models/leveling/leveling';
 import { levelingIgnore } from '../../models/leveling/levelingignore';
 const earnedXpRecently = new Set();
-import { Afk } from '../../models/afk/afk';
+import { Afk } from '../../models/go/afk';
 import { Event } from '../../structures/Event';
+import moment from 'moment';
 
 export default new Event(client, 'messageCreate', async (message: Message) => {
   const args = message.content.trim().split(/ +/g);
@@ -139,7 +140,13 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
       guildID: message.guild.id,
     });
     if (afk) {
-      message.reply({ content: `<@${message.author.id}> is back!` });
+      message
+        .reply({ content: `<@${message.author.id}> is back!` })
+        .then((msg) => {
+          setTimeout(() => {
+            msg.delete();
+          }, 5000);
+        });
       await Afk.deleteOne({
         userID: message.author.id,
         guildID: message.guild.id,
@@ -152,7 +159,9 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
       }).then((afk) => {
         if (afk) {
           message.reply({
-            content: `<@${user.id}> is AFK! with reason: ${afk.message}`,
+            content: `<@${user.id}> is Afk! with reason: ${
+              afk.message
+            } - ${moment(afk.time).fromNow()}`,
             allowedMentions: { users: [] },
           });
         }

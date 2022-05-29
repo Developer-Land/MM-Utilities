@@ -1,4 +1,5 @@
-import { Afk } from '../../models/afk/afk';
+import { Afk } from '../../models/go/afk';
+import { Duty } from '../../models/go/duty';
 import { Command } from '../../structures/Command';
 
 export default new Command({
@@ -22,6 +23,14 @@ export default new Command({
       name: 'duty',
       description: 'go on duty',
       type: 'SUB_COMMAND',
+      options: [
+        {
+          name: 'toggle',
+          description: 'toggle duty',
+          type: 'BOOLEAN',
+          required: true,
+        },
+      ],
     },
   ],
   userPermissions: ['MANAGE_MESSAGES'],
@@ -51,6 +60,51 @@ export default new Command({
           content: `You are already afk with message ${afk.message}`,
           ephemeral: true,
         });
+      }
+      return;
+    }
+    if (interaction.options.getSubcommand() === 'duty') {
+      let toggle = interaction.options.getBoolean('toggle');
+
+      let duty = await Duty.findOne({
+        userID: interaction.user.id,
+        guildID: interaction.guildId,
+      });
+
+      if (toggle) {
+        if (!duty) {
+          let newDuty = new Duty({
+            userID: interaction.user.id,
+            guildID: interaction.guildId,
+          });
+          await newDuty.save();
+          interaction.member.roles.add('980496476985761872', 'Duty on');
+          interaction.reply({
+            content: `You are now on duty`,
+            ephemeral: true,
+          });
+        } else {
+          interaction.reply({
+            content: `You are already on duty`,
+            ephemeral: true,
+          });
+        }
+      } else {
+        if (duty) {
+          interaction.reply({
+            content: `You are now off duty`,
+            ephemeral: true,
+          });
+          await Duty.deleteOne({
+            userID: interaction.user.id,
+            guildID: interaction.guildId,
+          });
+        } else {
+          interaction.reply({
+            content: `You are already off duty`,
+            ephemeral: true,
+          });
+        }
       }
     }
   },

@@ -10,7 +10,7 @@ interface afkInterface {
 let Schema = new mongoose.Schema<afkInterface>({
   userID: { type: String },
   guildID: { type: String },
-  message: { type: String, default: 'AFK' },
+  message: { type: String, default: 'Afk' },
   time: { type: Date, default: Date.now },
 });
 
