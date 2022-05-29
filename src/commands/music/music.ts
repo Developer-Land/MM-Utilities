@@ -315,14 +315,14 @@ export default new Command({
         return interaction.reply('Not in a vc');
       }
 
-      interaction.reply({ content: 'Cleared the queue and left VC' });
+      interaction.reply({ content: 'Cleared the queue and left channel!' });
       return;
     }
     if (interaction.options.getSubcommand() === 'resume') {
-      if (!player.queue?.length)
-        return interaction.reply({ content: 'No music in queue' });
+      if (!player.current)
+        return interaction.reply({ content: 'No music in queue.' });
       if (!player.paused)
-        return interaction.reply({ content: 'Already playing' });
+        return interaction.reply({ content: 'Track is already playing!' });
 
       player.pause(false);
 
@@ -331,7 +331,7 @@ export default new Command({
     }
     if (!player?.playing)
       return interaction.reply({
-        content: 'No track is currently being played',
+        content: 'No track is currently being played!',
       });
     if (interaction.options.getSubcommand() === 'nowplaying') {
       let millisecondsToMinutesSeconds = (ms) => {
@@ -348,7 +348,9 @@ export default new Command({
       interaction.reply({
         embeds: [
           {
-            title: 'Now Playing',
+            title: `Now Playing${player.paused ? ' (Paused)' : ''}${
+              player.trackRepeat ? ' (Track loop)' : ''
+            }${player.queueRepeat ? ' (Queue loop)' : ''}`,
             description: `🎶 | **${
               player.current.title
             }**! \`${millisecondsToMinutesSeconds(
@@ -373,7 +375,9 @@ export default new Command({
       interaction.reply({
         embeds: [
           {
-            title: 'Track Queue',
+            title: `Track Queue${player.paused ? ' (Paused)' : ''}${
+              player.trackRepeat ? ' (Track loop)' : ''
+            }${player.queueRepeat ? ' (Queue loop)' : ''}`,
             description: `${tracks.join('\n')}${
               player.queue.length > tracks.length
                 ? `\n...${
@@ -396,6 +400,8 @@ export default new Command({
       return;
     }
     if (interaction.options.getSubcommand() === 'skip') {
+      if (player.trackRepeat)
+        return interaction.reply("Track loop is on, can't skip!");
       let count = interaction.options.getInteger('count');
       if (count) {
         player.skip(count);
@@ -415,12 +421,12 @@ export default new Command({
       let position = interaction.options.getInteger('position');
       if (position > player.queue.length)
         return interaction.reply({
-          content: 'Invalid position',
+          content: 'Invalid position!',
         });
 
       player.queue.splice(position - 1, 1);
       interaction.reply({
-        content: `Removed track at position ${position}`,
+        content: `Removed track at position ${position}!`,
       });
       return;
     }
@@ -430,7 +436,7 @@ export default new Command({
         return interaction.reply({
           content: `Track loop is ${
             player.trackRepeat ? 'on' : 'off'
-          } and Queue loop is ${player.queueRepeat ? 'on' : 'off'}`,
+          } and Queue loop is ${player.queueRepeat ? 'on' : 'off'}.`,
         });
       if (mode === '0') {
         player.setTrackLoop(false);
@@ -445,11 +451,13 @@ export default new Command({
       interaction.reply({
         content: `Track loop is ${
           player.trackRepeat ? 'on' : 'off'
-        } and Queue loop is ${player.queueRepeat ? 'on' : 'off'}`,
+        } and Queue loop is ${player.queueRepeat ? 'on' : 'off'}.`,
       });
       return;
     }
     if (interaction.options.getSubcommand() === 'pause') {
+      if (player.paused)
+        return interaction.reply({ content: 'Track is already paused!' });
       player.pause(true);
 
       interaction.reply({ content: 'Paused the current track!' });

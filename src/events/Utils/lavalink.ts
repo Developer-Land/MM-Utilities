@@ -13,7 +13,7 @@ export default new Events(lavalink, [
         player.textChannelId
       ) as GuildTextBasedChannel;
 
-      channel.send(`Now playing \`${track.title}\``);
+      if (!player.trackRepeat) channel.send(`Now playing \`${track.title}\``);
     },
   },
   {
