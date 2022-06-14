@@ -1,12 +1,12 @@
-import { client } from '../../index';
-import { Message, Client, MessageEmbed } from 'discord.js';
+import { Message } from 'discord.js';
+import moment from 'moment';
 import fetch, { Response } from 'node-fetch';
+import { client } from '../../index';
+import { Afk } from '../../models/go/afk';
 import { leveling } from '../../models/leveling/leveling';
 import { levelingIgnore } from '../../models/leveling/levelingignore';
-const earnedXpRecently = new Set();
-import { Afk } from '../../models/go/afk';
 import { Event } from '../../structures/Event';
-import moment from 'moment';
+const earnedXpRecently = new Set();
 
 export default new Event(client, 'messageCreate', async (message: Message) => {
   const args = message.content.trim().split(/ +/g);

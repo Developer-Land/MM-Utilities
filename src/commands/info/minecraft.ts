@@ -1,6 +1,6 @@
 import { MessageEmbed } from 'discord.js';
-import fetch from 'node-fetch';
 import moment from 'moment';
+import fetch from 'node-fetch';
 import { Command } from '../../structures/Command';
 
 export default new Command({

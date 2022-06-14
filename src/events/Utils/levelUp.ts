@@ -1,3 +1,6 @@
+import { Guild, GuildMember, GuildTextBasedChannel } from 'discord.js';
+import { HydratedDocument } from 'mongoose';
+import { client } from '../../index';
 import { leveling, levelingInterface } from '../../models/leveling/leveling';
 import {
   levelRoles,
@@ -7,9 +10,6 @@ import {
   levelUserSettings,
   levelUserSettingsInterface,
 } from '../../models/leveling/usersettings';
-import { client } from '../../index';
-import { HydratedDocument } from 'mongoose';
-import { Guild, GuildMember, GuildTextBasedChannel } from 'discord.js';
 import { Event } from '../../structures/Event';
 
 export default new Event(leveling.watch(), 'change', async (data) => {

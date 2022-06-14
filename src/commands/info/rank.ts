@@ -39,7 +39,7 @@ export default new Command({
       .find({
         guildID: interaction.guildId,
       })
-      .sort([['xp', 'descending']])
+      .sort({ xp: 'descending' })
       .exec();
     let userSettings = await levelUserSettings.findOne({
       userID: user.id,

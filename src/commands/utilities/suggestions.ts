@@ -1,6 +1,6 @@
 import { GuildTextBasedChannel, MessageEmbed } from 'discord.js';
-import { Command } from '../../structures/Command';
 import { Suggestion } from '../../models/suggestion/suggestion';
+import { Command } from '../../structures/Command';
 
 export default new Command({
   name: 'suggest',

@@ -1,6 +1,3 @@
-import { EventEmitter } from 'stream';
-import { Express, Request, Response } from 'express';
-
 declare global {
   namespace NodeJS {
     interface ProcessEnv {

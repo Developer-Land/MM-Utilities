@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
 import chalk from 'chalk';
+import mongoose from 'mongoose';
 import { Events } from '../../structures/Events';
 
 export default new Events(mongoose.connection, [

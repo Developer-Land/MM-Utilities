@@ -1,10 +1,10 @@
-import { User, MessageReaction, GuildMember } from 'discord.js';
+import { GuildMember, MessageReaction, User } from 'discord.js';
 import { client } from '../../index';
 import { leveling } from '../../models/leveling/leveling';
 import { levelingIgnore } from '../../models/leveling/levelingignore';
 import { Events } from '../../structures/Events';
+import { starboardClient } from '../../utils/starboard';
 const earnedReactionXpRecently = new Set();
-import { starboardClient } from '../../Utils/starboard';
 
 export default new Events(client, [
   {

@@ -1,9 +1,9 @@
+import chalk from 'chalk';
 import { GuildTextBasedChannel } from 'discord.js';
 import { Node, Player, Track } from 'vulkava';
 import { client } from '../../index';
-import { lavalink } from '../../Utils/lavalink';
 import { Events } from '../../structures/Events';
-import chalk from 'chalk';
+import { lavalink } from '../../utils/lavalink';
 
 export default new Events(lavalink, [
   {

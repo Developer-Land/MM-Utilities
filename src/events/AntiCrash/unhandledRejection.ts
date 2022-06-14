@@ -8,9 +8,8 @@ export default new Event(process, 'unhandledRejection', async (reason, p) => {
       chalk.blue(`${new Date().toLocaleDateString()}`) +
       chalk.white.bold(' | ') +
       chalk.cyan('Unhandled Rejection/Catch') +
-      chalk.white(': ') +
-      chalk.white(reason) +
-      '\n' +
-      chalk.white(p)
+      chalk.white(': '),
+    reason,
+    p
   );
 });

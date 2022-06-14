@@ -1,7 +1,7 @@
-import { client, notifier } from '../../index';
 import { GuildTextBasedChannel } from 'discord.js';
-import { Event } from '../../structures/Event';
 import { Notification } from 'youtube-notification';
+import { client, notifier } from '../../index';
+import { Event } from '../../structures/Event';
 
 export default new Event(notifier, 'notified', (data: Notification) => {
   const published = String(data.published).split(' ');

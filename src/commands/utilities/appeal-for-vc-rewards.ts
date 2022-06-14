@@ -1,10 +1,10 @@
 import { Command } from '../../structures/Command';
 
 import {
-  MessageEmbed,
+  GuildTextBasedChannel,
   MessageActionRow,
   MessageButton,
-  GuildTextBasedChannel,
+  MessageEmbed,
 } from 'discord.js';
 
 export default new Command({

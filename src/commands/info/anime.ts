@@ -1,11 +1,11 @@
 import {
-  MessageEmbed,
-  MessageButton,
-  MessageActionRow,
   ButtonInteraction,
+  MessageActionRow,
+  MessageButton,
+  MessageEmbed,
 } from 'discord.js';
-import fetch from 'node-fetch';
 import { getInfoFromURL } from 'mal-scraper';
+import fetch from 'node-fetch';
 import { Command } from '../../structures/Command';
 
 export default new Command({

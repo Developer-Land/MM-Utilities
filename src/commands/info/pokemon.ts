@@ -1,4 +1,4 @@
-import { Client, CommandInteraction, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import fetch from 'node-fetch';
 import { Command } from '../../structures/Command';
 

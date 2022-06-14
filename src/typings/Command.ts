@@ -15,7 +15,7 @@ import { ExtendedClient } from '../structures/Client';
  * }
  * }
  */
-export interface ExtendedInteraction extends CommandInteraction {
+export interface ExtendedCommandInteraction extends CommandInteraction {
   member: GuildMember;
 }
 
@@ -26,5 +26,5 @@ export type CommandType = {
   subcommands?: string[];
   options?: { userPermissions?: PermissionResolvable[] }[];
   init?: (client: ExtendedClient) => any;
-  run: (client: ExtendedClient, interaction: ExtendedInteraction) => any;
+  run: (client: ExtendedClient, interaction: ExtendedCommandInteraction) => any;
 } & ChatInputApplicationCommandData;

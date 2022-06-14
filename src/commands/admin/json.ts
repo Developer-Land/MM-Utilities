@@ -1,9 +1,4 @@
-import {
-  Client,
-  CommandInteraction,
-  GuildTextBasedChannel,
-  MessageEmbed,
-} from 'discord.js';
+import { GuildTextBasedChannel, MessageEmbed } from 'discord.js';
 import { Command } from '../../structures/Command';
 
 export default new Command({

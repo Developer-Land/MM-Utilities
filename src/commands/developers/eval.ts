@@ -1,4 +1,4 @@
-import { MessageEmbed, Options } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import { Command } from '../../structures/Command';
 
 export default new Command({

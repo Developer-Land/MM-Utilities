@@ -1,8 +1,7 @@
-import { getVoiceConnection } from '@discordjs/voice';
 import { VoiceState } from 'discord.js';
 import { client } from '../../index';
 import { Event } from '../../structures/Event';
-import { lavalink } from '../../Utils/lavalink';
+import { lavalink } from '../../utils/lavalink';
 
 export default new Event(
   client,

@@ -1,10 +1,12 @@
-import { MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
-import { Command } from '../../structures/Command';
+import {
+  MessageActionRow,
+  MessageActionRowComponent,
+  MessageEmbed,
+} from 'discord.js';
+import { Button } from '../../structures/Button';
 
-export default new Command({
-  name: 'help',
-  description: 'Shows the list of my commands',
-  category: 'Info',
+export default new Button({
+  customId: 'COMMAND_LIST_BTN_HELP_CMD',
   run: async (client, interaction) => {
     let array = [];
     let uncategorized = [];
@@ -94,27 +96,24 @@ export default new Command({
       )
       .setColor(client.config.botColor);
 
-    let row = new MessageActionRow().addComponents(
-      new MessageButton()
-        .setLabel('Command List')
-        .setStyle('SECONDARY')
-        .setEmoji('932665354105278494')
-        .setCustomId('COMMAND_LIST_BTN_HELP_CMD'),
-
-      new MessageButton()
-        .setLabel('AI')
-        .setStyle('SECONDARY')
-        .setEmoji('926515055594455100')
-        .setCustomId('AI_BTN_HELP_CMD')
-    );
-
-    row.components[0].setDisabled(true);
-    interaction.reply({ embeds: [embed], components: [row] });
+    interaction.message.components[0].components[0] = (
+      interaction.message.components[0]
+        .components[0] as MessageActionRowComponent
+    ).setDisabled(true);
+    interaction.update({
+      embeds: [embed],
+      components: interaction.message.components as MessageActionRow[],
+    });
 
     setTimeout(() => {
-      row.components[1].setDisabled(true);
+      interaction.message.components[0].components[1] = (
+        interaction.message.components[0]
+          .components[1] as MessageActionRowComponent
+      ).setDisabled(true);
 
-      interaction.editReply({ components: [row] });
+      interaction.update({
+        components: interaction.message.components as MessageActionRow[],
+      });
     }, 17000);
   },
 });

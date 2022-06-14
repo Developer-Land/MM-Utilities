@@ -11,10 +11,9 @@ export default new Event(
         chalk.blue(`${new Date().toLocaleDateString()}`) +
         chalk.white.bold(' | ') +
         chalk.cyan('Uncaught Exception/Catch (MONITOR)') +
-        chalk.white(': ') +
-        chalk.white(err) +
-        '\n' +
-        chalk.white(origin)
+        chalk.white(': '),
+      err,
+      origin
     );
   }
 );

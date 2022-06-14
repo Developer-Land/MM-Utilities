@@ -1,7 +1,7 @@
-import { lavalink } from '../../Utils/lavalink';
 import axios from 'axios';
 import { MessageEmbed } from 'discord.js';
 import { Command } from '../../structures/Command';
+import { lavalink } from '../../utils/lavalink';
 
 let getLyrics = (title) =>
   new Promise(async (ful, rej) => {

@@ -1,13 +1,13 @@
-import { lavalink } from '../../Utils/lavalink';
 import { getVoiceConnection } from '@discordjs/voice';
-import moment from 'moment';
-import { Command } from '../../structures/Command';
 import {
   MessageActionRow,
   MessageSelectMenu,
   SelectMenuInteraction,
 } from 'discord.js';
+import moment from 'moment';
 import { Track } from 'vulkava';
+import { Command } from '../../structures/Command';
+import { lavalink } from '../../utils/lavalink';
 
 export default new Command({
   name: 'music',

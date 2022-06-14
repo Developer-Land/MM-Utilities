@@ -24,7 +24,7 @@ export default new Command({
     }
     let users = await leveling
       .find({ guildID: interaction.guildId })
-      .sort([['xp', 'descending']])
+      .sort({ xp: 'descending' })
       .exec();
     let leaderboard = users.slice((page - 1) * 10, 10 + (page - 1) * 10);
     if (leaderboard.length < 1 && optionPage) {

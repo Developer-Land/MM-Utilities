@@ -1,11 +1,11 @@
 import { Command } from '../../structures/Command';
 
 import {
-  MessageEmbed,
+  ColorResolvable,
   MessageActionRow,
   MessageButton,
+  MessageEmbed,
   Role,
-  ColorResolvable,
 } from 'discord.js';
 
 export default new Command({

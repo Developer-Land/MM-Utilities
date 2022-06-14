@@ -1,5 +1,4 @@
-import { Client, CommandInteraction, MessageEmbed } from 'discord.js';
-import { SlashCommandBuilder } from '@discordjs/builders';
+import { MessageEmbed } from 'discord.js';
 import { Command } from '../../structures/Command';
 
 export default new Command({

@@ -1,9 +1,9 @@
-import { Event } from '../../structures/Event';
-import { client } from '../../index';
-import { lavalink } from '../../Utils/lavalink';
+import chalk from 'chalk';
 import { ExcludeEnum } from 'discord.js';
 import { ActivityTypes } from 'discord.js/typings/enums';
-import chalk from 'chalk';
+import { client } from '../../index';
+import { Event } from '../../structures/Event';
+import { lavalink } from '../../utils/lavalink';
 
 export default new Event(
   client,
