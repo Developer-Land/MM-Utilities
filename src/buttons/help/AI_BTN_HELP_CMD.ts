@@ -1,9 +1,9 @@
-import { Button } from '../../structures/Button';
 import {
-  MessageEmbed,
-  MessageActionRowComponent,
   MessageActionRow,
+  MessageActionRowComponent,
+  MessageEmbed,
 } from 'discord.js';
+import { Button } from '../../structures/Button';
 
 export default new Button({
   customId: 'AI_BTN_HELP_CMD',
@@ -26,20 +26,13 @@ export default new Button({
       interaction.message.components[0]
         .components[1] as MessageActionRowComponent
     ).setDisabled(true);
-    interaction.update({
+    interaction.message.components[0].components[0] = (
+      interaction.message.components[0]
+        .components[0] as MessageActionRowComponent
+    ).setDisabled(false);
+    await interaction.update({
       embeds: [AI],
       components: interaction.message.components as MessageActionRow[],
     });
-
-    setTimeout(() => {
-      interaction.message.components[0].components[0] = (
-        interaction.message.components[0]
-          .components[0] as MessageActionRowComponent
-      ).setDisabled(true);
-
-      interaction.update({
-        components: interaction.message.components as MessageActionRow[],
-      });
-    }, 17000);
   },
 });

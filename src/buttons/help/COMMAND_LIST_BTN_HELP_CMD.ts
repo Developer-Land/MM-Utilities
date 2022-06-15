@@ -100,20 +100,13 @@ export default new Button({
       interaction.message.components[0]
         .components[0] as MessageActionRowComponent
     ).setDisabled(true);
+    interaction.message.components[0].components[1] = (
+      interaction.message.components[0]
+        .components[1] as MessageActionRowComponent
+    ).setDisabled(false);
     interaction.update({
       embeds: [embed],
       components: interaction.message.components as MessageActionRow[],
     });
-
-    setTimeout(() => {
-      interaction.message.components[0].components[1] = (
-        interaction.message.components[0]
-          .components[1] as MessageActionRowComponent
-      ).setDisabled(true);
-
-      interaction.update({
-        components: interaction.message.components as MessageActionRow[],
-      });
-    }, 17000);
   },
 });

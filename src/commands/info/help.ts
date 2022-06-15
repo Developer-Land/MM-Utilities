@@ -109,12 +109,13 @@ export default new Command({
     );
 
     row.components[0].setDisabled(true);
-    interaction.reply({ embeds: [embed], components: [row] });
+    await interaction.reply({ embeds: [embed], components: [row] });
 
-    setTimeout(() => {
+    setTimeout(async () => {
       row.components[1].setDisabled(true);
+      row.components[0].setDisabled(true);
 
-      interaction.editReply({ components: [row] });
+      await interaction.editReply({ components: [row] });
     }, 17000);
   },
 });
