@@ -33,7 +33,35 @@ Simple Bot for [MM Gamer discord server](https://discord.com/invite/ASr2B3ZZSY)
 - Clone the repository and go to the directory
 - run `npm install` to install all dependencies
 - Configure the `config.json` file
-- Configure the `.env` file check [environment.d.ts](https://github.com/Developer-Land/MM-Utilities/blob/main/environment.d.ts) for more info
+
+```json
+{
+  "activityType": "Put activity type here",
+  "activityName": "Put activity name here",
+  "botColor": "Put HEX here",
+  "errColor": "Put HEX here",
+  "DeveloperIDs": ["Put Developer Id here"]
+}
+```
+
+- Configure the `.env` file
+
+```env
+PORT=Put expressjs port here
+botToken=Put bot token here
+guildIds=Put guild ids here spreaded with commas
+mongooseConnectionString=Put mongoose connection string here
+LAVALINK_HOST=Put lavalink host here
+LAVALINK_PASSWORD=Put lavalink password here
+SPOTIFY_CLIENT_ID=Put spotify client id here
+SPOTIFY_CLIENT_SECRET=Put spotify client secret here
+YT_hubCallback=Put youtube hub callback here
+YT_SECRET=Put youtube secret here
+environment=Put environment here
+```
+
+- Run `npm start` to start the bot directly
+- Run `npm run build` to build the project and then run `npm start:prod` to start the bot
 
 # Database
 
