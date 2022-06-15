@@ -164,7 +164,14 @@ export default new Event(
     if (interaction.isButton()) {
       const button = client.buttons.get(interaction.customId);
       if (button) {
-        if (button.userPermissions.length) {
+        if (
+          !(interaction.member.permissions as Readonly<Permissions>).has(
+            button.userPermissions
+          ) ||
+          !(interaction.channel as GuildTextBasedChannel)
+            .permissionsFor((interaction as ExtendedButtonInteraction).member)
+            .has(button.userPermissions)
+        ) {
           interaction.reply({
             embeds: [
               new MessageEmbed()
@@ -187,7 +194,16 @@ export default new Event(
     if (interaction.isSelectMenu()) {
       const selectMenu = client.selectmenus.get(interaction.customId);
       if (selectMenu) {
-        if (selectMenu.userPermissions.length) {
+        if (
+          !(interaction.member.permissions as Readonly<Permissions>).has(
+            selectMenu.userPermissions
+          ) ||
+          !(interaction.channel as GuildTextBasedChannel)
+            .permissionsFor(
+              (interaction as ExtendedSelectMenuInteraction).member
+            )
+            .has(selectMenu.userPermissions)
+        ) {
           interaction.reply({
             embeds: [
               new MessageEmbed()
