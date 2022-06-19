@@ -154,7 +154,7 @@ export class ExtendedClient extends Client<true> {
     });
 
     this.on('ready', () => {
-      const guildIds = process.env.guildIds.split(',');
+      const guildIds: string[] = JSON.parse(process.env.guildIds);
       guildIds.forEach((guildId) => {
         this.registerCommands({
           commands: slashCommands,

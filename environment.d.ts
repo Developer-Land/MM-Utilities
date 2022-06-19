@@ -6,6 +6,7 @@ declare global {
       guildIds: string;
       mongooseConnectionString: string;
       LAVALINK_HOST: string;
+      LAVALINK_PORT: string;
       LAVALINK_PASSWORD: string;
       SPOTIFY_CLIENT_ID: string;
       SPOTIFY_CLIENT_SECRET: string;
