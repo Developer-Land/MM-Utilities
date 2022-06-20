@@ -50,23 +50,17 @@ export default new Event(
       }
 
       // User Permissions
-      let perms: PermissionResolvable;
-      let MissingPermissionsArray: PermissionResolvable[];
+      let MissingPermissionsArray: PermissionResolvable[] = [];
       if (command.userPermissions?.length) {
-        MissingPermissionsArray = [];
-        for (perms of command.userPermissions) {
-          if (
-            !(interaction.member.permissions as Readonly<Permissions>).has(
-              perms
-            ) ||
-            !(interaction.channel as GuildTextBasedChannel)
-              .permissionsFor(
-                (interaction as ExtendedCommandInteraction).member
-              )
-              .has(perms)
-          ) {
-            MissingPermissionsArray.push(perms);
-          }
+        if (
+          !(interaction.member.permissions as Readonly<Permissions>).has(
+            command.userPermissions
+          ) ||
+          !(interaction.channel as GuildTextBasedChannel)
+            .permissionsFor((interaction as ExtendedCommandInteraction).member)
+            .has(command.userPermissions)
+        ) {
+          MissingPermissionsArray.push(...command.userPermissions);
         }
       }
       for (let i = 0; i < command.options?.length; i++) {
@@ -77,22 +71,17 @@ export default new Event(
             interaction.options?.getSubcommandGroup(false) ===
               command.options[i].name)
         ) {
-          if (!MissingPermissionsArray) {
-            MissingPermissionsArray = [];
-          }
-          for (perms of command.options[i].userPermissions) {
-            if (
-              !(interaction.member.permissions as Readonly<Permissions>).has(
-                perms
-              ) ||
-              !(interaction.channel as GuildTextBasedChannel)
-                .permissionsFor(
-                  (interaction as ExtendedCommandInteraction).member
-                )
-                .has(perms)
-            ) {
-              MissingPermissionsArray.push(perms);
-            }
+          if (
+            !(interaction.member.permissions as Readonly<Permissions>).has(
+              command.options[i].userPermissions
+            ) ||
+            !(interaction.channel as GuildTextBasedChannel)
+              .permissionsFor(
+                (interaction as ExtendedCommandInteraction).member
+              )
+              .has(command.options[i].userPermissions)
+          ) {
+            MissingPermissionsArray.push(...command.options[i].userPermissions);
           }
         }
       }

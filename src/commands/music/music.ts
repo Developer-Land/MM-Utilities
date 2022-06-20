@@ -62,7 +62,7 @@ export default new Command({
       options: [
         {
           name: 'count',
-          description: 'how many track to remove',
+          description: 'how many track to skip',
           type: 'INTEGER',
           minValue: 2,
           required: false,
@@ -72,7 +72,7 @@ export default new Command({
     {
       type: 'SUB_COMMAND',
       name: 'remove',
-      description: 'remove a track from queue',
+      description: 'remove tracks from queue',
       options: [
         {
           name: 'position',
@@ -80,6 +80,13 @@ export default new Command({
           type: 'INTEGER',
           minValue: 1,
           required: true,
+        },
+        {
+          name: 'count',
+          description: 'how many tracks to remove',
+          type: 'INTEGER',
+          minValue: 1,
+          required: false,
         },
       ],
     },
@@ -250,6 +257,14 @@ export default new Command({
 
       player.connect();
 
+      if (searchResult.tracks.length === 1) {
+        let track = searchResult.tracks[0];
+        track.setRequester(interaction.user.tag);
+        player.queue.push(track);
+        interaction.editReply(`Queued \`${track.title}\``);
+        return;
+      }
+
       let menu = new MessageSelectMenu()
         .setCustomId('music_search')
         .setPlaceholder('Select tracks')
@@ -412,20 +427,26 @@ export default new Command({
       }
 
       interaction.reply({
-        content: `Skipped ${count !== 1 ? String(count) : 'the current'} ${
-          count !== 1 ? 'tracks' : 'track'
+        content: `${
+          count >= player.queue.length
+            ? 'Cleared the queue'
+            : `Skipped ${count} tracks`
         }!`,
       });
       return;
     }
     if (interaction.options.getSubcommand() === 'remove') {
       let position = interaction.options.getInteger('position');
+      let count = interaction.options.getInteger('count');
       if (position > player.queue.length)
         return interaction.reply({
           content: 'Invalid position!',
         });
-
-      player.queue.splice(position - 1, 1);
+      if (count) {
+        player.queue.splice(position - 1, count);
+      } else {
+        player.queue.splice(position - 1, 1);
+      }
       interaction.reply({
         content: `Removed track at position ${position}!`,
       });
