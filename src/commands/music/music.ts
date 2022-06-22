@@ -270,7 +270,7 @@ export default new Command({
         .setPlaceholder('Select tracks')
         .setMinValues(1)
         .addOptions(
-          searchResult.tracks.map((track) => {
+          searchResult.tracks.slice(0, 25).map((track) => {
             return {
               label: track.title,
               value: track.uri,
