@@ -151,7 +151,6 @@ export default new Command({
       type: 'SUB_COMMAND',
       name: 'leave',
       description: 'clear the queue and disconnect from vc',
-      userPermissions: ['MOVE_MEMBERS'],
     },
   ],
 
@@ -322,6 +321,7 @@ export default new Command({
     let player = lavalink.players.get(interaction.guild.id);
 
     if (interaction.options.getSubcommand() === 'leave') {
+      if (!interaction.member.permissions.has('MOVE_MEMBERS')) return interaction.reply({ content: "You can't do that" });
       let connection = getVoiceConnection(interaction.guild.id);
       if (player) {
         player.destroy();

@@ -127,7 +127,6 @@ export default new Command({
           ],
         },
       ],
-      userPermissions: ['MANAGE_GUILD'],
     },
     {
       type: 'SUB_COMMAND_GROUP',
@@ -214,6 +213,7 @@ export default new Command({
   subcommands: ['leveling ignore'],
   run: async (client, interaction) => {
     if (interaction.options.getSubcommandGroup() === 'staff') {
+      if (!interaction.member.permissions.has('MANAGE_GUILD')) return interaction.reply({ content: "You can't do that" })
       if (interaction.options.getSubcommand() === 'ignore') {
         let type = interaction.options.getString('type');
         let channel = interaction.options.getChannel('channel');

@@ -24,7 +24,6 @@ export type CommandType = {
   developersOnly?: boolean;
   category?: string;
   subcommands?: string[];
-  options?: { userPermissions?: PermissionResolvable[] }[];
   init?: (client: ExtendedClient) => any;
   run: (client: ExtendedClient, interaction: ExtendedCommandInteraction) => any;
 } & ChatInputApplicationCommandData;

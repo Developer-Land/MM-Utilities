@@ -63,28 +63,6 @@ export default new Event(
           MissingPermissionsArray.push(...command.userPermissions);
         }
       }
-      for (let i = 0; i < command.options?.length; i++) {
-        if (
-          command.options[i].userPermissions?.length &&
-          (interaction.options?.getSubcommand(false) ===
-            command.options[i].name ||
-            interaction.options?.getSubcommandGroup(false) ===
-              command.options[i].name)
-        ) {
-          if (
-            !(interaction.member.permissions as Readonly<Permissions>).has(
-              command.options[i].userPermissions
-            ) ||
-            !(interaction.channel as GuildTextBasedChannel)
-              .permissionsFor(
-                (interaction as ExtendedCommandInteraction).member
-              )
-              .has(command.options[i].userPermissions)
-          ) {
-            MissingPermissionsArray.push(...command.options[i].userPermissions);
-          }
-        }
-      }
       if (MissingPermissionsArray?.length) {
         const MissingPermissionsEmbed = new MessageEmbed()
           .setColor(client.config.errColor as ColorResolvable)
