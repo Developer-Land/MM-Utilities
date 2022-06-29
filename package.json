@@ -28,7 +28,7 @@
     "mongoose": "^6.3.8",
     "node-fetch": "^2.6.7",
     "reconlx": "^2.5.6",
-    "vulkava": "^1.2.4",
+    "vulkava": "^1.4.0",
     "youtube-notification": "^1.1.0"
   },
   "devDependencies": {

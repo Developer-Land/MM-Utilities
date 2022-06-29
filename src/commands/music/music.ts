@@ -7,6 +7,7 @@ import {
 import moment from 'moment';
 import { Track } from 'vulkava';
 import { Command } from '../../structures/Command';
+import { Queue } from '../../structures/lavalinkQueue';
 import { lavalink } from '../../utils/lavalink';
 
 export default new Command({
@@ -75,15 +76,15 @@ export default new Command({
       description: 'remove tracks from queue',
       options: [
         {
-          name: 'position',
-          description: 'the position of the track to remove',
+          name: 'from',
+          description: 'the from index to start removing',
           type: 'INTEGER',
           minValue: 1,
           required: true,
         },
         {
-          name: 'count',
-          description: 'how many tracks to remove',
+          name: 'to',
+          description: 'the to index to stop removing',
           type: 'INTEGER',
           minValue: 1,
           required: false,
@@ -196,6 +197,7 @@ export default new Command({
         voiceChannelId: interaction.member.voice.channelId,
         textChannelId: interaction.channel.id,
         selfDeaf: true,
+        queue: new Queue(),
       });
 
       player.connect();
@@ -204,9 +206,9 @@ export default new Command({
         for (let track of searchResult.tracks) {
           track.setRequester(interaction.user.tag);
           if (force) {
-            player.queue.unshift(track);
+            (player.queue as Queue).addToBeginning(track);
           } else {
-            player.queue.push(track);
+            (player.queue as Queue).add(track);
           }
         }
 
@@ -217,9 +219,9 @@ export default new Command({
         let track = searchResult.tracks[0];
         track.setRequester(interaction.user.tag);
         if (force) {
-          player.queue.unshift(track);
+          (player.queue as Queue).addToBeginning(track);
         } else {
-          player.queue.push(track);
+          (player.queue as Queue).add(track);
         }
         interaction.editReply(`Queued \`${track.title}\``);
       }
@@ -252,6 +254,7 @@ export default new Command({
         voiceChannelId: interaction.member.voice.channelId,
         textChannelId: interaction.channel.id,
         selfDeaf: true,
+        queue: new Queue(),
       });
 
       player.connect();
@@ -259,7 +262,7 @@ export default new Command({
       if (searchResult.tracks.length === 1) {
         let track = searchResult.tracks[0];
         track.setRequester(interaction.user.tag);
-        player.queue.push(track);
+        (player.queue as Queue).add(track);
         interaction.editReply(`Queued \`${track.title}\``);
         return;
       }
@@ -299,7 +302,7 @@ export default new Command({
           collected.first().values.forEach((uri) => {
             let track = searchResult.tracks.find((t) => t.uri === uri);
             track.setRequester(interaction.user.tag);
-            player.queue.push(track);
+            (player.queue as Queue).add(track);
           });
           interaction.editReply({
             content: `Queued \`${collected
@@ -321,7 +324,8 @@ export default new Command({
     let player = lavalink.players.get(interaction.guild.id);
 
     if (interaction.options.getSubcommand() === 'leave') {
-      if (!interaction.member.permissions.has('MOVE_MEMBERS')) return interaction.reply({ content: "You can't do that" });
+      if (!interaction.member.permissions.has('MOVE_MEMBERS'))
+        return interaction.reply({ content: "You can't do that" });
       let connection = getVoiceConnection(interaction.guild.id);
       if (player) {
         player.destroy();
@@ -384,7 +388,7 @@ export default new Command({
     }
     if (interaction.options.getSubcommand() === 'queue') {
       let currentTrack = player.current;
-      let tracks = player.queue.slice(0, 10).map((m, i) => {
+      let tracks = (player.queue as Queue).slice(0, 10).map((m, i) => {
         return `${i + 1}. **[${m.title}](${m.uri})** - ${m.requester}`;
       });
 
@@ -395,11 +399,15 @@ export default new Command({
               player.queueRepeat ? ' (Queue loop)' : ''
             }`,
             description: `${tracks.join('\n')}${
-              player.queue.length > tracks.length
+              (player.queue as Queue).size > tracks.length
                 ? `\n...${
-                    player.queue.length - tracks.length === 1
-                      ? `${player.queue.length - tracks.length} more track`
-                      : `${player.queue.length - tracks.length} more tracks`
+                    (player.queue as Queue).size - tracks.length === 1
+                      ? `${
+                          (player.queue as Queue).size - tracks.length
+                        } more track`
+                      : `${
+                          (player.queue as Queue).size - tracks.length
+                        } more tracks`
                   }`
                 : ''
             }`,
@@ -428,7 +436,7 @@ export default new Command({
 
       interaction.reply({
         content: `${
-          count >= player.queue.length
+          count >= (player.queue as Queue).size
             ? 'Cleared the queue'
             : `Skipped ${count} tracks`
         }!`,
@@ -436,20 +444,24 @@ export default new Command({
       return;
     }
     if (interaction.options.getSubcommand() === 'remove') {
-      let position = interaction.options.getInteger('position');
-      let count = interaction.options.getInteger('count');
-      if (position > player.queue.length)
+      let from = interaction.options.getInteger('from');
+      let to = interaction.options.getInteger('to');
+      if (from > (player.queue as Queue).size)
         return interaction.reply({
-          content: 'Invalid position!',
+          content: 'Invalid from index',
         });
-      if (count) {
-        player.queue.splice(position - 1, count);
+      if (to < from) return interaction.reply({ content: 'Invalid to index!' });
+      if (to) {
+        let removed = (player.queue as Queue).remove(from, to - (from - 1));
+        interaction.reply({
+          content: `Removed ${removed.map((x) => x).join(', ')} from queue!`,
+        });
       } else {
-        player.queue.splice(position - 1, 1);
+        let removed = (player.queue as Queue).remove(from, 1);
+        interaction.reply({
+          content: `Removed ${String(removed)} from queue!`,
+        });
       }
-      interaction.reply({
-        content: `Removed track at position ${position}!`,
-      });
       return;
     }
     if (interaction.options.getSubcommand() === 'loop') {
@@ -501,7 +513,7 @@ export default new Command({
       return;
     }
     if (interaction.options.getSubcommand() === 'shuffle') {
-      player.shuffleQueue();
+      (player.queue as Queue).shuffle();
       interaction.reply({ content: 'Shuffled the queue!' });
     }
   },

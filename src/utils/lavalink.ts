@@ -2,20 +2,21 @@ import { Vulkava } from 'vulkava';
 import { NodeOptions, OutgoingDiscordPayload } from 'vulkava/lib/@types';
 import { client } from '../index';
 
+const nodeIdentifiers: string[] = JSON.parse(process.env.LAVALINK_IDENTIFIER);
 const nodeHosts: string[] = JSON.parse(process.env.LAVALINK_HOST);
-const nodePorts: string[] = JSON.parse(process.env.LAVALINK_PORT);
 const nodePasswords: string[] = JSON.parse(process.env.LAVALINK_PASSWORD);
 const nodes: NodeOptions[] = [];
 
-nodeHosts.forEach((host, index) => {
+for (let i = 0; i < nodeIdentifiers.length; i++) {
   nodes.push({
-    hostname: host,
-    port: parseInt(nodePorts[index]),
-    password: nodePasswords[index],
+    id: nodeIdentifiers[i],
+    hostname: nodeHosts[i].split(':')[0],
+    port: parseInt(nodeHosts[i].split(':')[1]),
+    password: nodePasswords[i],
     secure: false,
     resumeKey: 'MM-Utilities',
   });
-});
+}
 
 export const lavalink = new Vulkava({
   nodes: nodes,

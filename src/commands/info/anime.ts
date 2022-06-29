@@ -56,17 +56,11 @@ export default new Command({
               content: 'no Animes found',
               embeds: [],
             });
-          let first5AnimeSearch = mat.categories[0].items.slice(0, 5);
-          let second5AnimeSearch = mat.categories[0].items.slice(5, 10);
-          let AnimeData = [];
-          for (const anime of first5AnimeSearch) {
-            AnimeData.push(await getInfoFromURL(anime.url));
-          }
-          for (const anime of second5AnimeSearch) {
-            AnimeData.push(await getInfoFromURL(anime.url));
-          }
-          let titles = AnimeData.map((m, i) => {
-            let line = `${i + 1} - ${m.title}`;
+          let AnimeSearch = mat.categories[0].items;
+          let first5AnimeSearch = AnimeSearch.items.slice(0, 5);
+          let second5AnimeSearch = AnimeSearch.items.slice(5, 10);
+          let titles = AnimeSearch.map((m, i) => {
+            let line = `${i + 1} - ${m.name}`;
             return line;
           });
           let embed = new MessageEmbed()
@@ -105,63 +99,66 @@ export default new Command({
             filter,
             time: 20000,
           });
-          collector.on('collect', (i) => {
+          collector.on('collect', async (i) => {
             if (i.customId.startsWith('anime.')) {
               let id = i.customId.split('.')[2];
-              let genres: string[] = AnimeData[id].genres;
+              let AnimeData = await getInfoFromURL(AnimeSearch[id].url);
+              let genres: string[] = AnimeData.genres;
               let AnimeEmbed = new MessageEmbed()
-                .setTitle(AnimeData[id].title)
-                .setURL(AnimeData[id].url)
-                .setThumbnail(AnimeData[id].picture)
-                .setDescription(AnimeData[id].synopsis)
+                .setTitle(AnimeData.title)
+                .setURL(AnimeData.url)
+                .setThumbnail(AnimeData.picture)
+                .setDescription(AnimeData.synopsis)
                 .setColor(client.config.botColor)
                 .addField(
                   '🎞️ Trailer',
                   `[Youtube trailer link](${
-                    AnimeData[id].trailer
-                      ? AnimeData[id].trailer
-                      : '_gs0cgrmzmE'
+                    AnimeData.trailer ? AnimeData.trailer : '_gs0cgrmzmE'
                   })`,
                   true
                 )
                 .addField(
                   '⏳ Status',
-                  `${AnimeData[id].status ? AnimeData[id].status : 'N/A'}`,
+                  `${AnimeData.status ? AnimeData.status : 'N/A'}`,
                   true
                 )
-                .addField('🗂️ Type', AnimeData[id].type, true)
+                .addField('🗂️ Type', AnimeData.type, true)
                 .addField(
                   '➡️ Genres',
-                  `${genres.map((x) => x).join(', ') ? genres?.length : '.'}`,
+                  `${
+                    genres.map((x) => x).join(', ')
+                      ? genres.map((x) => x).join(', ')
+                      : '.'
+                  }`,
                   true
                 )
                 .addField(
                   '🗓️ Aired',
-                  `${AnimeData[id].aired ? AnimeData[id].aired : 'N/A'}`,
+                  `${AnimeData.aired ? AnimeData.aired : 'N/A'}`,
                   true
                 )
                 .addField(
                   '📀 Total Episodes',
-                  `${AnimeData[id].episodes ? AnimeData[id].episodes : 'N/A'}`,
+                  `${AnimeData.episodes ? AnimeData.episodes : 'N/A'}`,
                   true
                 )
                 .addField(
                   '⏱️ Episode Duration',
                   `${
-                    `${AnimeData[id].duration} (${AnimeData[id].scoreStats})`
-                      ? AnimeData[id].duration
+                    `${AnimeData.duration} (${AnimeData.scoreStats})`
+                      ? AnimeData.duration
                       : '?'
                   } minutes`,
                   true
                 )
                 .addField(
                   '⭐ Average Score',
-                  `${AnimeData[id].score ? AnimeData[id].score : '?'}/100`,
+                  `${AnimeData.score ? AnimeData.score : '?'}/100`,
                   true
                 )
                 .addField(
                   '🏆 Rank',
-                  `Top ${AnimeData[id].ranked ? AnimeData[id].ranked : 'N/A'}`,
+                  `Top ${AnimeData.ranked ? AnimeData.ranked : 'N/A'}`,
                   true
                 );
               interaction.editReply({
