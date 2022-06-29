@@ -87,7 +87,7 @@ export default new Command({
           description: 'the to index to stop removing',
           type: 'INTEGER',
           minValue: 1,
-          required: false,
+          required: true,
         },
       ],
     },
@@ -454,12 +454,12 @@ export default new Command({
       if (to) {
         let removed = (player.queue as Queue).remove(from, to - (from - 1));
         interaction.reply({
-          content: `Removed ${removed.map((x) => x).join(', ')} from queue!`,
+          content: `Removed ${removed.map((x) => x.title).join(', ')} from queue!`,
         });
       } else {
         let removed = (player.queue as Queue).remove(from, 1);
         interaction.reply({
-          content: `Removed ${String(removed)} from queue!`,
+          content: `Removed ${String(removed[0].title)} from queue!`,
         });
       }
       return;
