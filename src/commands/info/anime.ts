@@ -57,8 +57,8 @@ export default new Command({
               embeds: [],
             });
           let AnimeSearch = mat.categories[0].items;
-          let first5AnimeSearch = AnimeSearch.items.slice(0, 5);
-          let second5AnimeSearch = AnimeSearch.items.slice(5, 10);
+          let first5AnimeSearch = AnimeSearch.slice(0, 5);
+          let second5AnimeSearch = AnimeSearch.slice(5, 10);
           let titles = AnimeSearch.map((m, i) => {
             let line = `${i + 1} - ${m.name}`;
             return line;
