@@ -26,7 +26,7 @@ export default new Events(lavalink, [
   },
   {
     event: 'queueEnd',
-    run: (player: ExtendedPlayer) => {
+    run: (player: Player) => {
       let channel: GuildTextBasedChannel = client.channels.cache.get(
         player.textChannelId
       ) as GuildTextBasedChannel;

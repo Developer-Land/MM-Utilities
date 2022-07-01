@@ -458,19 +458,12 @@ export default new Command({
           content: 'Invalid from index',
         });
       if (to < from) return interaction.reply({ content: 'Invalid to index!' });
-      if (to) {
-        let removed = (player.queue as Queue).remove(from, to - (from - 1));
-        interaction.reply({
-          content: `Removed ${removed
-            .map((x) => x.title)
-            .join(', ')} from queue!`,
-        });
-      } else {
-        let removed = (player.queue as Queue).remove(from, 1);
-        interaction.reply({
-          content: `Removed ${String(removed[0].title)} from queue!`,
-        });
-      }
+      let removed = (player.queue as Queue).remove(from, to - (from - 1));
+      interaction.reply({
+        content: `Removed ${removed
+          .map((x) => x.title)
+          .join(', ')} from queue!`,
+      });
       return;
     }
     if (interaction.options.getSubcommand() === 'loop') {
