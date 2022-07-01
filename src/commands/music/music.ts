@@ -7,6 +7,7 @@ import {
 import moment from 'moment';
 import { Track } from 'vulkava';
 import { Command } from '../../structures/Command';
+import { ExtendedPlayer } from '../../structures/ExtendedPlayer';
 import { Queue } from '../../structures/lavalinkQueue';
 import { lavalink } from '../../utils/lavalink';
 
@@ -120,6 +121,11 @@ export default new Command({
     },
     {
       type: 'SUB_COMMAND',
+      name: 'autoplay',
+      description: 'autoplay on/off',
+    },
+    {
+      type: 'SUB_COMMAND',
       name: 'resume',
       description: 'resume the current track',
     },
@@ -164,6 +170,7 @@ export default new Command({
     'music skip',
     'music remove',
     'music loop',
+    'music autoplay',
     'music resume',
     'music pause',
     'music volume',
@@ -397,7 +404,7 @@ export default new Command({
           {
             title: `Track Queue${player.trackRepeat ? ' (Track loop)' : ''}${
               player.queueRepeat ? ' (Queue loop)' : ''
-            }`,
+            }${(player as ExtendedPlayer).isAutoplay ? ' (Autoplay)' : ''}`,
             description: `${tracks.join('\n')}${
               (player.queue as Queue).size > tracks.length
                 ? `\n...${
@@ -454,7 +461,9 @@ export default new Command({
       if (to) {
         let removed = (player.queue as Queue).remove(from, to - (from - 1));
         interaction.reply({
-          content: `Removed ${removed.map((x) => x.title).join(', ')} from queue!`,
+          content: `Removed ${removed
+            .map((x) => x.title)
+            .join(', ')} from queue!`,
         });
       } else {
         let removed = (player.queue as Queue).remove(from, 1);
@@ -489,6 +498,18 @@ export default new Command({
       });
       return;
     }
+    if (interaction.options.getSubcommand() === 'autoplay') {
+      (player as ExtendedPlayer).setAutoplay =
+        ExtendedPlayer.prototype.setAutoplay;
+      (player as ExtendedPlayer).autoplay = ExtendedPlayer.prototype.autoplay;
+      if ((player as ExtendedPlayer).isAutoplay) {
+        (player as ExtendedPlayer).setAutoplay(false);
+        return interaction.reply({ content: 'Autoplay is now off!' });
+      }
+      (player as ExtendedPlayer).setAutoplay(true);
+      await (player as ExtendedPlayer).autoplay(lavalink);
+      return interaction.reply({ content: 'Autoplay is now on!' });
+    }
     if (interaction.options.getSubcommand() === 'pause') {
       if (player.paused)
         return interaction.reply({ content: 'Track is already paused!' });
@@ -515,6 +536,7 @@ export default new Command({
     if (interaction.options.getSubcommand() === 'shuffle') {
       (player.queue as Queue).shuffle();
       interaction.reply({ content: 'Shuffled the queue!' });
+      return;
     }
   },
 });

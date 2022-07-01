@@ -3,26 +3,33 @@ import { GuildTextBasedChannel } from 'discord.js';
 import { Node, Player, Track } from 'vulkava';
 import { client } from '../../index';
 import { Events } from '../../structures/Events';
+import { ExtendedPlayer } from '../../structures/ExtendedPlayer';
 import { lavalink } from '../../utils/lavalink';
 
 export default new Events(lavalink, [
   {
     event: 'trackStart',
-    run: (player: Player, track: Track) => {
+    run: async (player: Player, track: Track) => {
       let channel: GuildTextBasedChannel = client.channels.cache.get(
         player.textChannelId
       ) as GuildTextBasedChannel;
 
-      if (!player.trackRepeat) channel.send(`Now playing \`${track.title}\``);
+      if (!player.trackRepeat) {
+        (player as ExtendedPlayer).setPreviousTrack =
+          ExtendedPlayer.prototype.setPreviousTrack;
+        (player as ExtendedPlayer).setPreviousTrack(track);
+        channel.send(`Now playing \`${track.title}\``);
+        (player as ExtendedPlayer).autoplay = ExtendedPlayer.prototype.autoplay;
+        await (player as ExtendedPlayer).autoplay(lavalink);
+      }
     },
   },
   {
     event: 'queueEnd',
-    run: (player: Player) => {
+    run: (player: ExtendedPlayer) => {
       let channel: GuildTextBasedChannel = client.channels.cache.get(
         player.textChannelId
       ) as GuildTextBasedChannel;
-
       channel.send(`Queue ended!`);
     },
   },
