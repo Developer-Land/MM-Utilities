@@ -5,7 +5,6 @@ import {
   Interaction,
   Message,
   MessageEmbed,
-  PermissionResolvable,
   Permissions,
 } from 'discord.js';
 import { client } from '../../index';
@@ -50,26 +49,20 @@ export default new Event(
       }
 
       // User Permissions
-      let MissingPermissionsArray: PermissionResolvable[] = [];
-      if (command.userPermissions?.length) {
-        if (
-          !(interaction.member.permissions as Readonly<Permissions>).has(
-            command.userPermissions
-          ) ||
-          !(interaction.channel as GuildTextBasedChannel)
-            .permissionsFor((interaction as ExtendedCommandInteraction).member)
-            .has(command.userPermissions)
-        ) {
-          MissingPermissionsArray.push(...command.userPermissions);
-        }
-      }
-      if (MissingPermissionsArray?.length) {
+      if (
+        !(interaction.member.permissions as Permissions).has(
+          command.userPermissions || []
+        ) ||
+        !(interaction.channel as GuildTextBasedChannel)
+          .permissionsFor((interaction as ExtendedCommandInteraction).member)
+          .has(command.userPermissions || [])
+      ) {
         const MissingPermissionsEmbed = new MessageEmbed()
           .setColor(client.config.errColor as ColorResolvable)
           .setDescription(
-            ` You're missing the following permission(s): \n\`${MissingPermissionsArray.map(
-              (x) => x
-            ).join(', ')}\``
+            ` You're missing the following permission(s): \n\`${command.userPermissions
+              .map((x) => x)
+              .join(', ')}\``
           );
         interaction.reply({
           embeds: [MissingPermissionsEmbed],
@@ -81,10 +74,17 @@ export default new Event(
       command
         .run(client, interaction as ExtendedCommandInteraction)
         .catch((error) => {
-          interaction.reply({
-            content: 'An error has occured, tell a developer',
-            ephemeral: true,
-          });
+          if (!interaction.replied) {
+            interaction.reply({
+              content: 'An error has occured, tell a developer',
+              ephemeral: true,
+            });
+          } else {
+            interaction.followUp({
+              content: 'An error has occured, tell a developer',
+              ephemeral: true,
+            });
+          }
           console.log(error);
           console.log(error.code || `no code`);
           const channel = client.channels.cache.get(
@@ -95,9 +95,10 @@ export default new Event(
               interaction.guild.name
             } \n\nInteraction Author -> ${interaction.user.id} || ${
               interaction.user.username
-            } \n\nInteraction Name -> ${
-              interaction.commandName
-            } \n\nInteraction Options -> ${
+            } \n\nInteraction Type -> Command
+             \n\nInteraction Name -> ${
+               interaction.commandName
+             } \n\nInteraction Options -> ${
               interaction.options?.data.length === 0
                 ? 'No options provided'
                 : interaction.options?.data
@@ -132,12 +133,12 @@ export default new Event(
       const button = client.buttons.get(interaction.customId);
       if (button) {
         if (
-          !(interaction.member.permissions as Readonly<Permissions>).has(
-            button.userPermissions
+          !(interaction.member.permissions as Permissions).has(
+            button.userPermissions || []
           ) ||
           !(interaction.channel as GuildTextBasedChannel)
             .permissionsFor((interaction as ExtendedButtonInteraction).member)
-            .has(button.userPermissions)
+            .has(button.userPermissions || [])
         ) {
           interaction.reply({
             embeds: [
@@ -153,7 +154,36 @@ export default new Event(
           });
           return;
         }
-        button.run(client, interaction as ExtendedButtonInteraction);
+        button
+          .run(client, interaction as ExtendedButtonInteraction)
+          .catch((error) => {
+            if (!interaction.replied) {
+              interaction.reply({
+                content: 'An error has occured, tell a developer',
+                ephemeral: true,
+              });
+            } else {
+              interaction.followUp({
+                content: 'An error has occured, tell a developer',
+                ephemeral: true,
+              });
+            }
+            console.log(error);
+            console.log(error.code || `no code`);
+            const channel = client.channels.cache.get(
+              '931459849097719808'
+            ) as GuildTextBasedChannel;
+            channel.send(
+              `\`\`\`yaml\nerror -> ${error} \n\nGuild -> ${
+                interaction.guild.name
+              } \n\nInteraction Author -> ${interaction.user.id} || ${
+                interaction.user.username
+              } \n\nInteraction Type -> Button
+              \n\nInteraction Name -> ${
+                interaction.customId
+              } \n\nerror code -> ${error.code || 'No code'}\`\`\``
+            );
+          });
       }
     }
 
@@ -162,14 +192,14 @@ export default new Event(
       const selectMenu = client.selectmenus.get(interaction.customId);
       if (selectMenu) {
         if (
-          !(interaction.member.permissions as Readonly<Permissions>).has(
-            selectMenu.userPermissions
+          !(interaction.member.permissions as Permissions).has(
+            selectMenu.userPermissions || []
           ) ||
           !(interaction.channel as GuildTextBasedChannel)
             .permissionsFor(
               (interaction as ExtendedSelectMenuInteraction).member
             )
-            .has(selectMenu.userPermissions)
+            .has(selectMenu.userPermissions || [])
         ) {
           interaction.reply({
             embeds: [
@@ -185,7 +215,36 @@ export default new Event(
           });
           return;
         }
-        selectMenu.run(client, interaction as ExtendedSelectMenuInteraction);
+        selectMenu
+          .run(client, interaction as ExtendedSelectMenuInteraction)
+          .catch((error) => {
+            if (!interaction.replied) {
+              interaction.reply({
+                content: 'An error has occured, tell a developer',
+                ephemeral: true,
+              });
+            } else {
+              interaction.followUp({
+                content: 'An error has occured, tell a developer',
+                ephemeral: true,
+              });
+            }
+            console.log(error);
+            console.log(error.code || `no code`);
+            const channel = client.channels.cache.get(
+              '931459849097719808'
+            ) as GuildTextBasedChannel;
+            channel.send(
+              `\`\`\`yaml\nerror -> ${error} \n\nGuild -> ${
+                interaction.guild.name
+              } \n\nInteraction Author -> ${interaction.user.id} || ${
+                interaction.user.username
+              } \n\nInteraction Type -> Select Menu
+              \n\nInteraction Name -> ${
+                interaction.customId
+              } \n\nerror code -> ${error.code || 'No code'}\`\`\``
+            );
+          });
       }
     }
 

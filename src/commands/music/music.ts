@@ -443,9 +443,7 @@ export default new Command({
 
       interaction.reply({
         content: `${
-          count >= (player.queue as Queue).size
-            ? 'Cleared the queue'
-            : `Skipped ${count} tracks`
+          !player.current ? 'Cleared the queue' : `Skipped ${count} tracks`
         }!`,
       });
       return;
