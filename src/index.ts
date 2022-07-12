@@ -1,8 +1,7 @@
 import { config } from 'dotenv';
 import express from 'express';
-import { AddressInfo } from 'net';
 import YouTubeNotifier from 'youtube-notification';
-import { ExtendedClient } from './structures/Client';
+import { ExtendedClient } from './Structures/Client';
 
 config();
 
