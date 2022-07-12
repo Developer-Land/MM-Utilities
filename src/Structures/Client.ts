@@ -50,9 +50,9 @@ export class ExtendedClient extends Client<true> {
     );
     const slashCommands: ApplicationCommandDataResolvable[] = [];
     const commandFiles = await globPromise(
-      `${__dirname}/../commands/*/*{.ts,.js}`
+      `${__dirname}/../Commands/*/*{.ts,.js}`
     );
-    commandFiles.forEach(async (filePath) => {
+    for await (const filePath of commandFiles) {
       const command: CommandType = await this.importFile(filePath);
       if (command.init) command.init(this);
       if (!command.name) {
@@ -79,7 +79,7 @@ export class ExtendedClient extends Client<true> {
 
       this.commands.set(command.name, command);
       slashCommands.push(command);
-    });
+    }
 
     // Buttons
     console.log(
@@ -88,9 +88,9 @@ export class ExtendedClient extends Client<true> {
         chalk.white.bold('┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
     );
     const buttonFiles = await globPromise(
-      `${__dirname}/../buttons/*/*{.ts,.js}`
+      `${__dirname}/../Buttons/*/*{.ts,.js}`
     );
-    buttonFiles.forEach(async (filePath) => {
+    for await (const filePath of buttonFiles) {
       const button: ButtonType = await this.importFile(filePath);
       if (!button.customId) {
         return console.log(
@@ -115,7 +115,7 @@ export class ExtendedClient extends Client<true> {
       }
 
       this.buttons.set(button.customId, button);
-    });
+    }
 
     // SelectMenu
     console.log(
@@ -124,9 +124,9 @@ export class ExtendedClient extends Client<true> {
         chalk.white.bold('┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
     );
     const selectmenuFiles = await globPromise(
-      `${__dirname}/../selectmenus/*/*{.ts,.js}`
+      `${__dirname}/../Selectmenus/*/*{.ts,.js}`
     );
-    selectmenuFiles.forEach(async (filePath) => {
+    for await (const filePath of selectmenuFiles) {
       const selectMenu: SelectMenuType = await this.importFile(filePath);
       if (!selectMenu.customId) {
         return console.log(
@@ -151,7 +151,7 @@ export class ExtendedClient extends Client<true> {
       }
 
       this.selectmenus.set(selectMenu.customId, selectMenu);
-    });
+    }
 
     this.on('ready', () => {
       const guildIds: string[] = JSON.parse(process.env.guildIds);
@@ -169,7 +169,7 @@ export class ExtendedClient extends Client<true> {
 
     // Event
     const eventFiles = await globPromise(
-      `${__dirname}/../events/**/*{.ts,.js}`
+      `${__dirname}/../Events/**/*{.ts,.js}`
     );
     eventFiles.forEach(async (filePath) => {
       const event: Event | Events = await this.importFile(filePath);
