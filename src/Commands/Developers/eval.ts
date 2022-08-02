@@ -23,8 +23,18 @@ export default new Command({
         evaled = require('util').inspect(evaled, { depth: 1 });
       let embed = new MessageEmbed()
         .setAuthor({ name: 'Eval', iconURL: interaction.user.avatarURL() })
-        .addField('Input', `\`\`\`${code}\`\`\``)
-        .addField('Output', `\`\`\`${evaled}\`\`\``)
+        .addFields(
+          {
+            name: 'Input',
+            value: `\`\`\`${code}\`\`\``,
+            inline: false,
+          },
+          {
+            name: 'Output',
+            value: `\`\`\`${evaled}\`\`\``,
+            inline: false,
+          }
+        )
         .setColor(client.config.botColor);
       await interaction.editReply({ content: 'Evaled', embeds: [embed] });
     } catch (err) {

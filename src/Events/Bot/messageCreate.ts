@@ -45,13 +45,15 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
           }&master=EXPress%20and%20Dorpon&company=DeveloperLand&user=${
             message.author.id
           }&gender=male&birthplace=MM%20Gamer%27s%20Server&age=1&birthdate=Nov%2021%2C%202021&birthyear=2021&birthday=Nov%2021&location=MM%20Gamer%27s%20Server&country=India&city=MM%20Gamer%27s%20Server&state=MM%20Gamer%27s%20Server`
-        ).then((res) => res.body.json())
-      ).message.catch(() =>
-        message.reply({
-          content: 'A error occurred',
-          allowedMentions: { repliedUser: true },
-        })
-      );
+        )
+          .then((res) => res.body.json())
+          .catch(() =>
+            message.reply({
+              content: 'A error occurred',
+              allowedMentions: { repliedUser: true },
+            })
+          )
+      ).message;
 
       message.reply({
         content: `${reply}`,

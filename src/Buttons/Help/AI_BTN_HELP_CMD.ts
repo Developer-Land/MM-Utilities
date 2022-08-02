@@ -17,10 +17,11 @@ export default new Button({
       .setDescription(
         `${client.user?.username} has an advanced Artificial Intelligence. \n<:MM_arrowGREEN:932674760960245840> To chat, start by pinging the bot. \n(Example: <@${client.user?.id}> hello)`
       )
-      .addField(
-        'Special Features',
-        '<:MM_arrowGREEN:932674760960245840> `joke, translate`'
-      );
+      .addFields({
+        name: 'Special Features',
+        value: '<:MM_arrowGREEN:932674760960245840> `joke, translate`',
+        inline: false,
+      });
 
     interaction.message.components[0].components[1] = (
       interaction.message.components[0]

@@ -90,10 +90,12 @@ export default new Button({
       })
       .setThumbnail('https://cdn.discordapp.com/emojis/926515055594455100.png')
       .addFields(YesFields)
-      .addField(
-        '<:MM_question:919531896227135550> How to use the commands:',
-        'To use a command you must type a slash (/) followed by the name of the command. In [bot-commands](https://discord.com/channels/485463924007763970/887068533136195604)!\n\nSyntax: /`[command name] [options]`\nExample: /userinfo `[@user]`'
-      )
+      .addFields({
+        name: '<:MM_question:919531896227135550> How to use the commands:',
+        value:
+          'To use a command you must type a slash (/) followed by the name of the command. In [bot-commands](https://discord.com/channels/485463924007763970/887068533136195604)!\n\nSyntax: /`[command name] [options]`\nExample: /userinfo `[@user]`',
+        inline: false,
+      })
       .setColor(client.config.botColor);
 
     interaction.message.components[0].components[0] = (

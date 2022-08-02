@@ -25,7 +25,7 @@ export default new Command({
     let ip = interaction.options.getString('ip');
     let port = interaction.options.getString('port');
     let data = await request(
-      `https://api.mcsrvstat.us/2/${ip}:${port ? port : '25565'}`
+      `https://api.mcsrvstat.us/2/${ip}${port ? ':' + port : ''}`
     ).then((res) => res.body.json());
     if (data.online !== true)
       return interaction.reply({ content: 'Server is offline' });
@@ -34,27 +34,41 @@ export default new Command({
       .setThumbnail(
         `https://api.mcsrvstat.us/icon/${ip}:${port ? port : '25565'}`
       )
-      .addField(ip, String(data.motd.clean[0]), true)
-      .addField('Version', data.version, true)
-      .addField(
-        'Players',
-        `${data.players.online}\/${data.players.max} ${
-          data.players.list
-            ? '\nPlayers: ' + data.players.list.map((x) => x).join(', ')
-            : ''
-        }`,
-        true
-      )
-      .addField(
-        'Software',
-        `${data.software ? data.software : 'Undetected'}`,
-        true
-      )
-      .addField('Map', `${data.map ? data.map : 'Undetected'}`, true)
-      .addField(
-        'Plugins',
-        `${data.plugins ? data.plugins : 'Undetected'}`,
-        true
+      .addFields(
+        {
+          name: ip,
+          value: String(data.motd.clean[0]),
+          inline: true,
+        },
+        {
+          name: 'Version',
+          value: data.version,
+          inline: true,
+        },
+        {
+          name: 'Players',
+          value: `${data.players.online}\/${data.players.max} ${
+            data.players.list
+              ? '\nPlayers: ' + data.players.list.map((x) => x).join(', ')
+              : ''
+          }`,
+          inline: true,
+        },
+        {
+          name: 'Software',
+          value: data.software ? data.software : 'Undetected',
+          inline: true,
+        },
+        {
+          name: 'Map',
+          value: data.map ? data.map : 'Undetected',
+          inline: true,
+        },
+        {
+          name: 'Plugins',
+          value: data.plugins ? data.plugins : 'Undetected',
+          inline: true,
+        }
       )
       .setFooter({
         text: `Cache resets in ${moment(data.debug.cachetime)
