@@ -57,7 +57,7 @@ export default new Command({
         (userCreated.months + ' months ')
           .replace(/\b0 months\b /, '')
           .replace(/\b1 months\b/, '1 month') +
-        (userCreated.days + ' days ')
+        (userCreated.days + ' days')
           .replace(/\b0 days\b /, '')
           .replace(/\b1 days\b/, '1 day') !==
       ''
@@ -76,7 +76,7 @@ export default new Command({
           (userCreated.minutes + ' minutes ')
             .replace(/\b0 minutes\b /, '')
             .replace(/\b1 minutes\b/, '1 minute') +
-          (userCreated.seconds + ' seconds ')
+          (userCreated.seconds + ' seconds')
             .replace(/\b0 seconds\b /, '')
             .replace(/\b1 seconds\b/, '1 second');
 
@@ -146,7 +146,7 @@ export default new Command({
             (userJoined.months + ' months ')
               .replace(/\b0 months\b /, '')
               .replace(/\b1 months\b/, '1 month') +
-            (userJoined.days + ' days ')
+            (userJoined.days + ' days')
               .replace(/\b0 days\b /, '')
               .replace(/\b1 days\b/, '1 day')
           : (userJoined.hours + ' hours ')
@@ -155,7 +155,7 @@ export default new Command({
             (userJoined.minutes + ' minutes ')
               .replace(/\b0 minutes\b /, '')
               .replace(/\b1 minutes\b/, '1 minute') +
-            (userJoined.seconds + ' seconds ')
+            (userJoined.seconds + ' seconds')
               .replace(/\b0 seconds\b /, '')
               .replace(/\b1 seconds\b/, '1 second');
 
