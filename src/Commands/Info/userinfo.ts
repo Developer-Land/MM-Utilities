@@ -23,7 +23,10 @@ export default new Command({
       .fetch(user.id)
       .catch(() => {})) as GuildMember;
     let avatar = user.displayAvatarURL({ size: 4096, dynamic: true });
-    let daysSinceCreation = moment(new Date()).diff(user.createdAt, 'days');
+    let secondsSinceCreation = moment(new Date()).diff(
+      user.createdAt,
+      'seconds'
+    );
     let userCreated = {} as {
       years: number;
       months: number;
@@ -33,7 +36,7 @@ export default new Command({
       seconds: number;
     };
     let startCreated = moment();
-    let endCreated = moment().add(daysSinceCreation, 'days');
+    let endCreated = moment().add(secondsSinceCreation, 'seconds');
     userCreated.years = endCreated.diff(startCreated, 'years');
     startCreated.add(userCreated.years, 'years');
     userCreated.months = endCreated.diff(startCreated, 'months');
@@ -49,31 +52,33 @@ export default new Command({
 
     let userCreatedString =
       (userCreated.years + ' years ')
-        .replace('0 years ', '')
-        .replace('1 years', '1 year') +
+        .replace(/\b0 years\b /, '')
+        .replace(/\b1 years\b/, '1 year') +
         (userCreated.months + ' months ')
-          .replace('0 months ', '')
-          .replace('1 months', '1 month') +
+          .replace(/\b0 months\b /, '')
+          .replace(/\b1 months\b/, '1 month') +
         (userCreated.days + ' days ')
-          .replace('0 days ', '')
-          .replace('1 days', '1 day') !==
+          .replace(/\b0 days\b /, '')
+          .replace(/\b1 days\b/, '1 day') !==
       ''
         ? (userCreated.years + ' years ')
-            .replace('0 years ', '')
-            .replace('1 years', '1 year') +
+            .replace(/\b0 years\b /, '')
+            .replace(/\b1 years\b/, '1 year') +
           (userCreated.months + ' months ')
-            .replace('0 months ', '')
-            .replace('1 months', '1 month') +
+            .replace(/\b0 months\b /, '')
+            .replace(/\b1 months\b/, '1 month') +
           (userCreated.days + ' days ')
-            .replace('0 days ', '')
-            .replace('1 days', '1 day')
+            .replace(/\b0 days\b /, '')
+            .replace(/\b1 days\b/, '1 day')
         : (userCreated.hours + ' hours ')
-            .replace('0 hours ', '')
-            .replace('1 hours', '1 hour') +
+            .replace(/\b0 hours\b /, '')
+            .replace(/\b1 hours\b/, '1 hour') +
           (userCreated.minutes + ' minutes ')
-            .replace('0 minutes ', '')
-            .replace('1 minutes', '1 minute') +
-          (userCreated.seconds + ' seconds ');
+            .replace(/\b0 minutes\b /, '')
+            .replace(/\b1 minutes\b/, '1 minute') +
+          (userCreated.seconds + ' seconds ')
+            .replace(/\b0 seconds\b /, '')
+            .replace(/\b1 seconds\b/, '1 second');
 
     let userinfo = new MessageEmbed()
       .setAuthor({ name: user.tag, iconURL: avatar })
@@ -97,7 +102,10 @@ export default new Command({
         }
       );
     if (target) {
-      let daysSinceJoined = moment(new Date()).diff(target.joinedAt, 'days');
+      let secondsSinceJoined = moment(new Date()).diff(
+        target.joinedAt,
+        'seconds'
+      );
       let userJoined = {} as {
         years: number;
         months: number;
@@ -107,7 +115,7 @@ export default new Command({
         seconds: number;
       };
       let startJoined = moment();
-      let endJoined = moment().add(daysSinceJoined, 'days');
+      let endJoined = moment().add(secondsSinceJoined, 'seconds');
       userJoined.years = endJoined.diff(startJoined, 'years');
       startJoined.add(userJoined.years, 'years');
       userJoined.months = endJoined.diff(startJoined, 'months');
@@ -123,33 +131,33 @@ export default new Command({
 
       let userJoinedString =
         (userJoined.years + ' years ')
-          .replace('0 years ', '')
-          .replace('1 years', '1 year') +
+          .replace(/\b0 years\b /, '')
+          .replace(/\b1 years\b/, '1 year') +
           (userJoined.months + ' months ')
-            .replace('0 months ', '')
-            .replace('1 months', '1 month') +
+            .replace(/\b0 months\b /, '')
+            .replace(/\b1 months\b/, '1 month') +
           (userJoined.days + ' days ')
-            .replace('0 days ', '')
-            .replace('1 days', '1 day') !==
+            .replace(/\b0 days\b /, '')
+            .replace(/\b1 days\b/, '1 day') !==
         ''
           ? (userJoined.years + ' years ')
-              .replace('0 years ', '')
-              .replace('1 years', '1 year') +
+              .replace(/\b0 years\b /, '')
+              .replace(/\b1 years\b/, '1 year') +
             (userJoined.months + ' months ')
-              .replace('0 months ', '')
-              .replace('1 months', '1 month') +
+              .replace(/\b0 months\b /, '')
+              .replace(/\b1 months\b/, '1 month') +
             (userJoined.days + ' days ')
-              .replace('0 days ', '')
-              .replace('1 days', '1 day')
+              .replace(/\b0 days\b /, '')
+              .replace(/\b1 days\b/, '1 day')
           : (userJoined.hours + ' hours ')
-              .replace('0 hours ', '')
-              .replace('1 hours', '1 hour') +
+              .replace(/\b0 hours\b /, '')
+              .replace(/\b1 hours\b/, '1 hour') +
             (userJoined.minutes + ' minutes ')
-              .replace('0 minutes ', '')
-              .replace('1 minutes', '1 minute') +
+              .replace(/\b0 minutes\b /, '')
+              .replace(/\b1 minutes\b/, '1 minute') +
             (userJoined.seconds + ' seconds ')
-              .replace('0 seconds ', '')
-              .replace('1 seconds', '1 second');
+              .replace(/\b0 seconds\b /, '')
+              .replace(/\b1 seconds\b/, '1 second');
 
       let RolePos = target.roles.cache.map((r) => r);
       RolePos.sort(function (a, b) {
