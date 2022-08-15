@@ -24,14 +24,56 @@ export default new Command({
       .catch(() => {})) as GuildMember;
     let avatar = user.displayAvatarURL({ size: 4096, dynamic: true });
     let daysSinceCreation = moment(new Date()).diff(user.createdAt, 'days');
+    let userCreated = {} as {
+      years: number;
+      months: number;
+      days: number;
+      hours: number;
+      minutes: number;
+      seconds: number;
+    };
     let startCreated = moment();
     let endCreated = moment().add(daysSinceCreation, 'days');
-    let yearsCreated = endCreated.diff(startCreated, 'years');
-    startCreated.add(yearsCreated, 'years');
-    let monthsCreated = endCreated.diff(startCreated, 'months');
-    startCreated.add(monthsCreated, 'months');
-    let daysCreated = endCreated.diff(startCreated, 'days');
-    startCreated.add(daysCreated, 'days');
+    userCreated.years = endCreated.diff(startCreated, 'years');
+    startCreated.add(userCreated.years, 'years');
+    userCreated.months = endCreated.diff(startCreated, 'months');
+    startCreated.add(userCreated.months, 'months');
+    userCreated.days = endCreated.diff(startCreated, 'days');
+    startCreated.add(userCreated.days, 'days');
+    userCreated.hours = endCreated.diff(startCreated, 'hours');
+    startCreated.add(userCreated.hours, 'hours');
+    userCreated.minutes = endCreated.diff(startCreated, 'minutes');
+    startCreated.add(userCreated.minutes, 'minutes');
+    userCreated.seconds = endCreated.diff(startCreated, 'seconds');
+    startCreated.add(userCreated.seconds, 'seconds');
+
+    let userCreatedString =
+      (userCreated.years + ' years ')
+        .replace('0 years ', '')
+        .replace('1 years', '1 year') +
+        (userCreated.months + ' months ')
+          .replace('0 months ', '')
+          .replace('1 months', '1 month') +
+        (userCreated.days + ' days ')
+          .replace('0 days ', '')
+          .replace('1 days', '1 day') !==
+      ''
+        ? (userCreated.years + ' years ')
+            .replace('0 years ', '')
+            .replace('1 years', '1 year') +
+          (userCreated.months + ' months ')
+            .replace('0 months ', '')
+            .replace('1 months', '1 month') +
+          (userCreated.days + ' days ')
+            .replace('0 days ', '')
+            .replace('1 days', '1 day')
+        : (userCreated.hours + ' hours ')
+            .replace('0 hours ', '')
+            .replace('1 hours', '1 hour') +
+          (userCreated.minutes + ' minutes ')
+            .replace('0 minutes ', '')
+            .replace('1 minutes', '1 minute') +
+          (userCreated.seconds + ' seconds ');
 
     let userinfo = new MessageEmbed()
       .setAuthor({ name: user.tag, iconURL: avatar })
@@ -51,29 +93,74 @@ export default new Command({
           name: 'Account Created',
           value: `${moment(user.createdAt).format(
             'llll'
-          )} (${yearsCreated} years ${monthsCreated} months ${daysCreated} days ago)`,
+          )} (${userCreatedString} ago)`,
         }
       );
     if (target) {
       let daysSinceJoined = moment(new Date()).diff(target.joinedAt, 'days');
+      let userJoined = {} as {
+        years: number;
+        months: number;
+        days: number;
+        hours: number;
+        minutes: number;
+        seconds: number;
+      };
       let startJoined = moment();
       let endJoined = moment().add(daysSinceJoined, 'days');
-      let yearsJoined = endJoined.diff(startJoined, 'years');
-      startJoined.add(yearsJoined, 'years');
-      let monthsJoined = endJoined.diff(startJoined, 'months');
-      startJoined.add(monthsJoined, 'months');
-      let daysJoined = endJoined.diff(startJoined, 'days');
-      startJoined.add(daysJoined, 'days');
+      userJoined.years = endJoined.diff(startJoined, 'years');
+      startJoined.add(userJoined.years, 'years');
+      userJoined.months = endJoined.diff(startJoined, 'months');
+      startJoined.add(userJoined.months, 'months');
+      userJoined.days = endJoined.diff(startJoined, 'days');
+      startJoined.add(userJoined.days, 'days');
+      userJoined.hours = endJoined.diff(startJoined, 'hours');
+      startJoined.add(userJoined.hours, 'hours');
+      userJoined.minutes = endJoined.diff(startJoined, 'minutes');
+      startJoined.add(userJoined.minutes, 'minutes');
+      userJoined.seconds = endJoined.diff(startJoined, 'seconds');
+      startJoined.add(userJoined.seconds, 'seconds');
+
+      let userJoinedString =
+        (userJoined.years + ' years ')
+          .replace('0 years ', '')
+          .replace('1 years', '1 year') +
+          (userJoined.months + ' months ')
+            .replace('0 months ', '')
+            .replace('1 months', '1 month') +
+          (userJoined.days + ' days ')
+            .replace('0 days ', '')
+            .replace('1 days', '1 day') !==
+        ''
+          ? (userJoined.years + ' years ')
+              .replace('0 years ', '')
+              .replace('1 years', '1 year') +
+            (userJoined.months + ' months ')
+              .replace('0 months ', '')
+              .replace('1 months', '1 month') +
+            (userJoined.days + ' days ')
+              .replace('0 days ', '')
+              .replace('1 days', '1 day')
+          : (userJoined.hours + ' hours ')
+              .replace('0 hours ', '')
+              .replace('1 hours', '1 hour') +
+            (userJoined.minutes + ' minutes ')
+              .replace('0 minutes ', '')
+              .replace('1 minutes', '1 minute') +
+            (userJoined.seconds + ' seconds ')
+              .replace('0 seconds ', '')
+              .replace('1 seconds', '1 second');
+
       let RolePos = target.roles.cache.map((r) => r);
       RolePos.sort(function (a, b) {
         return b.rawPosition - a.rawPosition;
       });
-      userinfo.fields.push(
+      userinfo.addFields(
         {
           name: 'Joined Server',
           value: `${moment(target.joinedAt).format(
             'llll'
-          )} (${yearsJoined} years ${monthsJoined} months ${daysJoined} days ago)`,
+          )} (${userJoinedString} ago)`,
           inline: false,
         },
         {

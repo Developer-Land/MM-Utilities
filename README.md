@@ -47,17 +47,18 @@ Simple Bot for [MM Gamer discord server](https://discord.com/invite/ASr2B3ZZSY)
 - Configure the `.env` file
 
 ```env
-PORT=Put expressjs port here
-botToken=Put bot token here
-guildIds=Put guild ids here spreaded with commas
-mongooseConnectionString=Put mongoose connection string here
-LAVALINK_HOST=Put lavalink host here
-LAVALINK_PASSWORD=Put lavalink password here
-SPOTIFY_CLIENT_ID=Put spotify client id here
-SPOTIFY_CLIENT_SECRET=Put spotify client secret here
-YT_hubCallback=Put youtube hub callback here
-YT_SECRET=Put youtube secret here
-environment=Put environment here
+PORT=Your port number
+botToken=Your bot token
+guildIds=["Your guild id", ""]
+mongooseConnectionString=Your mongoose connection string
+LAVALINK_IDENTIFIER=["Node 1", "Node 2"]
+LAVALINK_HOST=["in.example.com", "us.example.com"]
+LAVALINK_PASSWORD=["Password 1", "Password 2"]
+SPOTIFY_CLIENT_ID=Your spotify client id
+SPOTIFY_CLIENT_SECRET=Your spotify client secret
+YT_hubCallback=Your youtube callback url
+YT_SECRET=Your youtube secret
+environment=Your environment
 ```
 
 - Run `npm start` to start the bot directly

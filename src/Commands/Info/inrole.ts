@@ -38,7 +38,7 @@ export default new Command({
     let generateEmbed = async (start: number) => {
       let current = RoleMembers.slice(start, start + 10);
       return new MessageEmbed({
-        title: `Showing members from role ${start + 1}-${
+        title: `Showing members from ${role.name} role ${start + 1}-${
           start + current.length
         } out of ${role.members.size}`,
         color: role.hexColor.replace('#', '0x') as ColorResolvable,
