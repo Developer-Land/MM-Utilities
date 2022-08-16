@@ -1,6 +1,7 @@
 import {
   GuildTextBasedChannel,
   Message,
+  MessageEmbed,
   MessageActionRow,
   MessageButton,
   ThreadChannel,
@@ -197,7 +198,10 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
   // #verification
   // Send Answers to the Gatekeepers
   if (message.channel.id === '1008085778850648156') {
-    if (message.content.toLowerCase() === 'edit_this_message') return;
+    if (
+      message.member.roles.cache.has('854647752197931038') ||
+      message.author.bot
+      ) return;
 
     const channel = message.guild.channels.cache.get(
       '1008754426678353970'
@@ -227,7 +231,7 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
         .setCustomId(`${message.author.id}.verification.accept`),
       new MessageButton()
         .setStyle('DANGER')
-        .setLabel('Reject')
+        .setLabel('Decline')
         .setCustomId(`${message.author.id}.verification.reject`)
     );
 
@@ -237,5 +241,16 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
       avatarURL: message.author.displayAvatarURL({ format: 'png', size: 4096 }),
       components: [row],
     });
+    
+    message.author.send({
+      embeds: [
+        new MessageEmbed()
+          .setThumbnail(message.guild.iconURL({ format: 'png', size: 512 }))
+          .setAuthor({ name: 'Thank you for joining our server! Our "Gatekeepers" will try to give you access to the server as soon as possible if you have written the answers honestly.' })
+          .addFields({ name: "Your answers", value: `\`\`\`text\n${message.content}\`\`\`` })
+      ]
+    });
+    
+    setTimeout(() => message.delete(), 1600);
   } // #verification
 });
