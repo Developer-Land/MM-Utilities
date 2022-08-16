@@ -206,23 +206,17 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
     if (channel instanceof ThreadChannel) return;
 
     let webhookUrl: string;
-
-    channel.fetchWebhooks().then((hooks) => {
-      let myWebhooks = hooks.filter(
-        (webhook) => webhook.owner.id === client.user.id
-      );
-      if (myWebhooks.size !== 0) {
-        webhookUrl = myWebhooks.first().url;
-      } else {
-        channel
-          .createWebhook(`Verification`, {
-            avatar: client.user.displayAvatarURL(),
-          })
-          .then((webhook) => {
-            webhookUrl = webhook.url;
-          });
-      }
-    });
+    let myWebhooks = (await channel.fetchWebhooks()).filter(
+      (webhook) => webhook.owner.id === client.user.id
+    );
+    webhookUrl =
+      myWebhooks.size !== 0
+        ? myWebhooks.first().url
+        : (
+            await channel.createWebhook('Verification', {
+              avatar: client.user.displayAvatarURL(),
+            })
+          ).url;
 
     const webhookClient = new WebhookClient({ url: webhookUrl });
 
