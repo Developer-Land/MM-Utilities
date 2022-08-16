@@ -1,4 +1,11 @@
-import { Message, MessageActionRow, MessageButton, WebhookClient, GuildTextBasedChannel, ThreadChannel } from 'discord.js';
+import {
+  GuildTextBasedChannel,
+  Message,
+  MessageActionRow,
+  MessageButton,
+  ThreadChannel,
+  WebhookClient,
+} from 'discord.js';
 import moment from 'moment';
 import { request } from 'undici';
 import { client } from '../../index';
@@ -46,13 +53,13 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
             message.author.id
           }&gender=male&birthplace=MM%20Gamer%27s%20Server&age=1&birthdate=Nov%2021%2C%202021&birthyear=2021&birthday=Nov%2021&location=MM%20Gamer%27s%20Server&country=India&city=MM%20Gamer%27s%20Server&state=MM%20Gamer%27s%20Server`
         )
-        .then((res) => res.body.json())
-        .catch(() =>
-          message.reply({
-            content: 'A error occurred',
-            allowedMentions: { repliedUser: true },
-          })
-        )
+          .then((res) => res.body.json())
+          .catch(() =>
+            message.reply({
+              content: 'A error occurred',
+              allowedMentions: { repliedUser: true },
+            })
+          )
       ).message;
 
       message.reply({
@@ -189,60 +196,52 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
 
   // #verification
   // Send Answers to the Gatekeepers
-  if (message.channel.id === "1008085778850648156") {
-    if (message.content.toLowerCase() === "edit_this_message") return;
+  if (message.channel.id === '1008085778850648156') {
+    if (message.content.toLowerCase() === 'edit_this_message') return;
 
-    const author = message.author;
-    sendLogs({
-      user_name: author.username,
-      avatar_url: author.displayAvatarURL(),
-      user_id: author.id,
-      answers: message.content
+    const channel = message.guild.channels.cache.get(
+      '1008754426678353970'
+    ) as GuildTextBasedChannel;
+
+    if (channel instanceof ThreadChannel) return;
+
+    let webhookUrl: string;
+
+    channel.fetchWebhooks().then((hooks) => {
+      let myWebhooks = hooks.filter(
+        (webhook) => webhook.owner.id === client.user.id
+      );
+      if (myWebhooks.size !== 0) {
+        webhookUrl = myWebhooks.first().url;
+      } else {
+        channel
+          .createWebhook(`Verification`, {
+            avatar: client.user.displayAvatarURL(),
+          })
+          .then((webhook) => {
+            webhookUrl = webhook.url;
+          });
+      }
     });
 
-    interface detailsObject {
-      user_name: string,
-      avatar_url: string,
-      user_id: string,
-      answers: string
-    }
-    
-    function getWebhook(): string {
-      const channel = message.guild.channels.cache.get("1008754426678353970") as GuildTextBasedChannel;
-      
-      if (channel instanceof ThreadChannel) return;
-      
-      return channel.fetchWebhooks().then((hooks) => {
-        let myWebhooks = hooks.filter((webhook) => {
-          webhook.owner.id === client.user.id
-        });
-    
-        if (myWebhooks.size !== 0) return myWebhooks.first().url;
-    
-        return channel.createWebhook('MM Utilities')
-          .then(webhook => webhook.url);
-      });
-    }
+    const webhookClient = new WebhookClient({ url: webhookUrl });
 
-    function sendLogs(details: detailsObject): void {
-      const { user_name, avatar_url, user_id, answers } = details;
+    const row = new MessageActionRow().addComponents(
+      new MessageButton()
+        .setStyle('SUCCESS')
+        .setLabel('Accept')
+        .setCustomId(`${message.author.id}.verification.accept`),
+      new MessageButton()
+        .setStyle('DANGER')
+        .setLabel('Reject')
+        .setCustomId(`${message.author.id}.verification.reject`)
+    );
 
-      const webhookClient = new WebhookClient({ url: getWebhook() });
-
-      const row = new MessageActionRow()
-        .addComponents(
-          new MessageButton()
-          .setStyle("SUCCESS")
-          .setLabel("Accept")
-          .setCustomId(user_id)
-        );
-
-      webhookClient.send({
-        content: answers,
-        username: user_name,
-        avatarURL: avatar_url,
-        components: [row]
-      });
-    }
-  } // #verification 
+    webhookClient.send({
+      content: message.content,
+      username: message.author.username,
+      avatarURL: message.author.displayAvatarURL({ format: 'png', size: 4096 }),
+      components: [row],
+    });
+  } // #verification
 });
