@@ -246,8 +246,10 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
       embeds: [
         new MessageEmbed()
           .setThumbnail(message.guild.iconURL({ format: 'png', size: 512 }))
-          .setAuthor({ name: 'Thank you for joining our server! Our "Gatekeepers" will try to give you access to the server as soon as possible if you have written the answers honestly.' })
-          .addFields({ name: "Your answers", value: `\`\`\`text\n${message.content}\`\`\`` })
+          .setTitle("Thank you for joining our server!")
+          .setDescription('Our "Gatekeepers" will try to give you access to the server as soon as possible if you have written the answers honestly.')
+          .setColor(client.config.botColor)
+          .addFields({ name: "Your answers:", value: `\`\`\`txt\n${message.content}\`\`\`` })
       ]
     });
     
