@@ -130,7 +130,16 @@ export default new Event(
 
     // Button Handling
     if (interaction.isButton()) {
-      const button = client.buttons.get(interaction.customId);
+      let button = client.buttons.get(interaction.customId);
+      if (!button) {
+        for (const x of client.buttons.values()) {
+          let buttonRegex = new RegExp(x.customId, 'gi');
+          let matches = buttonRegex.exec(interaction.customId);
+          if (matches?.length === 1) {
+            button = client.buttons.get(x.customId);
+          }
+        }
+      }
       if (button) {
         if (
           !(interaction.member.permissions as Permissions).has(
