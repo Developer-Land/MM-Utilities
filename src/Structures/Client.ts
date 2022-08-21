@@ -24,8 +24,42 @@ export class ExtendedClient extends Client<true> {
   config: Config;
   async start() {
     this.registerModules();
-    this.login(process.env.botToken);
+    await this.login(process.env.botToken);
   }
+  async reload() {
+    this.commands.clear();
+    this.buttons.clear();
+    this.selectmenus.clear();
+
+    const commandFiles = await globPromise(
+      `${__dirname}/../Commands/*/*{.ts,.js}`
+    );
+    for await (const filePath of commandFiles) {
+      delete require.cache[require.resolve(filePath)];
+    }
+    const buttonFiles = await globPromise(
+      `${__dirname}/../Buttons/*/*{.ts,.js}`
+    );
+    for await (const filePath of buttonFiles) {
+      delete require.cache[require.resolve(filePath)];
+    }
+    const selectmenuFiles = await globPromise(
+      `${__dirname}/../Selectmenus/*/*{.ts,.js}`
+    );
+    for await (const filePath of selectmenuFiles) {
+      delete require.cache[require.resolve(filePath)];
+    }
+    const eventFiles = await globPromise(`${__dirname}/../Events/*/*{.ts,.js}`);
+    for await (const filePath of eventFiles) {
+      delete require.cache[require.resolve(filePath)];
+      const event: Event | Events = await this.importFile(filePath);
+      event?.emitter?.removeAllListeners();
+    }
+    delete require.cache[require.resolve(`${__dirname}/../config.json`)];
+
+    await this.registerModules();
+  }
+
   async importFile(filePath: string) {
     return (await import(filePath))?.default;
   }
@@ -163,7 +197,9 @@ export class ExtendedClient extends Client<true> {
       });
       // Mongoose
       if (process.env.mongooseConnectionString) {
-        mongoose.connect(process.env.mongooseConnectionString);
+        if (mongoose.connection.readyState === 0) {
+          mongoose.connect(process.env.mongooseConnectionString);
+        }
       }
     });
 
