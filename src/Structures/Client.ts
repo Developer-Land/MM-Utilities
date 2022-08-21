@@ -53,7 +53,11 @@ export class ExtendedClient extends Client<true> {
     for await (const filePath of eventFiles) {
       delete require.cache[require.resolve(filePath)];
       const event: Event | Events = await this.importFile(filePath);
-      event?.emitter?.removeAllListeners();
+      if (event?.emitter?.removeAllListeners()) {
+        event.emitter.removeAllListeners();
+      } else {
+        console.log(event.emitter);
+      }
     }
     delete require.cache[require.resolve(`${__dirname}/../config.json`)];
 
