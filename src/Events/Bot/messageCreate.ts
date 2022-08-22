@@ -1,9 +1,9 @@
 import {
   GuildTextBasedChannel,
   Message,
-  MessageEmbed,
   MessageActionRow,
   MessageButton,
+  MessageEmbed,
   ThreadChannel,
   WebhookClient,
 } from 'discord.js';
@@ -178,20 +178,31 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
     });
   }
 
-  // Delete messages without 'Attachments' in '#staff-media'
-  if (message.channel.id === '938447207017873438') {
-    if (message.author.bot) return;
-    if (!message.attachments.size) {
-      message.delete();
-      message.channel
-        .send(
-          `
-        <@${message.author.id}>, that's not an attachment!
-        `
-        )
-        .then((msg) => {
-          setTimeout(() => msg.delete(), 3000);
+  // Spell/Grammar checker
+  if (message.channel.id === '975026656802656347') {
+    let data = await request(
+      `https://orthographe.reverso.net/api/v1/Spelling?text=${encodeURIComponent(
+        message.content
+      ).replace(/%20/gi, '')}&language=eng&getCorrectionDetails=true`
+    ).then((res) => res.body.json());
+    if (data.corrections.length > 25)
+      return message.reply('Too many mistakes.');
+    if (data.corrections.length > 0) {
+      let CorrectionsEmbed = new MessageEmbed();
+      CorrectionsEmbed.setTitle('Corrections!');
+      CorrectionsEmbed.setColor(client.config.botColor);
+      await data.corrections.forEach((correction, index) => {
+        CorrectionsEmbed.addFields({
+          name: `${index + 1}. ${correction.shortDescription} at ${
+            correction.startIndex
+          }-${correction.endIndex}`,
+          value: `Mistake ${correction.mistakeText}, Correction ${correction.correctionText}`,
+          inline: true,
         });
+      });
+      message.reply({ embeds: [CorrectionsEmbed] });
+    } else {
+      message.reply('No mistakes found!');
     }
   }
 
@@ -201,7 +212,8 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
     if (
       message.member.roles.cache.has('854647752197931038') ||
       message.author.bot
-      ) return;
+    )
+      return;
 
     const channel = message.guild.channels.cache.get(
       '1008754426678353970'
@@ -241,18 +253,23 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
       avatarURL: message.author.displayAvatarURL({ format: 'png', size: 4096 }),
       components: [row],
     });
-    
+
     message.author.send({
       embeds: [
         new MessageEmbed()
           .setThumbnail(message.guild.iconURL({ format: 'png', size: 512 }))
-          .setTitle("Thank you for joining our server!")
-          .setDescription('Our "Gatekeepers" will try to give you access to the server as soon as possible if you have written the answers honestly.')
+          .setTitle('Thank you for joining our server!')
+          .setDescription(
+            'Our "Gatekeepers" will try to give you access to the server as soon as possible if you have written the answers honestly.'
+          )
           .setColor(client.config.botColor)
-          .addFields({ name: "Your answers:", value: `\`\`\`txt\n${message.content}\`\`\`` })
-      ]
+          .addFields({
+            name: 'Your answers:',
+            value: `\`\`\`txt\n${message.content}\`\`\``,
+          }),
+      ],
     });
-    
+
     setTimeout(() => message.delete(), 1600);
   } // #verification
 });
