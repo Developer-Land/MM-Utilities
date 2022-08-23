@@ -17,5 +17,6 @@ let Schema = new mongoose.Schema<dutyInterface>({
 });
 
 let Duty = mongoose.model('duty', Schema);
+let DutyEmitter = Duty.watch();
 
-export { Duty, dutyInterface };
+export { Duty, DutyEmitter, dutyInterface };

@@ -49,8 +49,8 @@ export class ExtendedClient extends Client<true> {
     for await (const filePath of selectmenuFiles) {
       delete require.cache[require.resolve(filePath)];
     }
-    //    const eventFiles = await globPromise(`${__dirname}/../Events/*/*{.ts,.js}`);
-    /*    for await (const filePath of eventFiles) {
+    const eventFiles = await globPromise(`${__dirname}/../Events/*/*{.ts,.js}`);
+    for await (const filePath of eventFiles) {
       delete require.cache[require.resolve(filePath)];
       const event: Event | Events = await this.importFile(filePath);
       if (event?.emitter?.removeAllListeners()) {
@@ -60,8 +60,8 @@ export class ExtendedClient extends Client<true> {
       }
     }
     delete require.cache[require.resolve(`${__dirname}/../config.json`)];
-*/
-    await this.registerModules({ events: false });
+
+    await this.registerModules();
   }
 
   async importFile(filePath: string) {
@@ -76,7 +76,7 @@ export class ExtendedClient extends Client<true> {
     }
   }
 
-  async registerModules({ events } = { events: true }) {
+  async registerModules() {
     // Config
     this.config = await this.importFile(`${__dirname}/../config.json`);
 
@@ -208,28 +208,26 @@ export class ExtendedClient extends Client<true> {
     });
 
     // Event
-    if (events) {
-      const eventFiles = await globPromise(
-        `${__dirname}/../Events/**/*{.ts,.js}`
-      );
-      eventFiles.forEach(async (filePath) => {
-        const event: Event | Events = await this.importFile(filePath);
-        if (event instanceof Event) {
-          if (event.options?.once) {
-            event.emitter.once(event.event, event.run);
-          } else {
-            event.emitter.on(event.event, event.run);
-          }
-        } else if (event instanceof Events) {
-          event.events.forEach(async (events) => {
-            if (events.options?.once) {
-              event.emitter.once(events.event, events.run);
-            } else {
-              event.emitter.on(events.event, events.run);
-            }
-          });
+    const eventFiles = await globPromise(
+      `${__dirname}/../Events/**/*{.ts,.js}`
+    );
+    eventFiles.forEach(async (filePath) => {
+      const event: Event | Events = await this.importFile(filePath);
+      if (event instanceof Event) {
+        if (event.options?.once) {
+          event.emitter.once(event.event, event.run);
+        } else {
+          event.emitter.on(event.event, event.run);
         }
-      });
-    }
+      } else if (event instanceof Events) {
+        event.events.forEach(async (events) => {
+          if (events.options?.once) {
+            event.emitter.once(events.event, events.run);
+          } else {
+            event.emitter.on(events.event, events.run);
+          }
+        });
+      }
+    });
   }
 }

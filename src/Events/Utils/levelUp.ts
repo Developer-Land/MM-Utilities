@@ -1,7 +1,11 @@
 import { Guild, GuildMember, GuildTextBasedChannel } from 'discord.js';
 import { HydratedDocument } from 'mongoose';
 import { client } from '../../index';
-import { leveling, levelingInterface } from '../../Models/Leveling/leveling';
+import {
+  leveling,
+  levelingEmitter,
+  levelingInterface,
+} from '../../Models/Leveling/leveling';
 import {
   levelRoles,
   levelRolesInterface,
@@ -12,7 +16,7 @@ import {
 } from '../../Models/Leveling/usersettings';
 import { Event } from '../../Structures/Event';
 
-export default new Event(leveling.watch(), 'change', async (data) => {
+export default new Event(levelingEmitter, 'change', async (data) => {
   if (data.updateDescription?.updatedFields?.level) {
     let RolesArray: string[] = [];
     let RemoveRolesArray: string[] = [];

@@ -17,5 +17,6 @@ let Schema = new mongoose.Schema<levelingInterface>({
 });
 
 let leveling = mongoose.model('leveling', Schema);
+let levelingEmitter = leveling.watch();
 
-export { leveling, levelingInterface };
+export { leveling, levelingEmitter, levelingInterface };

@@ -183,7 +183,10 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
     let data = await request(
       `https://orthographe.reverso.net/api/v1/Spelling?text=${encodeURIComponent(
         message.content
-      ).replace(/%20/gi, '')}&language=eng&getCorrectionDetails=true`
+      ).replace(/%20/gi, '')}&language=eng&getCorrectionDetails=true`,
+      {
+        method: 'GET',
+      }
     ).then((res) => res.body.json());
     if (data.corrections.length > 25)
       return message.reply('Too many mistakes.');
