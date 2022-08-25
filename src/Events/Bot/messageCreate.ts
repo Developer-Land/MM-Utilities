@@ -8,7 +8,7 @@ import {
   WebhookClient,
 } from 'discord.js';
 import moment from 'moment';
-import { request } from 'undici';
+import { Agent, request } from 'undici';
 import { client } from '../../index';
 import { Afk } from '../../Models/Go/afk';
 import { leveling } from '../../Models/Leveling/leveling';
@@ -185,6 +185,11 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
         message.content
       ).replace(/%20/gi, '')}&language=eng&getCorrectionDetails=true`,
       {
+        dispatcher: new Agent({
+          connect: {
+            rejectUnauthorized: false,
+          },
+        }),
         method: 'GET',
       }
     ).then((res) => res.body.json());
