@@ -8,7 +8,7 @@ import {
   WebhookClient,
 } from 'discord.js';
 import moment from 'moment';
-import { Agent, request } from 'undici';
+import { request } from 'undici';
 import { client } from '../../index';
 import { Afk } from '../../Models/Go/afk';
 import { leveling } from '../../Models/Leveling/leveling';
@@ -180,31 +180,90 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
 
   // Spell/Grammar checker
   if (message.channel.id === '975026656802656347') {
+    if (message.author.bot) return;
+    message.mentions.members.forEach((m) => {
+      var re = new RegExp(m.toString().replace(/\@/gi, '@!'), 'gi');
+      message.content = message.content.replace(re, m.displayName);
+    });
+    message.mentions.channels.forEach((c) => {
+      message.content = message.content.replace(
+        /<#[0-9]{18}>/gi,
+        (c as GuildTextBasedChannel).name
+      );
+    });
+
+    message.mentions.roles.forEach((r) => {
+      message.content = message.content.replace(/<@&[0-9]{18}>/gi, r.name);
+    });
+
+    message.content = message.content.replace(/@everyone/gi, 'everyone');
+    message.content = message.content.replace(/@here/gi, 'here');
+
     let data = await request(
-      `https://orthographe.reverso.net/api/v1/Spelling?text=${encodeURIComponent(
+      `https://developerland.ml/api/language/check?text=${encodeURIComponent(
         message.content
-      ).replace(/%20/gi, '')}&language=eng&getCorrectionDetails=true`,
+      ).replace(/%20/gi, '+')}&language=en-US`,
       {
-        dispatcher: new Agent({
-          connect: {
-            rejectUnauthorized: false,
-          },
-        }),
         method: 'GET',
       }
     ).then((res) => res.body.json());
-    if (data.corrections.length > 25)
-      return message.reply('Too many mistakes.');
-    if (data.corrections.length > 0) {
+    if (data.matches.length > 25) return message.reply('Too many mistakes.');
+    if (data.matches.length > 0) {
       let CorrectionsEmbed = new MessageEmbed();
       CorrectionsEmbed.setTitle('Corrections!');
       CorrectionsEmbed.setColor(client.config.botColor);
-      await data.corrections.forEach((correction, index) => {
+      await data.matches.forEach((match, index) => {
+        let desc = match.message;
+        let name = match.shortMessage ? match.shortMessage : 'Mistake';
+
+        if (match.rule.id == 'MORFOLOGIK_RULE_EN_US') {
+          if (match.replacements.length > 0) {
+            desc = `You wrote "${match.context.text.substr(
+              match.context.offset,
+              match.context.length
+            )}". Did you mean "${match.replacements[0].value}"?`;
+          } else {
+            desc = `The word "${match.context.text.substr(
+              match.context.offset,
+              match.context.length
+            )} is not spelled correctly."`;
+          }
+        }
+        if (match.rule.id == 'EN_CONTRACTION_SPELLING') {
+          if (match.replacements.length > 0) {
+            desc = `You wrote "${match.context.text.substr(
+              match.context.offset,
+              match.context.length
+            )}". Did you mean "${match.replacements[0].value}"?`;
+          } else {
+            desc = `The contraction "${match.context.text.substr(
+              match.context.offset,
+              match.context.length
+            )}" is not spelled correctly.`;
+          }
+        }
+        if (match.rule.id == 'UPPERCASE_SENTENCE_START') {
+          desc = 'In English, sentences must start with a capital letter.';
+        }
+        if (match.rule.id == 'DOUBLE_PUNCTUATION') {
+          desc = "In English, double dots aren't used.";
+        }
+        if (match.rule.id == 'I_LOWERCASE') {
+          desc = `"I" when used as a pronoun is always uppercase in English.`;
+        }
+        if (match.rule.id == 'PROFANITY') {
+          desc = `The expression "${match.context.text.substr(
+            match.context.offset,
+            match.context.length
+          )}" may be considered offensive.`;
+        }
+        if (match.rule.id == 'BELIVE_BELIEVE') {
+          name = 'Possible spelling mistake found.';
+          desc = match.message;
+        }
         CorrectionsEmbed.addFields({
-          name: `${index + 1}. ${correction.shortDescription} at ${
-            correction.startIndex
-          }-${correction.endIndex}`,
-          value: `Mistake ${correction.mistakeText}, Correction ${correction.correctionText}`,
+          name: `${index + 1}. ${name}`,
+          value: desc,
           inline: true,
         });
       });
