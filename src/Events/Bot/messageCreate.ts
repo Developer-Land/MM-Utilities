@@ -14,6 +14,7 @@ import { Afk } from '../../Models/Go/afk';
 import { leveling } from '../../Models/Leveling/leveling';
 import { levelingIgnore } from '../../Models/Leveling/levelingignore';
 import { Event } from '../../Structures/Event';
+import { Webhook } from "../../Structures/Webhook"
 const earnedXpRecently = new Set();
 
 export default new Event(client, 'messageCreate', async (message: Message) => {
@@ -281,46 +282,27 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
       message.author.bot
     )
       return;
-
-    const channel = message.guild.channels.cache.get(
-      '1008754426678353970'
-    ) as GuildTextBasedChannel;
-
-    if (channel instanceof ThreadChannel) return;
-
-    let webhookUrl: string;
-    let myWebhooks = (await channel.fetchWebhooks()).filter(
-      (webhook) => webhook.owner.id === client.user.id
-    );
-    webhookUrl =
-      myWebhooks.size !== 0
-        ? myWebhooks.first().url
-        : (
-            await channel.createWebhook('Verification', {
-              avatar: client.user.displayAvatarURL(),
-            })
-          ).url;
-
-    const webhookClient = new WebhookClient({ url: webhookUrl });
-
-    const row = new MessageActionRow().addComponents(
-      new MessageButton()
-        .setStyle('SUCCESS')
-        .setLabel('Accept')
-        .setCustomId(`${message.author.id}.verification.accept`),
-      new MessageButton()
-        .setStyle('DANGER')
-        .setLabel('Decline')
-        .setCustomId(`${message.author.id}.verification.reject`)
-    );
-
-    webhookClient.send({
-      content: message.content,
+    
+    const webhook = new Webhook({ channelId: "1008754426678353970" }, {
       username: message.author.username,
-      avatarURL: message.author.displayAvatarURL({ format: 'png', size: 4096 }),
-      components: [row],
+      avatarURL: message.author.displayAvatarURL({ format: 'png', size: 2048 }),
+      content: message.content,
+      components: [
+        new MessageActionRow()
+          .addComponents(
+            new MessageButton()
+            .setStyle('SUCCESS')
+            .setLabel('Accept')
+            .setCustomId(`${message.author.id}.verification.accept`),
+        
+            new MessageButton()
+            .setStyle('DANGER')
+            .setLabel('Decline')
+            .setCustomId(`${message.author.id}.verification.reject`)
+          )
+      ]
     });
-
+    
     message.author.send({
       embeds: [
         new MessageEmbed()
@@ -333,8 +315,8 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
           .addFields({
             name: 'Your answers:',
             value: `\`\`\`txt\n${message.content}\`\`\``,
-          }),
-      ],
+          })
+      ]
     });
 
     setTimeout(() => message.delete(), 1600);
