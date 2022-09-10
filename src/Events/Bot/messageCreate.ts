@@ -301,7 +301,7 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
             .setCustomId(`${message.author.id}.verification.reject`)
           )
       ]
-    });
+    }).send();
     
     message.author.send({
       embeds: [
