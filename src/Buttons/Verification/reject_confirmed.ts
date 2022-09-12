@@ -2,7 +2,7 @@ import { Button } from '../../Structures/Button';
 import { GuildMember, Snowflake, MessageActionRow, MessageButton } from "discord.js";
 
 export default new Button({
-  customId: '\\d+\\.verification.rejectConfimed',
+  customId: '\\d+\\.verification.rejectConfirmed',
   run: async (client, interaction) => {
     const messageId = interaction.customId.replace(/\D/g, '') as Snowflake;
    
