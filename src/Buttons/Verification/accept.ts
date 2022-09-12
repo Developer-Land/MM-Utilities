@@ -17,6 +17,7 @@ export default new Button({
               .setStyle("SUCCESS")
               .setLabel("Accepted")
               .setDisabled(true)
+              .setCustomId("==============================================================================")
           )
       ]
     });

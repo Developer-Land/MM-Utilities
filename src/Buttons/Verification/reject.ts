@@ -13,12 +13,12 @@ export default new Button({
             new MessageButton()
               .setStyle('DANGER')
               .setLabel("I know what I'm doing")
-              .setCustomId(`${interaction.message.id}.verification.reject.confirmed`),
+              .setCustomId(`${interaction.message.id}.verification.rejectConfirmed`),
             
             new MessageButton()
               .setStyle('SECONDARY')
               .setLabel('Never mind')
-              .setCustomId(`verification.reject.cancelled`)
+              .setCustomId(`verification.rejectCancelled`)
           )
       ]
       
