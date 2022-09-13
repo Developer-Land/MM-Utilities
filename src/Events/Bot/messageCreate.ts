@@ -286,7 +286,7 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
     const webhook = new Webhook({ channelId: "1008754426678353970" }, {
       username: message.author.username,
       avatarURL: message.author.displayAvatarURL({ format: 'png', size: 2048 }),
-      content: message.content,
+      content: `<@&1008423362911031367> —\n\n${message.content}`,
       components: [
         new MessageActionRow()
           .addComponents(

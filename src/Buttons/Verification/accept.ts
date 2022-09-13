@@ -4,6 +4,13 @@ import { GuildMember, Snowflake, MessageActionRow, MessageButton } from "discord
 export default new Button({
   customId: '\\d+\\.verification.accept',
   run: async (client, interaction) => {
+    if (!interaction.member.roles.cache.has("1008423362911031367")) {
+      return interaction.reply({
+        content: "You are not a gatekeeper.",
+        ephemeral: true
+      })
+    }
+    
     const userId = interaction.customId.replace(/\D/g, '') as Snowflake;
     
     (interaction.guild.members.cache.get(userId) as GuildMember)
