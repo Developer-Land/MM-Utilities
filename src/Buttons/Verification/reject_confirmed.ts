@@ -31,13 +31,6 @@ export default new Button({
                 )
             ]
           }).edit();
-        })
-        .catch(err => {
-          console.log(err);
-          interaction.reply({
-            content: 'An error accured.',
-            ephemeral: true
-          });
         });
   }
 });
