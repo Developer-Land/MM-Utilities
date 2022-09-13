@@ -1,4 +1,5 @@
 import { Button } from '../../Structures/Button';
+import { Webhook } from "../../Structures/Webhook"
 import { GuildMember, Snowflake, MessageActionRow, MessageButton } from "discord.js";
 
 export default new Button({
@@ -13,7 +14,7 @@ export default new Button({
     (interaction.guild.members.cache.get(userId) as GuildMember)
       .kick(`${interaction.user.tag} - Failed verification.`);
     
-    targetMessage.edit({
+    new Webhook({ channelId: "1008754426678353970", messageId: targetMessage.id }, {
       components: [
         new MessageActionRow()
           .addComponents(
@@ -24,7 +25,7 @@ export default new Button({
             .setCustomId("================================================================================")
           )
       ]
-    });
+    }).edit();
     
     interaction.deferUpdate();
   }
