@@ -7,7 +7,8 @@ import {
   WebhookClientDataIdWithToken,
   GuildTextBasedChannel,
   ThreadChannel,
-  Snowflake
+  Snowflake,
+  Message
 } from "discord.js";
 
 interface IWebhookData {
