@@ -4,8 +4,6 @@ import {
   MessageActionRow,
   MessageButton,
   MessageEmbed,
-  ThreadChannel,
-  WebhookClient,
 } from 'discord.js';
 import moment from 'moment';
 import { request } from 'undici';
@@ -14,7 +12,7 @@ import { Afk } from '../../Models/Go/afk';
 import { leveling } from '../../Models/Leveling/leveling';
 import { levelingIgnore } from '../../Models/Leveling/levelingignore';
 import { Event } from '../../Structures/Event';
-import { Webhook } from "../../Structures/Webhook"
+import { Webhook } from '../../Structures/Webhook';
 const earnedXpRecently = new Set();
 
 export default new Event(client, 'messageCreate', async (message: Message) => {
@@ -56,16 +54,11 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
           }&gender=male&birthplace=MM%20Gamer%27s%20Server&age=1&birthdate=Nov%2021%2C%202021&birthyear=2021&birthday=Nov%2021&location=MM%20Gamer%27s%20Server&country=India&city=MM%20Gamer%27s%20Server&state=MM%20Gamer%27s%20Server`
         )
           .then((res) => res.body.json())
-          .catch(() =>
-            message.reply({
-              content: 'A error occurred',
-              allowedMentions: { repliedUser: true },
-            })
-          )
+          .catch(() => {})
       ).message;
 
       message.reply({
-        content: `${reply}`,
+        content: `${reply.replace(/^undefined$/, 'A error occurred')}`,
         allowedMentions: { repliedUser: true },
       });
     }
@@ -115,7 +108,7 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
           userID: message.author.id,
           guildID: message.guild.id,
         });
-        let randomXp = Math.floor(Math.random() * 21) + 40;
+        let randomXp = Math.floor(Math.random() * 21) + 20;
         const xp = randomXp;
         if (!user) {
           const newUser = new leveling({
@@ -207,70 +200,76 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
       {
         method: 'GET',
       }
-    ).then((res) => res.body.json());
-    if (data.matches.length > 25) return message.reply('Too many mistakes.');
-    if (data.matches.length > 0) {
-      let CorrectionsEmbed = new MessageEmbed();
-      CorrectionsEmbed.setTitle('Corrections!');
-      CorrectionsEmbed.setColor(client.config.botColor);
-      await data.matches.forEach((match, index) => {
-        let desc = match.message;
-        let name = match.shortMessage ? match.shortMessage : 'Mistake';
-
-        if (match.rule.id == 'MORFOLOGIK_RULE_EN_US') {
-          if (match.replacements.length > 0) {
-            desc = `You wrote "${match.context.text.substr(
-              match.context.offset,
-              match.context.length
-            )}". Did you mean "${match.replacements[0].value}"?`;
-          } else {
-            desc = `The word "${match.context.text.substr(
-              match.context.offset,
-              match.context.length
-            )} is not spelled correctly."`;
-          }
-        }
-        if (match.rule.id == 'EN_CONTRACTION_SPELLING') {
-          if (match.replacements.length > 0) {
-            desc = `You wrote "${match.context.text.substr(
-              match.context.offset,
-              match.context.length
-            )}". Did you mean "${match.replacements[0].value}"?`;
-          } else {
-            desc = `The contraction "${match.context.text.substr(
-              match.context.offset,
-              match.context.length
-            )}" is not spelled correctly.`;
-          }
-        }
-        if (match.rule.id == 'UPPERCASE_SENTENCE_START') {
-          desc = 'In English, sentences must start with a capital letter.';
-        }
-        if (match.rule.id == 'DOUBLE_PUNCTUATION') {
-          desc = "In English, double dots aren't used.";
-        }
-        if (match.rule.id == 'I_LOWERCASE') {
-          desc = `"I" when used as a pronoun is always uppercase in English.`;
-        }
-        if (match.rule.id == 'PROFANITY') {
-          desc = `The expression "${match.context.text.substr(
-            match.context.offset,
-            match.context.length
-          )}" may be considered offensive.`;
-        }
-        if (match.rule.id == 'BELIVE_BELIEVE') {
-          name = 'Possible spelling mistake found.';
-          desc = match.message;
-        }
-        CorrectionsEmbed.addFields({
-          name: `${index + 1}. ${name}`,
-          value: desc,
-          inline: true,
-        });
-      });
-      message.reply({ embeds: [CorrectionsEmbed] });
+    )
+      .then((res) => res.body.json())
+      .catch(() => {});
+    if (!data) {
+      message.reply('A error occurred');
     } else {
-      message.reply('No mistakes found!');
+      if (data.matches.length > 25) return message.reply('Too many mistakes.');
+      if (data.matches.length > 0) {
+        let CorrectionsEmbed = new MessageEmbed();
+        CorrectionsEmbed.setTitle('Corrections!');
+        CorrectionsEmbed.setColor(client.config.botColor);
+        await data.matches.forEach((match, index) => {
+          let desc = match.message;
+          let name = match.shortMessage ? match.shortMessage : 'Mistake';
+
+          if (match.rule.id == 'MORFOLOGIK_RULE_EN_US') {
+            if (match.replacements.length > 0) {
+              desc = `You wrote "${match.context.text.substr(
+                match.context.offset,
+                match.context.length
+              )}". Did you mean "${match.replacements[0].value}"?`;
+            } else {
+              desc = `The word "${match.context.text.substr(
+                match.context.offset,
+                match.context.length
+              )} is not spelled correctly."`;
+            }
+          }
+          if (match.rule.id == 'EN_CONTRACTION_SPELLING') {
+            if (match.replacements.length > 0) {
+              desc = `You wrote "${match.context.text.substr(
+                match.context.offset,
+                match.context.length
+              )}". Did you mean "${match.replacements[0].value}"?`;
+            } else {
+              desc = `The contraction "${match.context.text.substr(
+                match.context.offset,
+                match.context.length
+              )}" is not spelled correctly.`;
+            }
+          }
+          if (match.rule.id == 'UPPERCASE_SENTENCE_START') {
+            desc = 'In English, sentences must start with a capital letter.';
+          }
+          if (match.rule.id == 'DOUBLE_PUNCTUATION') {
+            desc = "In English, double dots aren't used.";
+          }
+          if (match.rule.id == 'I_LOWERCASE') {
+            desc = `"I" when used as a pronoun is always uppercase in English.`;
+          }
+          if (match.rule.id == 'PROFANITY') {
+            desc = `The expression "${match.context.text.substr(
+              match.context.offset,
+              match.context.length
+            )}" may be considered offensive.`;
+          }
+          if (match.rule.id == 'BELIVE_BELIEVE') {
+            name = 'Possible spelling mistake found.';
+            desc = match.message;
+          }
+          CorrectionsEmbed.addFields({
+            name: `${index + 1}. ${name}`,
+            value: desc,
+            inline: true,
+          });
+        });
+        message.reply({ embeds: [CorrectionsEmbed] });
+      } else {
+        message.reply('No mistakes found!');
+      }
     }
   }
 
@@ -282,27 +281,32 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
       message.author.bot
     )
       return;
-    
-    const webhook = new Webhook({ channelId: "1008754426678353970" }, {
-      username: message.author.username,
-      avatarURL: message.author.displayAvatarURL({ format: 'png', size: 2048 }),
-      content: `<@&1008423362911031367> —\n\n${message.content}`,
-      components: [
-        new MessageActionRow()
-          .addComponents(
+
+    const webhook = new Webhook(
+      { channelId: '1008754426678353970' },
+      {
+        username: message.author.username,
+        avatarURL: message.author.displayAvatarURL({
+          format: 'png',
+          size: 2048,
+        }),
+        content: `<@&1008423362911031367> —\n\n${message.content}`,
+        components: [
+          new MessageActionRow().addComponents(
             new MessageButton()
-            .setStyle('SUCCESS')
-            .setLabel('Accept')
-            .setCustomId(`${message.author.id}.verification.accept`),
-        
+              .setStyle('SUCCESS')
+              .setLabel('Accept')
+              .setCustomId(`${message.author.id}.verification.accept`),
+
             new MessageButton()
-            .setStyle('DANGER')
-            .setLabel('Decline')
-            .setCustomId(`${message.author.id}.verification.reject`)
-          )
-      ]
-    }).send();
-    
+              .setStyle('DANGER')
+              .setLabel('Decline')
+              .setCustomId(`${message.author.id}.verification.reject`)
+          ),
+        ],
+      }
+    ).send();
+
     message.author.send({
       embeds: [
         new MessageEmbed()
@@ -315,8 +319,8 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
           .addFields({
             name: 'Your answers:',
             value: `\`\`\`txt\n${message.content}\`\`\``,
-          })
-      ]
+          }),
+      ],
     });
 
     setTimeout(() => message.delete(), 1600);
