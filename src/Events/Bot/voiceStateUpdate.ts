@@ -22,6 +22,7 @@ export default new Event(
       newState.channel != null &&
       newState.member != null
     ) {
+      if (newState.member.user.bot) return;
       if (newState.deaf) return;
       let ignoreCH = await levelingIgnore.findOne({
         guildID: newState.guild.id,
@@ -83,6 +84,7 @@ export default new Event(
         }
         memberJoinedDate.delete(newState.member.id);
       } else {
+        if (newState.member.user.bot) return;
         if (memberJoinedDate.get(newState.member.id)) return;
         if (newState.deaf) return;
         let ignoreCH = await levelingIgnore.findOne({
