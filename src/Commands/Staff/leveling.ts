@@ -44,7 +44,7 @@ export default new Command({
               type: 'CHANNEL',
               name: 'channel',
               description: 'the channel',
-              channelTypes: ['GUILD_TEXT'],
+              channelTypes: ['GUILD_TEXT', 'GUILD_VOICE', 'GUILD_STAGE_VOICE'],
               required: false,
             },
           ],
