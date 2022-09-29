@@ -57,12 +57,12 @@ export default new Event(
           new Date().valueOf() -
           memberJoinedDate.get(newState.member.id).valueOf();
         let timeAsMins = moment.duration(time).asMinutes();
-        if (timeAsMins === 0) return;
+        if (timeAsMins < 10) return;
         const user = await leveling.findOne({
           userID: newState.member.id,
           guildID: newState.guild.id,
         });
-        let randomXp = (Math.floor(Math.random() * 6) + timeAsMins) * 40;
+        let randomXp = (Math.floor(Math.random() * 4) + timeAsMins) * 40;
         const xp = randomXp;
         if (!user) {
           const newUser = new leveling({
@@ -120,12 +120,12 @@ export default new Event(
         new Date().valueOf() -
         memberJoinedDate.get(oldState.member.id).valueOf();
       let timeAsMins = moment.duration(time).asMinutes();
-      if (timeAsMins === 0) return;
+      if (timeAsMins < 10) return;
       const user = await leveling.findOne({
         userID: oldState.member.id,
         guildID: oldState.guild.id,
       });
-      let randomXp = (Math.floor(Math.random() * 6) + timeAsMins) * 40;
+      let randomXp = (Math.floor(Math.random() * 4) + timeAsMins) * 40;
       const xp = randomXp;
       if (!user) {
         const newUser = new leveling({
