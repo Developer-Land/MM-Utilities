@@ -1,6 +1,10 @@
 import { Command } from '../../Structures/Command';
 
-import { GuildMember, MessageEmbed } from 'discord.js';
+import {
+  ApplicationCommandOptionType,
+  EmbedBuilder,
+  GuildMember,
+} from 'discord.js';
 import moment from 'moment';
 
 export default new Command({
@@ -8,7 +12,7 @@ export default new Command({
   description: 'Shows information about a user',
   options: [
     {
-      type: 'USER',
+      type: ApplicationCommandOptionType.User,
       name: 'user',
       description: 'The user to show information about',
     },
@@ -22,7 +26,7 @@ export default new Command({
     let target = (await interaction.guild.members
       .fetch(user.id)
       .catch(() => {})) as GuildMember;
-    let avatar = user.displayAvatarURL({ size: 4096, dynamic: true });
+    let avatar = user.displayAvatarURL({ size: 4096 });
     let secondsSinceCreation = moment(new Date()).diff(
       user.createdAt,
       'seconds'
@@ -80,7 +84,7 @@ export default new Command({
             .replace(/\b0 seconds\b /, '')
             .replace(/\b1 seconds\b/, '1 second');
 
-    let userinfo = new MessageEmbed()
+    let userinfo = new EmbedBuilder()
       .setAuthor({ name: user.tag, iconURL: avatar })
       .setThumbnail(avatar)
       .setColor(client.config.botColor)
@@ -183,7 +187,7 @@ export default new Command({
       if (target.presence.clientStatus.desktop) Devices.push('🖥️ Desktop');
       if (target.presence.clientStatus.mobile) Devices.push('📱 Mobile');
       if (target.presence.clientStatus.web) Devices.push('🌐 Web');
-      userinfo.fields.push({
+      userinfo.addFields({
         name: `Device${Devices.length > 1 ? `s(${Devices.length})` : ''}`,
         value: `${Devices.join(', ')}`,
         inline: false,

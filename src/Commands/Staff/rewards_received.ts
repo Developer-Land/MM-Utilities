@@ -1,4 +1,8 @@
-import { GuildTextBasedChannel, MessageEmbed } from 'discord.js';
+import {
+  ApplicationCommandOptionType,
+  EmbedBuilder,
+  GuildTextBasedChannel,
+} from 'discord.js';
 import { Command } from '../../Structures/Command';
 
 export default new Command({
@@ -6,13 +10,13 @@ export default new Command({
   description: 'This command is only for SMP Staff',
   options: [
     {
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       name: 'gamertag',
       description: 'Gamertag of the player',
       required: true,
     },
     {
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       name: 'type',
       description: 'Select from above',
       required: true,
@@ -28,32 +32,32 @@ export default new Command({
       ],
     },
     {
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       name: 'rewards_he_received',
       description:
         'List of the rewards he received (e. g. 5x Block of Diamond, Full Diamond Armour)',
       required: true,
     },
     {
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       name: 'goal_he_completed',
       description: 'The goal he completed (e. g. 200msg)',
       required: true,
     },
     {
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       name: 'date',
       description: 'Input date here, in DD/MM/YYYY format (e. g. 04/12/2004)',
       required: true,
     },
     {
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       name: 'time',
       description: 'Input time here, in 12hour format (e. g. 1:45 PM)',
       required: true,
     },
     {
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       name: 'extra_information',
       description: 'This field is optional, you can write whatever you want',
     },
@@ -66,7 +70,7 @@ export default new Command({
     if (
       interaction.member.roles.cache.has('882253716034568283') ||
       interaction.member.roles.cache.has('626015899425439744') ||
-      interaction.member.permissions.has('ADMINISTRATOR')
+      interaction.member.permissions.has('Administrator')
     ) {
       let gamertag = options.getString('gamertag');
       let type = options.getString('type');
@@ -80,11 +84,11 @@ export default new Command({
         '929428937929539655'
       ) as GuildTextBasedChannel;
 
-      let embed = new MessageEmbed()
+      let embed = new EmbedBuilder()
         .setColor(client.config.botColor)
         .setAuthor({
           name: user.tag,
-          iconURL: user.displayAvatarURL({ size: 128, dynamic: true }),
+          iconURL: user.displayAvatarURL({ size: 128 }),
         })
         .setDescription(`**${gamertag}** claimed \`${rewards_he_received}\``)
         .addFields([

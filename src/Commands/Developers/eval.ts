@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { Command } from '../../Structures/Command';
 
 export default new Command({
@@ -6,7 +6,7 @@ export default new Command({
   description: 'Evaluates arbitrary javascript code',
   options: [
     {
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       name: 'code',
       description: 'The code to evaluate',
       required: true,
@@ -21,7 +21,7 @@ export default new Command({
       let evaled = await eval(code);
       if (typeof evaled !== 'string')
         evaled = require('util').inspect(evaled, { depth: 1 });
-      let embed = new MessageEmbed()
+      let embed = new EmbedBuilder()
         .setAuthor({ name: 'Eval', iconURL: interaction.user.avatarURL() })
         .addFields(
           {

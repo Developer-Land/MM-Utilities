@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { MessageEmbed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
+import { request } from 'undici';
 import { Command } from '../../Structures/Command';
 import { lavalink } from '../../Systems/lavalink';
 
@@ -9,7 +9,7 @@ let getLyrics = (title) =>
     url.searchParams.append('title', title);
 
     try {
-      let { data } = await axios.get(url.href);
+      let { data } = await request(url.href).then((res) => res.body.json());
       ful(data);
     } catch (error) {
       rej(error);
@@ -33,7 +33,7 @@ let createResponse = async (title) => {
     let embeds = substring(4096, data.lyrics).map((value, index) => {
       let isFirst = index === 0;
 
-      return new MessageEmbed({
+      return new EmbedBuilder({
         title: isFirst ? `${data.title} - ${data.author}` : null,
         thumbnail: isFirst ? { url: data.thumbnail.genius } : null,
         description: value,
@@ -53,7 +53,7 @@ export default new Command({
     {
       name: 'title',
       description: 'specific song for lyrics',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: false,
     },
   ],

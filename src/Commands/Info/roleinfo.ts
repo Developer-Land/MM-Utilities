@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import moment from 'moment';
 import { Command } from '../../Structures/Command';
 
@@ -9,56 +9,58 @@ export default new Command({
     {
       name: 'role',
       description: 'the role you want to check',
-      type: 'ROLE',
+      type: ApplicationCommandOptionType.Role,
       required: true,
     },
   ],
   category: 'Info',
   run: async (client, interaction) => {
     let role = interaction.options.getRole('role');
-    let RoleInfoEmbed = new MessageEmbed()
+    let RoleInfoEmbed = new EmbedBuilder()
       .setTitle('Information Of Role')
       .setColor(interaction.guild.roles.cache.get(role.id).hexColor)
-      .addField(
-        'ID',
-        String(interaction.guild.roles.cache.get(role.id).id),
-        false
-      )
-      .addField(
-        'Name',
-        String(interaction.guild.roles.cache.get(role.id).name),
-        false
-      )
-      .addField(
-        'Color',
-        String(interaction.guild.roles.cache.get(role.id).hexColor),
-        false
-      )
-      .addField(
-        'Hoisted',
-        String(interaction.guild.roles.cache.get(role.id).hoist)
-          .replace(/false/gi, 'No')
-          .replace(/true/gi, 'Yes'),
-        false
-      )
-      .addField(
-        'Postion',
-        String(interaction.guild.roles.cache.get(role.id).rawPosition),
-        false
-      )
-      .addField(
-        'Mentionable',
-        String(interaction.guild.roles.cache.get(role.id).mentionable)
-          .replace(/false/gi, 'No')
-          .replace(/true/gi, 'Yes'),
-        false
-      )
-      .addField(
-        'Managed',
-        String(interaction.guild.roles.cache.get(role.id).managed)
-          .replace(/false/gi, 'No')
-          .replace(/true/gi, 'Yes'),
-        false
+      .addFields(
+        {
+          name: 'ID',
+          value: String(interaction.guild.roles.cache.get(role.id).id),
+          inline: false,
+        },
+        {
+          name: 'Name',
+          value: String(interaction.guild.roles.cache.get(role.id).name),
+          inline: false,
+        },
+        {
+          name: 'Color',
+          value: String(interaction.guild.roles.cache.get(role.id).hexColor),
+          inline: false,
+        },
+        {
+          name: 'Hoisted',
+          value: String(interaction.guild.roles.cache.get(role.id).hoist)
+            .replace(/false/gi, 'No')
+            .replace(/true/gi, 'Yes'),
+          inline: false,
+        },
+        {
+          name: 'Postion',
+          value: String(interaction.guild.roles.cache.get(role.id).rawPosition),
+          inline: false,
+        },
+        {
+          name: 'Mentionable',
+          value: String(interaction.guild.roles.cache.get(role.id).mentionable)
+            .replace(/false/gi, 'No')
+            .replace(/true/gi, 'Yes'),
+          inline: false,
+        },
+        {
+          name: 'Managed',
+          value: String(interaction.guild.roles.cache.get(role.id).managed)
+            .replace(/false/gi, 'No')
+            .replace(/true/gi, 'Yes'),
+          inline: false,
+        }
       )
       .setFooter({
         text: `Role Created | ${moment(

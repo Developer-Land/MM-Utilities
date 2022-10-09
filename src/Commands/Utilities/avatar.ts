@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { Command } from '../../Structures/Command';
 
 export default new Command({
@@ -8,7 +8,7 @@ export default new Command({
     {
       name: 'user',
       description: 'The user you want to get pfp of',
-      type: 'USER',
+      type: ApplicationCommandOptionType.User,
       required: false,
     },
   ],
@@ -20,9 +20,9 @@ export default new Command({
       user = interaction.options.getUser('user');
     }
 
-    let avatar = user.displayAvatarURL({ size: 4096, dynamic: true });
+    let avatar = user.displayAvatarURL({ size: 4096 });
 
-    let embed = new MessageEmbed()
+    let embed = new EmbedBuilder()
       .setTitle(`${user.tag}'s avatar`)
       .setDescription(`[Avatar URL of ${user.tag}](${avatar})`)
       .setColor(client.config.botColor)

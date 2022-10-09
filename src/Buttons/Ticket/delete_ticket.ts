@@ -1,5 +1,5 @@
 import { createTranscript } from 'discord-html-transcripts';
-import { Message, MessageEmbed, TextChannel } from 'discord.js';
+import { EmbedBuilder, Message, TextChannel } from 'discord.js';
 import { Ticket } from '../../Models/Ticket/ticket';
 import { Button } from '../../Structures/Button';
 
@@ -12,9 +12,10 @@ export default new Button({
     if (TicketDocument) {
       if (TicketDocument.TicketStatus !== 'Closed') return;
       let attach = await createTranscript(interaction.channel as TextChannel, {
-        fileName: `${
+        filename: `${
           (interaction.channel as TextChannel).name
         }_transcript.html`,
+        poweredBy: false,
       });
       interaction.reply({
         content: 'Deleting the ticket and channel.. Please wait.',
@@ -24,7 +25,7 @@ export default new Button({
       ) as TextChannel;
       let Channel = interaction.channel as TextChannel;
       if (logch) {
-        let embbb = new MessageEmbed()
+        let embbb = new EmbedBuilder()
           .setTitle('Ticket Deleted!')
           .setDescription(
             `Ticket just got deleted by *<@${interaction.user.id}>* | Username: ***${interaction.user.tag}***\n\nTicket Channel Name: \`${Channel.name}\` | Ticket Channel ID: \`${interaction.channel.id}\`\n${Channel.topic}`

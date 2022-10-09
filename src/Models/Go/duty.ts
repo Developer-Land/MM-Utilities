@@ -12,7 +12,7 @@ let Schema = new mongoose.Schema<dutyInterface>({
   expireAt: {
     type: Date,
     default: Date.now,
-    index: { expires: '12h' },
+    expires: '12h',
   },
 });
 

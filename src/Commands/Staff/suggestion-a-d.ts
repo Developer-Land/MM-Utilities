@@ -1,4 +1,8 @@
-import { GuildTextBasedChannel, MessageEmbed } from 'discord.js';
+import {
+  ApplicationCommandOptionType,
+  EmbedBuilder,
+  GuildTextBasedChannel,
+} from 'discord.js';
 import { Command } from '../../Structures/Command';
 
 export default new Command({
@@ -6,12 +10,12 @@ export default new Command({
   description: 'Approve/Decline a suggestion',
   options: [
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'approve',
       description: 'Approve a good suggestion',
       options: [
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           name: 'message',
           description: 'The ID of the suggestion you want to approve',
           required: true,
@@ -19,18 +23,18 @@ export default new Command({
       ],
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'decline',
       description: 'decline a suggestion',
       options: [
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           name: 'message',
           description: 'The ID of the suggestion you want to decline',
           required: true,
         },
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           name: 'reason',
           description: 'The reason',
           required: true,
@@ -39,19 +43,20 @@ export default new Command({
     },
   ],
 
-  userPermissions: ['MANAGE_GUILD'],
+  userPermissions: ['ManageGuild'],
   category: 'Moderation & Management',
   subcommands: ['suggestion approve', 'suggestion decline'],
   run: async (client, interaction) => {
     let { options, guild, user } = interaction;
 
-    let errEmbed = new MessageEmbed().setColor(client.config.errColor);
+    let errEmbed = new EmbedBuilder().setColor(client.config.errColor);
 
     let messageId = options.getString('message');
     let channel = guild.channels.cache.find(
       (c) => c.name === 'suggestions'
     ) as GuildTextBasedChannel;
-    let targetMessage = await channel.messages.fetch(messageId, {
+    let targetMessage = await channel.messages.fetch({
+      message: messageId,
       cache: true,
       force: true,
     });
@@ -77,7 +82,7 @@ export default new Command({
     let SE = targetMessage.embeds[0];
 
     if (options.getSubcommand() === 'approve') {
-      let approvedEmbed = new MessageEmbed()
+      let approvedEmbed = new EmbedBuilder()
         .setAuthor({
           name: SE.author.name,
           iconURL:
@@ -87,7 +92,7 @@ export default new Command({
         .setDescription(SE.description)
         .setFooter({
           text: `Approved by ${user.tag}`,
-          iconURL: user.displayAvatarURL({ size: 512, dynamic: true }),
+          iconURL: user.displayAvatarURL({ size: 512 }),
         })
         .setColor('#31FF6B');
 
@@ -100,7 +105,7 @@ export default new Command({
     }
 
     if (options.getSubcommand() === 'decline') {
-      let approvedEmbed = new MessageEmbed()
+      let approvedEmbed = new EmbedBuilder()
         .setAuthor({
           name: SE.author.name,
           iconURL:
@@ -110,9 +115,9 @@ export default new Command({
         .setDescription(SE.description)
         .setFooter({
           text: `Declined by ${user.tag}`,
-          iconURL: user.displayAvatarURL({ size: 512, dynamic: true }),
+          iconURL: user.displayAvatarURL({ size: 512 }),
         })
-        .addField('Reason:', options.getString('reason'))
+        .addFields({ name: 'Reason:', value: options.getString('reason') })
         .setColor('#FF3232');
 
       targetMessage.edit({ embeds: [approvedEmbed] });

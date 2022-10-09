@@ -1,7 +1,11 @@
 import { getVoiceConnection } from '@discordjs/voice';
 import {
-  MessageActionRow,
-  MessageSelectMenu,
+  ActionRowBuilder,
+  ApplicationCommandOptionType,
+  ComponentType,
+  MessageActionRowComponentBuilder,
+  resolveColor,
+  SelectMenuBuilder,
   SelectMenuInteraction,
 } from 'discord.js';
 import moment from 'moment';
@@ -16,91 +20,91 @@ export default new Command({
   description: 'main music command',
   options: [
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'play',
       description: 'play a track',
       options: [
         {
           name: 'query',
           description: 'The track you want to play',
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           required: true,
         },
         {
           name: 'force',
           description: 'Force the track to play',
-          type: 'BOOLEAN',
+          type: ApplicationCommandOptionType.Boolean,
           required: false,
         },
       ],
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'search',
       description: 'search tracks',
       options: [
         {
           name: 'query',
           description: 'The tracks you want to search',
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           required: true,
         },
       ],
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'nowplaying',
       description: 'shows information about the current track',
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'queue',
       description: 'display the track queue',
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'skip',
       description: 'skip track(s)',
       options: [
         {
           name: 'count',
           description: 'how many track to skip',
-          type: 'INTEGER',
+          type: ApplicationCommandOptionType.Integer,
           minValue: 2,
           required: false,
         },
       ],
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'remove',
       description: 'remove tracks from queue',
       options: [
         {
           name: 'from',
           description: 'the from index to start removing',
-          type: 'INTEGER',
+          type: ApplicationCommandOptionType.Integer,
           minValue: 1,
           required: true,
         },
         {
           name: 'to',
           description: 'the to index to stop removing',
-          type: 'INTEGER',
+          type: ApplicationCommandOptionType.Integer,
           minValue: 1,
           required: true,
         },
       ],
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'loop',
       description: 'loop Off/Track/Queue',
       options: [
         {
           name: 'mode',
           description: 'loop mode',
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           required: false,
           choices: [
             {
@@ -120,29 +124,29 @@ export default new Command({
       ],
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'autoplay',
       description: 'autoplay on/off',
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'resume',
       description: 'resume the current track',
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'pause',
       description: 'pause the current track',
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'volume',
       description: 'change or check the volume of the current track',
       options: [
         {
           name: 'percentage',
           description: 'percentage to change the volume to',
-          type: 'INTEGER',
+          type: ApplicationCommandOptionType.Integer,
           required: false,
           minValue: 1,
           maxValue: 500,
@@ -150,12 +154,12 @@ export default new Command({
       ],
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'shuffle',
       description: 'shuffle the queue',
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'leave',
       description: 'clear the queue and disconnect from vc',
     },
@@ -274,7 +278,7 @@ export default new Command({
         return;
       }
 
-      let menu = new MessageSelectMenu()
+      let menu = new SelectMenuBuilder()
         .setCustomId('music_search')
         .setPlaceholder('Select tracks')
         .setMinValues(1)
@@ -286,7 +290,10 @@ export default new Command({
             };
           })
         );
-      let raw = new MessageActionRow().addComponents(menu);
+      let raw =
+        new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+          menu
+        );
       await interaction.editReply({
         content: 'Select tracks from menu',
         components: [raw],
@@ -294,7 +301,7 @@ export default new Command({
       let filter = (i: SelectMenuInteraction) =>
         i.user.id === interaction.user.id;
       let collector = interaction.channel.createMessageComponentCollector({
-        componentType: 'SELECT_MENU',
+        componentType: ComponentType.SelectMenu,
         filter,
         max: 1,
         time: 60000,
@@ -331,7 +338,7 @@ export default new Command({
     let player = lavalink.players.get(interaction.guild.id);
 
     if (interaction.options.getSubcommand() === 'leave') {
-      if (!interaction.member.permissions.has('MOVE_MEMBERS'))
+      if (!interaction.member.permissions.has('MoveMembers'))
         return interaction.reply({ content: "You can't do that" });
       let connection = getVoiceConnection(interaction.guild.id);
       if (player) {
@@ -384,7 +391,7 @@ export default new Command({
               player.exactPosition
             )}/${millisecondsToMinutesSeconds(player.current.duration)}\``,
             thumbnail: { url: player.current.thumbnail },
-            color: client.config.botColor,
+            color: resolveColor(client.config.botColor),
             footer: {
               text: `Queued by ${player.current.requester}`,
             },
@@ -418,7 +425,7 @@ export default new Command({
                   }`
                 : ''
             }`,
-            color: client.config.botColor,
+            color: resolveColor(client.config.botColor),
             fields: [
               {
                 name: 'Now Playing',

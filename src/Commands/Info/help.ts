@@ -1,4 +1,10 @@
-import { MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
+  MessageActionRowComponentBuilder,
+} from 'discord.js';
 import { Command } from '../../Structures/Command';
 
 export default new Command({
@@ -81,32 +87,34 @@ export default new Command({
 
     if (uncategorizedFiltered.length) YesFields.push(obj);
 
-    let embed = new MessageEmbed()
+    let embed = new EmbedBuilder()
       .setAuthor({
         name: client.user?.username + '| Help Command',
         iconURL: client.user?.displayAvatarURL({ size: 512 }),
       })
       .setThumbnail('https://cdn.discordapp.com/emojis/926515055594455100.png')
       .addFields(YesFields)
-      .addField(
-        '<:MM_question:919531896227135550> How to use the commands:',
-        'To use a command you must type a slash (/) followed by the name of the command. In [bot-commands](https://discord.com/channels/485463924007763970/887068533136195604)!\n\nSyntax: /`[command name] [options]`\nExample: /userinfo `[@user]`'
-      )
+      .addFields({
+        name: '<:MM_question:919531896227135550> How to use the commands:',
+        value:
+          'To use a command you must type a slash (/) followed by the name of the command. In [bot-commands](https://discord.com/channels/485463924007763970/887068533136195604)!\n\nSyntax: /`[command name] [options]`\nExample: /userinfo `[@user]`',
+      })
       .setColor(client.config.botColor);
 
-    let row = new MessageActionRow().addComponents(
-      new MessageButton()
-        .setLabel('Command List')
-        .setStyle('SECONDARY')
-        .setEmoji('932665354105278494')
-        .setCustomId('COMMAND_LIST_BTN_HELP_CMD'),
+    let row =
+      new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+        new ButtonBuilder()
+          .setLabel('Command List')
+          .setStyle(ButtonStyle.Secondary)
+          .setEmoji('932665354105278494')
+          .setCustomId('COMMAND_LIST_BTN_HELP_CMD'),
 
-      new MessageButton()
-        .setLabel('AI')
-        .setStyle('SECONDARY')
-        .setEmoji('926515055594455100')
-        .setCustomId('AI_BTN_HELP_CMD')
-    );
+        new ButtonBuilder()
+          .setLabel('AI')
+          .setStyle(ButtonStyle.Secondary)
+          .setEmoji('926515055594455100')
+          .setCustomId('AI_BTN_HELP_CMD')
+      );
 
     row.components[0].setDisabled(true);
     await interaction.reply({ embeds: [embed], components: [row] });

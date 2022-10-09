@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { Command } from '../../Structures/Command';
 
 export default new Command({
@@ -6,7 +6,7 @@ export default new Command({
   description: 'Get my source code',
   category: 'Info',
   run: async (client, interaction) => {
-    let embed = new MessageEmbed()
+    let embed = new EmbedBuilder()
       .setDescription(
         'The source code of the bot. [Click here](https://github.com/Developer-Land/MM-Utilities)'
       )

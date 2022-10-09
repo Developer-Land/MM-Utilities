@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { request } from 'undici';
 import { Command } from '../../Structures/Command';
 
@@ -9,7 +9,7 @@ export default new Command({
     {
       name: 'query',
       description: 'the name of pokemon you want to check',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
   ],
@@ -23,7 +23,7 @@ export default new Command({
     let pokeJson = JSON.stringify(poke.results);
     let found = pokeJson.match(PokeRegex);
     if (found.length === 0) return interaction.reply('no pokemon found');
-    let embed = new MessageEmbed()
+    let embed = new EmbedBuilder()
       .setTitle('Found Pokemons')
       .setDescription(found.map((x) => x).join('\n'))
       .setColor(client.config.botColor);

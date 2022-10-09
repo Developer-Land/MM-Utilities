@@ -1,7 +1,10 @@
 import {
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ChannelType,
+  EmbedBuilder,
+  MessageActionRowComponentBuilder,
   TextChannel,
 } from 'discord.js';
 import { Ticket } from '../../Models/Ticket/ticket';
@@ -28,19 +31,20 @@ export default new Button({
         chparent = null;
       }
       interaction.guild.channels
-        .create(ticketname, {
-          type: 'GUILD_TEXT',
+        .create({
+          name: ticketname,
+          type: ChannelType.GuildText,
           topic: topic,
           parent: chparent,
           permissionOverwrites: [
             {
               id: interaction.guild.roles.everyone,
-              deny: ['VIEW_CHANNEL', 'SEND_MESSAGES'], //Deny permissions
-              allow: ['ATTACH_FILES'],
+              deny: ['ViewChannel', 'SendMessages'], //Deny permissions
+              allow: ['AttachFiles'],
             },
             {
               id: interaction.user.id,
-              allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+              allow: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'],
             },
           ],
         })
@@ -48,13 +52,13 @@ export default new Button({
           let lep = ['882253713111154700'];
           lep.forEach((e) => {
             ch.permissionOverwrites.create(e, {
-              VIEW_CHANNEL: true,
-              SEND_MESSAGES: true,
-              READ_MESSAGE_HISTORY: true,
+              ViewChannel: true,
+              SendMessages: true,
+              ReadMessageHistory: true,
             });
           });
 
-          let ticketOpenEmbed = new MessageEmbed()
+          let ticketOpenEmbed = new EmbedBuilder()
             .setTitle('Ticket Created')
             .setDescription(
               `Ticket has been raised by ${interaction.user}. We ask the Staffs to summon here\n**User ID**: \`${interaction.user.id}\` | **Username**: \`${interaction.user.tag}\``
@@ -63,13 +67,16 @@ export default new Button({
             .setTimestamp()
             .setColor('#F5CE42');
 
-          let close_btn = new MessageButton()
-            .setStyle('SECONDARY')
+          let close_btn = new ButtonBuilder()
+            .setStyle(ButtonStyle.Secondary)
             .setEmoji('🔒')
             .setLabel('Close')
             .setCustomId('close_ticket');
 
-          let closerow = new MessageActionRow().addComponents([close_btn]);
+          let closerow =
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+              [close_btn]
+            );
 
           ch.send({
             content: `${interaction.user} \nSupport Team: <@&882253713111154700>`,

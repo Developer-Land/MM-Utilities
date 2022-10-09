@@ -1,10 +1,13 @@
 import { Command } from '../../Structures/Command';
 
 import {
+  ActionRowBuilder,
+  ApplicationCommandOptionType,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
   GuildTextBasedChannel,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  MessageActionRowComponentBuilder,
 } from 'discord.js';
 
 export default new Command({
@@ -12,13 +15,13 @@ export default new Command({
   description: 'Appeal for chat rewards after reaching the goal',
   options: [
     {
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       name: 'gamertag',
       description: 'Your gamertag',
       required: true,
     },
     {
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       name: 'goal_you_reached',
       description: 'The goal you reached',
       required: true,
@@ -68,7 +71,7 @@ export default new Command({
     {
       name: 'coordinates',
       description: 'Your coordinates',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
   ],
@@ -86,42 +89,45 @@ export default new Command({
     let cords = options.getString('coordinates');
 
     try {
-      let appealEmbed = new MessageEmbed()
+      let appealEmbed = new EmbedBuilder()
         .setAuthor({
           name: `${user.tag}〡Chat Rewards`,
-          iconURL: user.displayAvatarURL({ size: 128, dynamic: true }),
+          iconURL: user.displayAvatarURL({ size: 128 }),
         })
         .setColor(client.config.botColor)
         .setDescription(
           'Hit the "**`Claimed`**" button below after the player has claimed his rewards.'
         )
-        .addField('👤 Gamertag:', '`' + gamertag + '`', true)
-        .addField(
-          '<a:chatting:926496559993094194> Goal reached:',
-          `\`${goal} messages\``,
-          true
-        )
-        .addField(
-          '<a:MM_pet69:880814964871417856> Coordinates:',
-          '`' + cords + '`',
-          true
+        .addFields(
+          { name: '👤 Gamertag:', value: '`' + gamertag + '`', inline: true },
+          {
+            name: '<a:chatting:926496559993094194> Goal reached:',
+            value: `\`${goal} messages\``,
+            inline: true,
+          },
+          {
+            name: '<a:MM_pet69:880814964871417856> Coordinates:',
+            value: '`' + cords + '`',
+            inline: true,
+          }
         )
         .setTimestamp()
         .setFooter({ text: 'Timestamp・' });
 
-      let claimedButton = new MessageActionRow().addComponents(
-        new MessageButton()
-          .setStyle('SECONDARY')
-          .setLabel('Claimed')
-          .setCustomId('appeal_for_rewards_claimed_button')
-      );
+      let claimedButton =
+        new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+          new ButtonBuilder()
+            .setStyle(ButtonStyle.Secondary)
+            .setLabel('Claimed')
+            .setCustomId('appeal_for_rewards_claimed_button')
+        );
 
       appealChannel.send({
         embeds: [appealEmbed],
         components: [claimedButton],
       });
 
-      let sucEmbed = new MessageEmbed()
+      let sucEmbed = new EmbedBuilder()
         .setColor(client.config.botColor)
         .setAuthor({
           name: 'Rewards',
@@ -131,16 +137,18 @@ export default new Command({
         .setDescription(
           '<:MM_yesyesyes:909139323692154880> Successfully appealed!'
         )
-        .addField('👤 Gamertag:', '`' + gamertag + '`', true)
-        .addField(
-          '<a:chatting:926496559993094194> Goal reached:',
-          `\`${goal} messages\``,
-          true
-        )
-        .addField(
-          '<a:MM_pet69:880814964871417856> Coordinates:',
-          '`' + cords + '`',
-          true
+        .addFields(
+          { name: '👤 Gamertag:', value: '`' + gamertag + '`', inline: true },
+          {
+            name: '<a:chatting:926496559993094194> Goal reached:',
+            value: `\`${goal} messages\``,
+            inline: true,
+          },
+          {
+            name: '<a:MM_pet69:880814964871417856> Coordinates:',
+            value: '`' + cords + '`',
+            inline: true,
+          }
         );
 
       user.send({

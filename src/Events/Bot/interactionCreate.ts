@@ -1,11 +1,12 @@
 import {
+  ApplicationCommandOptionType,
   ColorResolvable,
+  EmbedBuilder,
   GuildMemberRoleManager,
   GuildTextBasedChannel,
   Interaction,
   Message,
-  MessageEmbed,
-  Permissions,
+  PermissionsBitField,
 } from 'discord.js';
 import { client } from '../../index';
 import { Event } from '../../Structures/Event';
@@ -27,7 +28,7 @@ export default new Event(
       // Developer Only Commands
       if (command.developersOnly) {
         if (!DeveloperIDs.includes(interaction.user.id)) {
-          let developersOnly_embed = new MessageEmbed()
+          let developersOnly_embed = new EmbedBuilder()
             .setTitle(`:x: | Only Developers Can Use That Command!`)
             .setDescription(
               `Developers: ${DeveloperIDs.map((v) => `<@${v}>`).join(', ')}`
@@ -37,7 +38,6 @@ export default new Event(
               text: `${client.user.tag}`,
               iconURL: `${client.user.displayAvatarURL({
                 size: 4096,
-                dynamic: true,
               })}`,
             })
             .setTimestamp();
@@ -50,14 +50,14 @@ export default new Event(
 
       // User Permissions
       if (
-        !(interaction.member.permissions as Permissions).has(
-          command.userPermissions || []
+        !interaction.memberPermissions.has(
+          PermissionsBitField.resolve(command.userPermissions || [])
         ) ||
         !(interaction.channel as GuildTextBasedChannel)
           .permissionsFor((interaction as ExtendedCommandInteraction).member)
-          .has(command.userPermissions || [])
+          .has(PermissionsBitField.resolve(command.userPermissions || []))
       ) {
-        const MissingPermissionsEmbed = new MessageEmbed()
+        const MissingPermissionsEmbed = new EmbedBuilder()
           .setColor(client.config.errColor as ColorResolvable)
           .setDescription(
             ` You're missing the following permission(s): \n\`${command.userPermissions
@@ -103,7 +103,7 @@ export default new Event(
                 ? 'No options provided'
                 : interaction.options?.data
                     .map((x) =>
-                      x.type === 'SUB_COMMAND_GROUP'
+                      x.type === ApplicationCommandOptionType.SubcommandGroup
                         ? x.name +
                           ' ' +
                           x.options.map(
@@ -114,7 +114,7 @@ export default new Event(
                                 .map((z) => z.name + ': ' + z.value)
                                 .join(', ')
                           )
-                        : x.type === 'SUB_COMMAND'
+                        : x.type === ApplicationCommandOptionType.Subcommand
                         ? x.name +
                           ' ' +
                           x.options
@@ -142,16 +142,16 @@ export default new Event(
       }
       if (button) {
         if (
-          !(interaction.member.permissions as Permissions).has(
-            button.userPermissions || []
+          !interaction.memberPermissions.has(
+            PermissionsBitField.resolve(button.userPermissions || [])
           ) ||
           !(interaction.channel as GuildTextBasedChannel)
             .permissionsFor((interaction as ExtendedButtonInteraction).member)
-            .has(button.userPermissions || [])
+            .has(PermissionsBitField.resolve(button.userPermissions || []))
         ) {
           interaction.reply({
             embeds: [
-              new MessageEmbed()
+              new EmbedBuilder()
                 .setColor(client.config.errColor as ColorResolvable)
                 .setDescription(
                   ` You're missing the following permission(s): \n\`${button.userPermissions
@@ -201,18 +201,18 @@ export default new Event(
       const selectMenu = client.selectmenus.get(interaction.customId);
       if (selectMenu) {
         if (
-          !(interaction.member.permissions as Permissions).has(
-            selectMenu.userPermissions || []
+          !interaction.memberPermissions.has(
+            PermissionsBitField.resolve(selectMenu.userPermissions || [])
           ) ||
           !(interaction.channel as GuildTextBasedChannel)
             .permissionsFor(
               (interaction as ExtendedSelectMenuInteraction).member
             )
-            .has(selectMenu.userPermissions || [])
+            .has(PermissionsBitField.resolve(selectMenu.userPermissions || []))
         ) {
           interaction.reply({
             embeds: [
-              new MessageEmbed()
+              new EmbedBuilder()
                 .setColor(client.config.errColor as ColorResolvable)
                 .setDescription(
                   ` You're missing the following permission(s): \n\`${selectMenu.userPermissions

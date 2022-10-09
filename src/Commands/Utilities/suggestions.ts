@@ -1,4 +1,8 @@
-import { GuildTextBasedChannel, MessageEmbed } from 'discord.js';
+import {
+  ApplicationCommandOptionType,
+  EmbedBuilder,
+  GuildTextBasedChannel,
+} from 'discord.js';
 import { Suggestion } from '../../Models/Suggestion/suggestion';
 import { Command } from '../../Structures/Command';
 
@@ -7,7 +11,7 @@ export default new Command({
   description: 'Suggest something',
   options: [
     {
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       name: 'suggestion',
       description: 'Input suggestion here',
       required: true,
@@ -20,7 +24,7 @@ export default new Command({
       (c) => c.name === 'suggestions'
     ) as GuildTextBasedChannel;
 
-    let errorembed = new MessageEmbed()
+    let errorembed = new EmbedBuilder()
       .setDescription(
         "<:TickRed:904760060725571615> Suggestions channel doesn't exist! \n\nPlease create a channel named `suggestions`."
       )
@@ -33,7 +37,7 @@ export default new Command({
 
     let message = interaction.options.getString('suggestion');
 
-    let embed = new MessageEmbed()
+    let embed = new EmbedBuilder()
       .setColor('#37B3C8')
       .setTitle(
         `Suggestion #${String(
@@ -43,7 +47,7 @@ export default new Command({
       .setDescription(`${message}`)
       .setAuthor({
         name: `${interaction.user.tag}`,
-        iconURL: interaction.member.displayAvatarURL({ dynamic: true }),
+        iconURL: interaction.member.displayAvatarURL(),
       })
       .setFooter({ text: '⬆️Upvote〡⬇️Downvote' });
 

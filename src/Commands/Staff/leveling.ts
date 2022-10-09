@@ -1,3 +1,4 @@
+import { ApplicationCommandOptionType, ChannelType } from 'discord.js';
 import { leveling } from '../../Models/Leveling/leveling';
 import { levelingIgnore } from '../../Models/Leveling/levelingignore';
 import { levelRoles } from '../../Models/Leveling/levelroles';
@@ -9,17 +10,17 @@ export default new Command({
   description: 'Main leveling command',
   options: [
     {
-      type: 'SUB_COMMAND_GROUP',
+      type: ApplicationCommandOptionType.SubcommandGroup,
       name: 'staff',
       description: 'Staff commands',
       options: [
         {
-          type: 'SUB_COMMAND',
+          type: ApplicationCommandOptionType.Subcommand,
           name: 'ignore',
           description: 'Add/remove a role or channel to ignore from getting xp',
           options: [
             {
-              type: 'STRING',
+              type: ApplicationCommandOptionType.String,
               name: 'type',
               description: 'select the thing you want to do add or remove',
               required: true,
@@ -35,33 +36,33 @@ export default new Command({
               ],
             },
             {
-              type: 'ROLE',
+              type: ApplicationCommandOptionType.Role,
               name: 'role',
               description: 'the role',
               required: false,
             },
             {
-              type: 'CHANNEL',
+              type: ApplicationCommandOptionType.Channel,
               name: 'channel',
               description: 'the channel',
-              channelTypes: ['GUILD_TEXT', 'GUILD_VOICE'],
+              channelTypes: [ChannelType.GuildText, ChannelType.GuildVoice],
               required: false,
             },
           ],
         },
         {
-          type: 'SUB_COMMAND',
+          type: ApplicationCommandOptionType.Subcommand,
           name: 'setlevel',
           description: 'Set level of a user',
           options: [
             {
-              type: 'USER',
+              type: ApplicationCommandOptionType.User,
               name: 'user',
               description: 'The user to set',
               required: true,
             },
             {
-              type: 'NUMBER',
+              type: ApplicationCommandOptionType.Number,
               name: 'level',
               description: 'The level to set',
               required: true,
@@ -69,18 +70,18 @@ export default new Command({
           ],
         },
         {
-          type: 'SUB_COMMAND',
+          type: ApplicationCommandOptionType.Subcommand,
           name: 'setxp',
           description: 'Set xp of a user',
           options: [
             {
-              type: 'USER',
+              type: ApplicationCommandOptionType.User,
               name: 'user',
               description: 'The user to set',
               required: true,
             },
             {
-              type: 'NUMBER',
+              type: ApplicationCommandOptionType.Number,
               name: 'xp',
               description: 'The xp to set',
               required: true,
@@ -88,12 +89,12 @@ export default new Command({
           ],
         },
         {
-          type: 'SUB_COMMAND',
+          type: ApplicationCommandOptionType.Subcommand,
           name: 'levelroles',
           description: 'Set level roles',
           options: [
             {
-              type: 'STRING',
+              type: ApplicationCommandOptionType.String,
               name: 'type',
               description: 'select the thing you want to do add or remove',
               choices: [
@@ -113,13 +114,13 @@ export default new Command({
               required: true,
             },
             {
-              type: 'NUMBER',
+              type: ApplicationCommandOptionType.Number,
               name: 'level',
               description: 'The level to set roles for',
               required: false,
             },
             {
-              type: 'ROLE',
+              type: ApplicationCommandOptionType.Role,
               name: 'role',
               description: 'The role to set',
               required: false,
@@ -129,17 +130,17 @@ export default new Command({
       ],
     },
     {
-      type: 'SUB_COMMAND_GROUP',
+      type: ApplicationCommandOptionType.SubcommandGroup,
       name: 'user',
       description: 'User commands',
       options: [
         {
-          type: 'SUB_COMMAND',
+          type: ApplicationCommandOptionType.Subcommand,
           name: 'levelupmsg',
           description: 'Toggle level up message ping for yourself',
           options: [
             {
-              type: 'STRING',
+              type: ApplicationCommandOptionType.String,
               name: 'change',
               description: 'Enable/disable level up message',
               required: true,
@@ -157,12 +158,12 @@ export default new Command({
           ],
         },
         {
-          type: 'SUB_COMMAND',
+          type: ApplicationCommandOptionType.Subcommand,
           name: 'rankcardbg',
           description: 'Set rankcard background or delete it',
           options: [
             {
-              type: 'STRING',
+              type: ApplicationCommandOptionType.String,
               name: 'url',
               description: 'The url of the background',
               required: false,
@@ -170,12 +171,12 @@ export default new Command({
           ],
         },
         {
-          type: 'SUB_COMMAND',
+          type: ApplicationCommandOptionType.Subcommand,
           name: 'rankcardcolor',
           description: 'Set rankcard color or delete it',
           options: [
             {
-              type: 'STRING',
+              type: ApplicationCommandOptionType.String,
               name: 'hex',
               description: 'The hex of the color',
               required: false,
@@ -183,12 +184,12 @@ export default new Command({
           ],
         },
         {
-          type: 'SUB_COMMAND',
+          type: ApplicationCommandOptionType.Subcommand,
           name: 'rankcardavatar',
           description: 'Set rankcard avatar shape',
           options: [
             {
-              type: 'STRING',
+              type: ApplicationCommandOptionType.String,
               name: 'shape',
               description: 'The shape of the avatar',
               required: true,
@@ -213,7 +214,7 @@ export default new Command({
   subcommands: ['leveling ignore'],
   run: async (client, interaction) => {
     if (interaction.options.getSubcommandGroup() === 'staff') {
-      if (!interaction.member.permissions.has('MANAGE_GUILD'))
+      if (!interaction.member.permissions.has('ManageGuild'))
         return interaction.reply({ content: "You can't do that" });
       if (interaction.options.getSubcommand() === 'ignore') {
         let type = interaction.options.getString('type');

@@ -1,8 +1,12 @@
 import {
+  ActionRowBuilder,
+  ApplicationCommandOptionType,
+  ButtonBuilder,
   ButtonInteraction,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  ButtonStyle,
+  ComponentType,
+  EmbedBuilder,
+  MessageActionRowComponentBuilder,
 } from 'discord.js';
 import { getInfoFromURL } from 'mal-scraper';
 import { request } from 'undici';
@@ -15,7 +19,7 @@ export default new Command({
     {
       name: 'type',
       description: 'Type of Search',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: true,
       choices: [
         {
@@ -31,7 +35,7 @@ export default new Command({
     {
       name: 'query',
       description: 'Name or Id of the anime',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
   ],
@@ -61,27 +65,27 @@ export default new Command({
         let line = `${i + 1} - ${m.name}`;
         return line;
       });
-      let embed = new MessageEmbed()
+      let embed = new EmbedBuilder()
         .setDescription(titles.join('\n'))
         .setColor(client.config.botColor);
-      let row1 = new MessageActionRow();
-      let row2 = new MessageActionRow();
+      let row1 = new ActionRowBuilder<MessageActionRowComponentBuilder>();
+      let row2 = new ActionRowBuilder<MessageActionRowComponentBuilder>();
       for (let i = 0; i < first5AnimeSearch.length; i++) {
         row1.addComponents(
-          new MessageButton()
+          new ButtonBuilder()
             .setCustomId(`anime.${first5AnimeSearch[i].id.toString()}.${i}`)
             .setLabel((i + 1).toString())
-            .setStyle('SECONDARY')
+            .setStyle(ButtonStyle.Secondary)
         );
       }
       for (let i = 0; i < second5AnimeSearch.length; i++) {
         row2.addComponents(
-          new MessageButton()
+          new ButtonBuilder()
             .setCustomId(
               `anime.${second5AnimeSearch[i].id.toString()}.${i + 5}`
             )
             .setLabel((i + 6).toString())
-            .setStyle('SECONDARY')
+            .setStyle(ButtonStyle.Secondary)
         );
       }
       interaction.editReply({
@@ -91,7 +95,7 @@ export default new Command({
       });
       let filter = (i: ButtonInteraction) => i.user.id === interaction.user.id;
       let collector = interaction.channel.createMessageComponentCollector({
-        componentType: 'BUTTON',
+        componentType: ComponentType.Button,
         max: 1,
         filter,
         time: 20000,
@@ -100,62 +104,64 @@ export default new Command({
         if (i.customId.startsWith('anime.')) {
           let id = i.customId.split('.')[2];
           let AnimeData = await getInfoFromURL(AnimeSearch[id].url);
-          let AnimeEmbed = new MessageEmbed()
+          let AnimeEmbed = new EmbedBuilder()
             .setTitle(AnimeData.title)
             .setURL(AnimeData.url)
             .setThumbnail(AnimeData.picture)
             .setDescription(AnimeData.synopsis)
             .setColor(client.config.botColor)
-            .addField(
-              '🎞️ Trailer',
-              `[Youtube trailer link](${
-                AnimeData.trailer ? AnimeData.trailer : '_gs0cgrmzmE'
-              })`,
-              true
-            )
-            .addField(
-              '⏳ Status',
-              `${AnimeData.status ? AnimeData.status : 'N/A'}`,
-              true
-            )
-            .addField('🗂️ Type', AnimeData.type, true)
-            .addField(
-              '➡️ Genres',
-              `${
-                AnimeData.genres.map((x) => x).join(', ')
-                  ? AnimeData.genres.map((x) => x).join(', ')
-                  : '.'
-              }`,
-              true
-            )
-            .addField(
-              '🗓️ Aired',
-              `${AnimeData.aired ? AnimeData.aired : 'N/A'}`,
-              true
-            )
-            .addField(
-              '📀 Total Episodes',
-              `${AnimeData.episodes ? AnimeData.episodes : 'N/A'}`,
-              true
-            )
-            .addField(
-              '⏱️ Episode Duration',
-              `${
-                `${AnimeData.duration} (${AnimeData.scoreStats})`
-                  ? AnimeData.duration
-                  : '?'
-              } minutes`,
-              true
-            )
-            .addField(
-              '⭐ Average Score',
-              `${AnimeData.score ? AnimeData.score : '?'}/100`,
-              true
-            )
-            .addField(
-              '🏆 Rank',
-              `Top ${AnimeData.ranked ? AnimeData.ranked : 'N/A'}`,
-              true
+            .addFields(
+              {
+                name: '🎞️ Trailer',
+                value: `[Youtube trailer link](${
+                  AnimeData.trailer ? AnimeData.trailer : '_gs0cgrmzmE'
+                })`,
+                inline: true,
+              },
+              {
+                name: '⏳ Status',
+                value: `${AnimeData.status ? AnimeData.status : 'N/A'}`,
+                inline: true,
+              },
+              { name: '🗂️ Type', value: AnimeData.type, inline: true },
+              {
+                name: '➡️ Genres',
+                value: `${
+                  AnimeData.genres.map((x) => x).join(', ')
+                    ? AnimeData.genres.map((x) => x).join(', ')
+                    : '.'
+                }`,
+                inline: true,
+              },
+              {
+                name: '🗓️ Aired',
+                value: `${AnimeData.aired ? AnimeData.aired : 'N/A'}`,
+                inline: true,
+              },
+              {
+                name: '📀 Total Episodes',
+                value: `${AnimeData.episodes ? AnimeData.episodes : 'N/A'}`,
+                inline: true,
+              },
+              {
+                name: '⏱️ Episode Duration',
+                value: `${
+                  `${AnimeData.duration} (${AnimeData.scoreStats})`
+                    ? AnimeData.duration
+                    : '?'
+                } minutes`,
+                inline: true,
+              },
+              {
+                name: '⭐ Average Score',
+                value: `${AnimeData.score ? AnimeData.score : '?'}/100`,
+                inline: true,
+              },
+              {
+                name: '🏆 Rank',
+                value: `Top ${AnimeData.ranked ? AnimeData.ranked : 'N/A'}`,
+                inline: true,
+              }
             );
           interaction.editReply({
             content: 'Here is your anime info',

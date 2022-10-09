@@ -1,4 +1,8 @@
-import { GuildTextBasedChannel, MessageEmbed } from 'discord.js';
+import {
+  ApplicationCommandOptionType,
+  EmbedBuilder,
+  GuildTextBasedChannel,
+} from 'discord.js';
 import { Command } from '../../Structures/Command';
 
 export default new Command({
@@ -6,12 +10,12 @@ export default new Command({
   description: 'description',
   options: [
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'remove',
       description: 'Removes all components from the provided message',
       options: [
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           name: 'message_url',
           description: 'URL of the message',
           required: true,
@@ -20,14 +24,14 @@ export default new Command({
     },
   ],
 
-  userPermissions: ['ADMINISTRATOR'],
+  userPermissions: ['Administrator'],
   category: 'Moderation & Management',
   subcommands: ['components remove'],
   run: async (client, interaction) => {
     let message_url = interaction.options.getString('message_url');
 
     let errSend = (message) => {
-      let errEmbed = new MessageEmbed()
+      let errEmbed = new EmbedBuilder()
         .setColor(client.config.errColor)
         .setDescription(message);
 
@@ -53,7 +57,8 @@ export default new Command({
     ) as GuildTextBasedChannel;
     if (!channel) return errSend('Unknown message!');
 
-    let targetMessage = await channel.messages.fetch(ids[ids.length - 1], {
+    let targetMessage = await channel.messages.fetch({
+      message: ids[ids.length - 1],
       cache: true,
       force: true,
     });

@@ -5,7 +5,7 @@ export default new Command({
   name: 'webhook',
   description: 'Creates webhook in the channel',
 
-  userPermissions: ['MANAGE_WEBHOOKS'],
+  userPermissions: ['ManageWebhooks'],
   category: 'Moderation & Management',
   run: async (client, interaction) => {
     let channel = interaction.channel as GuildTextBasedChannel;
@@ -22,7 +22,8 @@ export default new Command({
         });
       if (channel instanceof ThreadChannel) return;
       channel
-        .createWebhook('MM Utilities', {
+        .createWebhook({
+          name: 'MM-Utilities',
           avatar:
             'https://cdn.discordapp.com/avatars/911312019112734760/89a785b301f7d27a6403e0fac7f7f85a.webp?size=4096',
         })

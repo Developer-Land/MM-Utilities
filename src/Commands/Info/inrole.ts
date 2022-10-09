@@ -1,10 +1,13 @@
 import { Command } from '../../Structures/Command';
 
 import {
-  ColorResolvable,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  ActionRowBuilder,
+  ApplicationCommandOptionType,
+  ButtonBuilder,
+  ButtonStyle,
+  ComponentType,
+  EmbedBuilder,
+  MessageActionRowComponentBuilder,
   Role,
 } from 'discord.js';
 
@@ -15,20 +18,20 @@ export default new Command({
     {
       name: 'role',
       description: 'the role you want to check',
-      type: 'ROLE',
+      type: ApplicationCommandOptionType.Role,
       required: true,
     },
   ],
   category: 'Info',
   run: async (_client, interaction) => {
-    let backButton = new MessageButton({
-      style: 'SECONDARY',
+    let backButton = new ButtonBuilder({
+      style: ButtonStyle.Secondary,
       label: 'Back',
       emoji: '⬅️',
       customId: 'inroleBack',
     });
-    let forwardButton = new MessageButton({
-      style: 'SECONDARY',
+    let forwardButton = new ButtonBuilder({
+      style: ButtonStyle.Secondary,
       label: 'Forward',
       emoji: '➡️',
       customId: 'inroleForward',
@@ -37,11 +40,11 @@ export default new Command({
     let RoleMembers = [...role.members.values()];
     let generateEmbed = async (start: number) => {
       let current = RoleMembers.slice(start, start + 10);
-      return new MessageEmbed({
+      return new EmbedBuilder({
         title: `Showing members from ${role.name} role ${start + 1}-${
           start + current.length
         } out of ${role.members.size}`,
-        color: role.hexColor.replace('#', '0x') as ColorResolvable,
+        color: role.color,
         fields: await Promise.all(
           current.map(async (m) => ({
             name: m.user.tag,
@@ -55,12 +58,16 @@ export default new Command({
       embeds: [await generateEmbed(0)],
       components: canFitOnOnePage
         ? []
-        : [new MessageActionRow({ components: [forwardButton] })],
+        : [
+            new ActionRowBuilder<MessageActionRowComponentBuilder>({
+              components: [forwardButton],
+            }),
+          ],
     });
     if (canFitOnOnePage) return;
     let filter = (inrole) => inrole.user.id === interaction.user.id;
     let collector = interaction.channel.createMessageComponentCollector({
-      componentType: 'BUTTON',
+      componentType: ComponentType.Button,
       filter,
       time: 20000,
     });
@@ -71,7 +78,7 @@ export default new Command({
         await inrole.update({
           embeds: [await generateEmbed(currentIndex)],
           components: [
-            new MessageActionRow({
+            new ActionRowBuilder<MessageActionRowComponentBuilder>({
               components: [
                 // back button if it isn't the start
                 ...(currentIndex ? [backButton] : []),
@@ -88,7 +95,7 @@ export default new Command({
         await inrole.update({
           embeds: [await generateEmbed(currentIndex)],
           components: [
-            new MessageActionRow({
+            new ActionRowBuilder<MessageActionRowComponentBuilder>({
               components: [
                 // back button if it isn't the start
                 ...(currentIndex ? [backButton] : []),

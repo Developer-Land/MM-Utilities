@@ -1,4 +1,4 @@
-import { MessageAttachment } from 'discord.js';
+import { ApplicationCommandOptionType, AttachmentBuilder } from 'discord.js';
 import { leveling } from '../../Models/Leveling/leveling';
 import { levelUserSettings } from '../../Models/Leveling/usersettings';
 import { Command } from '../../Structures/Command';
@@ -10,7 +10,7 @@ export default new Command({
     {
       name: 'user',
       description: 'the user you want to check',
-      type: 'USER',
+      type: ApplicationCommandOptionType.User,
       required: false,
     },
   ],
@@ -68,12 +68,14 @@ export default new Command({
     }
     let avatar = user.displayAvatarURL({
       size: 4096,
-      format: 'png',
-      dynamic: true,
+      extension: 'png',
+      forceStatic: true,
     });
-    let rankcard = new MessageAttachment(
+    let rankcard = new AttachmentBuilder(
       `https://developerland.ml/api/rankcard?username=${target.displayName}&avatar=${avatar}&level=${level}&rank=${position}&currentXp=${xp}&xpNeeded=${NextLevelxp}&background=${background}&boosting=${booster}&staff=${staff}&bar=${barColor}&circle=${AvatarShape}`,
-      'rankcard.png'
+      {
+        name: 'rankcard.png',
+      }
     );
     await interaction.editReply({
       content: `${user}'s rankcard`,

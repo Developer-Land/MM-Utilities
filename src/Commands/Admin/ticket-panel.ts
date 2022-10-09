@@ -1,8 +1,12 @@
 import {
+  ActionRowBuilder,
+  ApplicationCommandOptionType,
+  ButtonBuilder,
+  ButtonStyle,
+  ChannelType,
+  EmbedBuilder,
   GuildTextBasedChannel,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  MessageActionRowComponentBuilder,
 } from 'discord.js';
 import { Command } from '../../Structures/Command';
 
@@ -13,16 +17,16 @@ export default new Command({
     {
       name: 'channel',
       description: 'Channel to send the ticket panel message',
-      type: 'CHANNEL',
-      channelTypes: ['GUILD_TEXT'],
+      type: ApplicationCommandOptionType.Channel,
+      channelTypes: [ChannelType.GuildText],
       required: true,
     },
   ],
 
-  userPermissions: ['ADMINISTRATOR'],
+  userPermissions: ['Administrator'],
   category: 'Moderation & Management',
   run: async (client, interaction) => {
-    if (!interaction.member.permissions.has('ADMINISTRATOR')) {
+    if (!interaction.member.permissions.has('Administrator')) {
       return interaction.reply({
         content: 'You dont have permissions to setup a ticket system',
         ephemeral: true,
@@ -31,13 +35,16 @@ export default new Command({
     let channel = interaction.options.getChannel(
       'channel'
     ) as GuildTextBasedChannel;
-    let ticketbtn = new MessageButton()
-      .setStyle('SECONDARY')
+    let ticketbtn = new ButtonBuilder()
+      .setStyle(ButtonStyle.Secondary)
       .setEmoji('919904410803519498')
       .setLabel('Create Ticket')
       .setCustomId('create_ticket');
-    let a = new MessageActionRow().addComponents([ticketbtn]);
-    let embed = new MessageEmbed()
+    let a =
+      new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([
+        ticketbtn,
+      ]);
+    let embed = new EmbedBuilder()
       .setTitle('Help & Support')
       .setDescription(
         'Click <:MM_tickets:919904410803519498> to create/open a new ticket.'

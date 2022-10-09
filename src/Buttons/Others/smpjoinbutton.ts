@@ -1,10 +1,10 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { Button } from '../../Structures/Button';
 
 export default new Button({
   customId: 'smpjoinbutton',
   run: async (client, interaction) => {
-    let smpinfo = new MessageEmbed()
+    let smpinfo = new EmbedBuilder()
       .setAuthor({
         name: 'Here you go!',
         iconURL:

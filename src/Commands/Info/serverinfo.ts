@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { ChannelType, EmbedBuilder } from 'discord.js';
 import { Command } from '../../Structures/Command';
 
 export default new Command({
@@ -6,15 +6,13 @@ export default new Command({
   description: "Shows information about MM Gamer's server",
   category: 'Info',
   run: async (client, interaction) => {
-    let ServerInfoEmbed = new MessageEmbed()
+    let ServerInfoEmbed = new EmbedBuilder()
       .setAuthor({
         name: `${interaction.guild.name}`,
-        iconURL: `${interaction.guild.iconURL({ size: 64, dynamic: true })}`,
+        iconURL: `${interaction.guild.iconURL({ size: 64 })}`,
       })
       .setColor(client.config.botColor)
-      .setThumbnail(
-        `${interaction.guild.iconURL({ size: 2048, dynamic: true })}`
-      )
+      .setThumbnail(`${interaction.guild.iconURL({ size: 4096 })}`)
       .setFooter({ text: `ID: ${interaction.guild.id}` })
       .addFields(
         {
@@ -39,15 +37,15 @@ export default new Command({
           name: 'Channels:',
           value: `> Text: ${
             interaction.guild.channels.cache.filter(
-              (c) => c.type === 'GUILD_TEXT'
+              (c) => c.type === ChannelType.GuildText
             ).size
           } \n> Voice: ${
             interaction.guild.channels.cache.filter(
-              (c) => c.type === 'GUILD_VOICE'
+              (c) => c.type === ChannelType.GuildVoice
             ).size
           } \n> Categories: ${
             interaction.guild.channels.cache.filter(
-              (c) => c.type === 'GUILD_CATEGORY'
+              (c) => c.type === ChannelType.GuildCategory
             ).size
           }`,
         },

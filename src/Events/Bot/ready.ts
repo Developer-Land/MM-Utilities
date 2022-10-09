@@ -1,6 +1,5 @@
 import chalk from 'chalk';
-import { ExcludeEnum } from 'discord.js';
-import { ActivityTypes } from 'discord.js/typings/enums';
+import { ActivityType } from 'discord.js';
 import { client } from '../../index';
 import { Event } from '../../Structures/Event';
 import { lavalink } from '../../Systems/lavalink';
@@ -33,14 +32,19 @@ export default new Event(client, 'ready', () => {
       )
   );
 
+  let activityType = {
+    Playing: ActivityType.Playing,
+    Streaming: ActivityType.Streaming,
+    Listening: ActivityType.Listening,
+    Watching: ActivityType.Watching,
+    Competing: ActivityType.Competing,
+  };
+
   client.user.setPresence({
     status: 'online',
   });
   client.user.setActivity(client.config.activityName, {
-    type: client.config.activityType as ExcludeEnum<
-      typeof ActivityTypes,
-      'CUSTOM'
-    >,
+    type: activityType[client.config.activityType],
     url: `https://www.youtube.com/watch?v=dbpMXfbS-Sc`,
   });
   lavalink.start(client.user.id);

@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { Command } from '../../Structures/Command';
 
 export default new Command({
@@ -8,7 +8,7 @@ export default new Command({
     {
       name: 'number',
       description: 'The rule you want to lookup for',
-      type: 'INTEGER',
+      type: ApplicationCommandOptionType.Integer,
       required: true,
       minValue: 1,
       maxValue: 13,
@@ -77,7 +77,7 @@ export default new Command({
       rule =
         'Do not use Zalgo Text in Chat. Everything in Chat must be in a standard English QWERTY keyboard.';
     }
-    let RuleEmbed = new MessageEmbed()
+    let RuleEmbed = new EmbedBuilder()
       .setAuthor({
         name: `Rule #${RuleNum}`,
         iconURL:

@@ -1,10 +1,10 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { Button } from '../../Structures/Button';
 const cooldownOfStaffList = new Set();
 
 export default new Button({
   customId: 'UPDATE_STAFF_LIST',
-  userPermissions: ['MANAGE_CHANNELS'],
+  userPermissions: ['ManageChannels'],
   run: async (client, interaction) => {
     if (cooldownOfStaffList.has(interaction.member.id))
       return interaction.reply('You are on cooldown!');
@@ -19,7 +19,7 @@ export default new Button({
       trainee: interaction.guild.roles.cache.get('893197592974987304'),
       builder: interaction.guild.roles.cache.get('944240796813652038'),
     };
-    let embed = new MessageEmbed()
+    let embed = new EmbedBuilder()
       .setAuthor({
         name: 'Staff list - MM Gamer',
         iconURL:

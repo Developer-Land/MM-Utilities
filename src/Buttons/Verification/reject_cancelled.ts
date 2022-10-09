@@ -1,5 +1,4 @@
 import { Button } from '../../Structures/Button';
-import { MessageActionRow, MessageButton } from "discord.js";
 
 export default new Button({
   customId: 'verification.rejectCancelled',

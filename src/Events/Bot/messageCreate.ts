@@ -1,9 +1,11 @@
 import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
   GuildTextBasedChannel,
   Message,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  MessageActionRowComponentBuilder,
 } from 'discord.js';
 import moment from 'moment';
 import { request } from 'undici';
@@ -208,7 +210,7 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
     } else {
       if (data.matches.length > 25) return message.reply('Too many mistakes.');
       if (data.matches.length > 0) {
-        let CorrectionsEmbed = new MessageEmbed();
+        let CorrectionsEmbed = new EmbedBuilder();
         CorrectionsEmbed.setTitle('Corrections!');
         CorrectionsEmbed.setColor(client.config.botColor);
         await data.matches.forEach((match, index) => {
@@ -287,19 +289,19 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
       {
         username: message.author.username,
         avatarURL: message.author.displayAvatarURL({
-          format: 'png',
+          extension: 'png',
           size: 2048,
         }),
         content: `<@&1008423362911031367> —\n\n${message.content}`,
         components: [
-          new MessageActionRow().addComponents(
-            new MessageButton()
-              .setStyle('SUCCESS')
+          new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+            new ButtonBuilder()
+              .setStyle(ButtonStyle.Success)
               .setLabel('Accept')
               .setCustomId(`${message.author.id}.verification.accept`),
 
-            new MessageButton()
-              .setStyle('DANGER')
+            new ButtonBuilder()
+              .setStyle(ButtonStyle.Danger)
               .setLabel('Decline')
               .setCustomId(`${message.author.id}.verification.reject`)
           ),
@@ -309,8 +311,8 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
 
     message.author.send({
       embeds: [
-        new MessageEmbed()
-          .setThumbnail(message.guild.iconURL({ format: 'png', size: 512 }))
+        new EmbedBuilder()
+          .setThumbnail(message.guild.iconURL({ extension: 'png', size: 512 }))
           .setTitle('Thank you for joining our server!')
           .setDescription(
             'Our "Gatekeepers" will try to give you access to the server as soon as possible if you have written the answers honestly.'

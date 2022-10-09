@@ -1,4 +1,9 @@
-import { GuildTextBasedChannel, MessageEmbed } from 'discord.js';
+import {
+  ApplicationCommandOptionType,
+  ChannelType,
+  EmbedBuilder,
+  GuildTextBasedChannel,
+} from 'discord.js';
 import { Command } from '../../Structures/Command';
 
 export default new Command({
@@ -6,60 +11,60 @@ export default new Command({
   description: 'Does many things with JSON',
   options: [
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'get',
       description: 'Gets JSON code for an existing message',
       options: [
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           name: 'message_url',
           description: 'The url of the message',
           required: true,
         },
         {
-          type: 'BOOLEAN',
+          type: ApplicationCommandOptionType.Boolean,
           name: 'hide',
           description: 'Hides the reply',
         },
       ],
     },
     {
-      type: 'SUB_COMMAND_GROUP',
+      type: ApplicationCommandOptionType.SubcommandGroup,
       name: 'embed',
       description: 'Creates and Edits embeds with JSON code',
       options: [
         {
-          type: 'SUB_COMMAND',
+          type: ApplicationCommandOptionType.Subcommand,
           name: 'create',
           description: 'Creates an embed with JSON code',
           options: [
             {
-              type: 'STRING',
+              type: ApplicationCommandOptionType.String,
               name: 'json_code',
               description: 'Insert an embed JSON here',
               required: true,
             },
             {
-              type: 'CHANNEL',
+              type: ApplicationCommandOptionType.Channel,
               name: 'channel',
               description: 'The channel where this embed will be sent to',
-              channelTypes: ['GUILD_TEXT'],
+              channelTypes: [ChannelType.GuildText],
             },
           ],
         },
         {
-          type: 'SUB_COMMAND',
+          type: ApplicationCommandOptionType.Subcommand,
           name: 'edit',
           description: 'Edits an embed with JSON code ',
           options: [
             {
-              type: 'STRING',
+              type: ApplicationCommandOptionType.String,
               name: 'message_url',
               description: 'The url of the message',
               required: true,
             },
             {
-              type: 'STRING',
+              type: ApplicationCommandOptionType.String,
               name: 'json_code',
               description: 'Insert an embed JSON here',
               required: true,
@@ -70,12 +75,12 @@ export default new Command({
     },
   ],
 
-  userPermissions: ['ADMINISTRATOR'],
+  userPermissions: ['Administrator'],
   category: 'Moderation & Management',
   subcommands: ['json get', 'json embed create', 'json embed edit'],
   run: async (client, interaction) => {
-    let errorEmbed = new MessageEmbed().setColor(client.config.errColor);
-    let successEmbed = new MessageEmbed().setColor(client.config.botColor);
+    let errorEmbed = new EmbedBuilder().setColor(client.config.errColor);
+    let successEmbed = new EmbedBuilder().setColor(client.config.botColor);
 
     let message_url = interaction.options.getString('message_url');
     let channel = interaction.options.getChannel('channel');
@@ -108,13 +113,11 @@ export default new Command({
           });
         }
 
-        let targetMessage = await channelFromURL.messages.fetch(
-          ids[ids.length - 1],
-          {
-            cache: true,
-            force: true,
-          }
-        );
+        let targetMessage = await channelFromURL.messages.fetch({
+          message: ids[ids.length - 1],
+          cache: true,
+          force: true,
+        });
 
         if (!targetMessage) {
           errorEmbed.setDescription('Unknown message!');
@@ -142,7 +145,7 @@ export default new Command({
 
         Object.keys(idk).forEach((k) => idk[k] == null && delete idk[k]);
 
-        let embed = new MessageEmbed()
+        let embed = new EmbedBuilder()
           .setColor(client.config.botColor)
           .setAuthor({ name: 'JSON code' })
           .setDescription(`\`\`\`js\n${JSON.stringify(obj)}\`\`\``);
@@ -215,13 +218,11 @@ export default new Command({
           });
         }
 
-        let targetMessage = await channelFromURL.messages.fetch(
-          ids[ids.length - 1],
-          {
-            cache: true,
-            force: true,
-          }
-        );
+        let targetMessage = await channelFromURL.messages.fetch({
+          message: ids[ids.length - 1],
+          cache: true,
+          force: true,
+        });
 
         if (!targetMessage) {
           errorEmbed.setDescription('Unknown message!');

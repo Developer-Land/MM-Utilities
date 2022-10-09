@@ -1,7 +1,9 @@
 import {
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
+  MessageActionRowComponentBuilder,
   TextChannel,
 } from 'discord.js';
 import { Ticket } from '../../Models/Ticket/ticket';
@@ -20,22 +22,22 @@ export default new Button({
       (interaction.channel as TextChannel).permissionOverwrites.delete(
         ticketCreator
       );
-      let delete_btn = new MessageButton()
-        .setStyle('SECONDARY')
+      let delete_btn = new ButtonBuilder()
+        .setStyle(ButtonStyle.Secondary)
         .setEmoji('🗑️')
         .setLabel('Delete')
         .setCustomId('delete_ticket');
-      let open_btn = new MessageButton()
-        .setStyle('SECONDARY')
+      let open_btn = new ButtonBuilder()
+        .setStyle(ButtonStyle.Secondary)
         .setEmoji('🔓')
         .setLabel('Unlock')
         .setCustomId('open_ticket');
-      let tr_btn = new MessageButton()
-        .setStyle('SECONDARY')
+      let tr_btn = new ButtonBuilder()
+        .setStyle(ButtonStyle.Secondary)
         .setEmoji('📄')
         .setLabel('Transcript')
         .setCustomId('tr_ticket');
-      let ticketCloseEmbed = new MessageEmbed()
+      let ticketCloseEmbed = new EmbedBuilder()
         .setTitle('Ticket Closed')
         .setDescription(
           `The ticket has been closed by ${interaction.user} \nClick 🔓 to reopen the ticket. \nClick 📄 to save the transcript. \nClick 🗑️ to delete the ticket.`
@@ -43,11 +45,12 @@ export default new Button({
         .setThumbnail(interaction.guild.iconURL())
         .setTimestamp()
         .setColor('#7BE2CD');
-      let row = new MessageActionRow().addComponents([
-        open_btn,
-        tr_btn,
-        delete_btn,
-      ]);
+      let row =
+        new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([
+          open_btn,
+          tr_btn,
+          delete_btn,
+        ]);
       interaction.channel.send({
         embeds: [ticketCloseEmbed],
         components: [row],

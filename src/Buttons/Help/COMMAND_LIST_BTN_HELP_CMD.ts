@@ -1,7 +1,8 @@
 import {
-  MessageActionRow,
+  ButtonBuilder,
+  ButtonComponent,
+  EmbedBuilder,
   MessageActionRowComponent,
-  MessageEmbed,
 } from 'discord.js';
 import { Button } from '../../Structures/Button';
 
@@ -83,7 +84,7 @@ export default new Button({
 
     if (uncategorizedFiltered.length) YesFields.push(obj);
 
-    let embed = new MessageEmbed()
+    let embed = new EmbedBuilder()
       .setAuthor({
         name: client.user?.username + '| Help Command',
         iconURL: client.user?.displayAvatarURL({ size: 512 }),
@@ -98,17 +99,16 @@ export default new Button({
       })
       .setColor(client.config.botColor);
 
-    interaction.message.components[0].components[0] = (
-      interaction.message.components[0]
-        .components[0] as MessageActionRowComponent
-    ).setDisabled(true);
-    interaction.message.components[0].components[1] = (
-      interaction.message.components[0]
-        .components[1] as MessageActionRowComponent
-    ).setDisabled(false);
+    interaction.message.components[0].components[0] = ButtonBuilder.from(
+      interaction.message.components[0].components[0] as ButtonComponent
+    ).setDisabled(true).data as MessageActionRowComponent;
+
+    interaction.message.components[0].components[1] = ButtonBuilder.from(
+      interaction.message.components[0].components[1] as ButtonComponent
+    ).setDisabled(false).data as MessageActionRowComponent;
     interaction.update({
       embeds: [embed],
-      components: interaction.message.components as MessageActionRow[],
+      components: interaction.message.components,
     });
   },
 });

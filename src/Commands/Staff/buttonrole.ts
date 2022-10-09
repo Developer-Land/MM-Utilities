@@ -1,9 +1,11 @@
 import {
+  ActionRowBuilder,
+  ApplicationCommandOptionType,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
   GuildTextBasedChannel,
-  MessageActionRow,
-  MessageButton,
-  MessageButtonStyleResolvable,
-  MessageEmbed,
+  MessageActionRowComponentBuilder,
   Role,
 } from 'discord.js';
 import { Command } from '../../Structures/Command';
@@ -13,95 +15,95 @@ export default new Command({
   description: 'Adds buttonrole to a messsge that was sent by Acer',
   options: [
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'add',
       description: 'Adds a buttonrole to a message that was sent by Acer',
       options: [
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           name: 'message_url',
           description:
             'The url of the message you want to add the buttonrole to',
           required: true,
         },
         {
-          type: 'ROLE',
+          type: ApplicationCommandOptionType.Role,
           name: 'role',
           description:
             'The role that you want to give or remove by pressing the button',
           required: true,
         },
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.Number,
           name: 'type',
           description: 'Type of the buttonrole (select from above)',
           required: true,
           choices: [
             {
               name: 'Toggle - gives the role when you press it and removes when you press it again',
-              value: 'PRIMARY',
+              value: ButtonStyle.Primary,
             },
             {
               name: 'Add - roles can only be picked up, not removed',
-              value: 'SUCCESS',
+              value: ButtonStyle.Success,
             },
             {
               name: 'Remove - roles can only be removed, not picked up',
-              value: 'DANGER',
+              value: ButtonStyle.Danger,
             },
           ],
         },
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.Number,
           name: 'style',
           description: 'The style of the button. (select from above)',
           choices: [
             {
               name: 'Blurple',
-              value: 'PRIMARY',
+              value: ButtonStyle.Primary,
             },
             {
               name: 'Green',
-              value: 'SUCCESS',
+              value: ButtonStyle.Success,
             },
             {
               name: 'Gray',
-              value: 'SECONDARY',
+              value: ButtonStyle.Secondary,
             },
             {
               name: 'Red',
-              value: 'DANGER',
+              value: ButtonStyle.Danger,
             },
           ],
         },
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           name: 'emoji',
           description:
             'The emoji of the button (type "none" if you don\'t want any emoji)',
         },
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           name: 'label',
           description: 'The label text of the Button',
         },
         {
-          type: 'ROLE',
+          type: ApplicationCommandOptionType.Role,
           name: 'role_2',
           description: '2nd role',
         },
         {
-          type: 'ROLE',
+          type: ApplicationCommandOptionType.Role,
           name: 'role_3',
           description: '3rd role',
         },
         {
-          type: 'ROLE',
+          type: ApplicationCommandOptionType.Role,
           name: 'role_4',
           description: '4th role',
         },
         {
-          type: 'ROLE',
+          type: ApplicationCommandOptionType.Role,
           name: 'role_5',
           description: '5th role',
         },
@@ -109,14 +111,14 @@ export default new Command({
     },
   ],
 
-  userPermissions: ['ADMINISTRATOR'],
+  userPermissions: ['Administrator'],
   category: 'Moderation & Management',
   subcommands: ['buttonrole add'],
   run: async (client, interaction) => {
     let { options } = interaction;
 
     let errSend = (message) => {
-      let errEmbed = new MessageEmbed()
+      let errEmbed = new EmbedBuilder()
         .setColor(client.config.errColor)
         .setDescription(message);
 
@@ -132,12 +134,10 @@ export default new Command({
     let role3 = options.getRole('role_3');
     let role4 = options.getRole('role_4');
     let role5 = options.getRole('role_5');
-    let type = options.getString('type');
+    let type = options.getNumber('type');
     let emoji = options.getString('emoji')?.toLowerCase();
     let label = options.getString('label');
-    let style = options.getString('style') as
-      | MessageButtonStyleResolvable
-      | string;
+    let style = options.getNumber('style');
 
     try {
       let isMsgUrl = (s) => {
@@ -157,7 +157,8 @@ export default new Command({
       ) as GuildTextBasedChannel;
       if (!channel) return errSend('Unknown message!');
 
-      let targetMessage = await channel.messages.fetch(ids[ids.length - 1], {
+      let targetMessage = await channel.messages.fetch({
+        message: ids[ids.length - 1],
         cache: true,
         force: true,
       });
@@ -177,15 +178,15 @@ export default new Command({
 
       let realType;
       switch (type) {
-        case 'SUCCESS': {
+        case ButtonStyle.Success: {
           realType = 'Add';
           break;
         }
-        case 'PRIMARY': {
+        case ButtonStyle.Primary: {
           realType = 'Toggle';
           break;
         }
-        case 'DANGER': {
+        case ButtonStyle.Danger: {
           realType = 'Remove';
           break;
         }
@@ -202,15 +203,15 @@ export default new Command({
 
       if (!emoji) {
         switch (type) {
-          case 'SUCCESS': {
+          case ButtonStyle.Success: {
             emoji = '➕';
             break;
           }
-          case 'DANGER': {
+          case ButtonStyle.Danger: {
             emoji = '🗑️';
             break;
           }
-          case 'PRIMARY': {
+          case ButtonStyle.Primary: {
             emoji = '936267150811881564';
             break;
           }
@@ -221,20 +222,23 @@ export default new Command({
 
       if (role.managed) return errSend("You can't use managed roles!");
 
-      if (interaction.guild.me.roles.highest.rawPosition <= role.rawPosition)
+      if (
+        interaction.guild.members.me.roles.highest.rawPosition <=
+        role.rawPosition
+      )
         return errSend('The role have to be below me!');
 
       let btnType;
       switch (type) {
-        case 'SUCCESS': {
+        case ButtonStyle.Success: {
           btnType = 'a';
           break;
         }
-        case 'DANGER': {
+        case ButtonStyle.Danger: {
           btnType = 'r';
           break;
         }
-        case 'PRIMARY': {
+        case ButtonStyle.Primary: {
           btnType = 't';
           break;
         }
@@ -247,14 +251,17 @@ export default new Command({
       if (role4) customIdArray.push(role4?.id + btnType);
       if (role5) customIdArray.push(role5?.id + btnType);
 
-      let button = new MessageButton()
+      let button = new ButtonBuilder()
         .setLabel(label)
-        .setStyle(style as MessageButtonStyleResolvable)
+        .setStyle(style)
         .setEmoji(emoji)
         .setCustomId(customIdArray.join(' '));
 
-      let row = targetMessage.components[0];
-      if (!row) row = new MessageActionRow();
+      let row = ActionRowBuilder.from(
+        targetMessage.components[0]
+      ) as ActionRowBuilder<MessageActionRowComponentBuilder>;
+
+      if (!row) row = new ActionRowBuilder<MessageActionRowComponentBuilder>();
 
       let c = row.components;
 
@@ -272,19 +279,19 @@ export default new Command({
 
       let styleinrp; //"Style" in reply.
       switch (style) {
-        case 'PRIMARY': {
+        case ButtonStyle.Primary: {
           styleinrp = 'Blurple';
           break;
         }
-        case 'SECONDARY': {
+        case ButtonStyle.Secondary: {
           styleinrp = 'Gray';
           break;
         }
-        case 'SUCCESS': {
+        case ButtonStyle.Success: {
           styleinrp = 'Green';
           break;
         }
-        case 'DANGER': {
+        case ButtonStyle.Danger: {
           styleinrp = 'Red';
           break;
         }
@@ -308,22 +315,25 @@ export default new Command({
         .map((x) => x.replace(/a|r|t/g, ''))
         .join('>, <@&');
 
-      let replyEmbed = new MessageEmbed()
+      let replyEmbed = new EmbedBuilder()
         .setColor(client.config.botColor)
         .setDescription('**Button Role successfully added.**')
-        .addField('Role', '<@&' + rolesinrp + '>')
-        .addField('Type', typeinrp)
-        .addField('Style', styleinrp)
-        .addField('Emoji', emojiinrp)
-        .addField('Label', labelinrp);
+        .addFields(
+          { name: 'Role', value: '<@&' + rolesinrp + '>' },
+          { name: 'Type', value: typeinrp },
+          { name: 'Style', value: styleinrp },
+          { name: 'Emoji', value: emojiinrp },
+          { name: 'Label', value: labelinrp }
+        );
 
-      let messageUrlButton = new MessageActionRow().addComponents(
-        new MessageButton()
-          .setStyle('LINK')
-          .setURL(targetMessage.url)
-          .setLabel('Message')
-          .setEmoji('🔍')
-      );
+      let messageUrlButton =
+        new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+          new ButtonBuilder()
+            .setStyle(ButtonStyle.Link)
+            .setURL(targetMessage.url)
+            .setLabel('Message')
+            .setEmoji('🔍')
+        );
 
       interaction.reply({
         embeds: [replyEmbed],

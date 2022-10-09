@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import moment from 'moment';
 import { request } from 'undici';
 import { Command } from '../../Structures/Command';
@@ -10,13 +10,13 @@ export default new Command({
     {
       name: 'ip',
       description: 'Ip of minecraft server',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
     {
       name: 'port',
       description: 'port of minecraft server',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: false,
     },
   ],
@@ -29,7 +29,7 @@ export default new Command({
     ).then((res) => res.body.json());
     if (data.online !== true)
       return interaction.reply({ content: 'Server is offline' });
-    let ServerInfo = new MessageEmbed()
+    let ServerInfo = new EmbedBuilder()
       .setTitle('Online')
       .setThumbnail(
         `https://api.mcsrvstat.us/icon/${ip}:${port ? port : '25565'}`

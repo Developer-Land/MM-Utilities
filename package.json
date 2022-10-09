@@ -15,28 +15,27 @@
   "description": "",
   "dependencies": {
     "@discordjs/opus": "^0.8.0",
-    "@discordjs/voice": "^0.10.0",
-    "axios": "^0.27.2",
+    "@discordjs/voice": "^0.13.0",
     "chalk": "^4.1.2",
-    "discord-html-transcripts": "^2.5.8",
-    "discord.js": "^13.9.2",
-    "dotenv": "^16.0.1",
-    "express": "^4.18.1",
+    "discord-html-transcripts": "^3.1.0",
+    "discord.js": "^14.5.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "glob": "^8.0.3",
     "mal-scraper": "^2.11.4",
-    "moment": "^2.29.3",
-    "mongoose": "^6.4.4",
+    "moment": "^2.29.4",
+    "mongoose": "^6.6.5",
     "reconlx": "^2.5.6",
-    "undici": "^5.7.0",
-    "vulkava": "^1.5.2",
+    "undici": "^5.11.0",
+    "vulkava": "^1.5.9",
     "youtube-notification": "^1.1.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.13",
-    "@types/glob": "^7.2.0",
-    "@types/node": "^18.0.3",
-    "ts-node": "^10.8.2",
+    "@types/express": "^4.17.14",
+    "@types/glob": "^8.0.0",
+    "@types/node": "^18.8.3",
+    "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^4.7.3"
+    "typescript": "^4.8.4"
   }
 }

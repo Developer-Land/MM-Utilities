@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { leveling } from '../../Models/Leveling/leveling';
 import { Command } from '../../Structures/Command';
 
@@ -9,7 +9,7 @@ export default new Command({
     {
       name: 'page',
       description: 'The page you want to check',
-      type: 'NUMBER',
+      type: ApplicationCommandOptionType.Number,
       required: false,
       minValue: 1,
     },
@@ -60,7 +60,7 @@ export default new Command({
           e.discriminator
         }](https://mmgamer.ml), Level: ${e.level} (${e.xp.toLocaleString()} XP)`
     );
-    let LBEmbed = new MessageEmbed()
+    let LBEmbed = new EmbedBuilder()
       .setTitle('Leaderboard')
       .setDescription(lb.join('\n'))
       .setColor(client.config.botColor)

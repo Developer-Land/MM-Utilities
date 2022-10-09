@@ -1,3 +1,4 @@
+import { ApplicationCommandOptionType } from 'discord.js';
 import { Afk } from '../../Models/Go/afk';
 import { Duty } from '../../Models/Go/duty';
 import { Command } from '../../Structures/Command';
@@ -9,12 +10,12 @@ export default new Command({
     {
       name: 'afk',
       description: 'go afk',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: 'message',
           description: 'afk message',
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           required: false,
         },
       ],
@@ -22,18 +23,18 @@ export default new Command({
     {
       name: 'duty',
       description: 'go on duty',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: 'toggle',
           description: 'toggle duty',
-          type: 'BOOLEAN',
+          type: ApplicationCommandOptionType.Boolean,
           required: true,
         },
       ],
     },
   ],
-  userPermissions: ['MANAGE_MESSAGES'],
+  userPermissions: ['ManageMessages'],
 
   category: 'Utilities',
   run: async (client, interaction) => {
