@@ -1,8 +1,7 @@
 import {
-  ButtonBuilder,
-  ButtonComponent,
+  ActionRowBuilder,
   EmbedBuilder,
-  MessageActionRowComponent,
+  MessageActionRowComponentBuilder,
 } from 'discord.js';
 import { Button } from '../../Structures/Button';
 
@@ -24,17 +23,15 @@ export default new Button({
         inline: false,
       });
 
-    interaction.message.components[0].components[1] = ButtonBuilder.from(
-      interaction.message.components[0].components[1] as ButtonComponent
-    ).setDisabled(true).data as MessageActionRowComponent;
-
-    interaction.message.components[0].components[0] = ButtonBuilder.from(
-      interaction.message.components[0].components[0] as ButtonComponent
-    ).setDisabled(false).data as MessageActionRowComponent;
+    let row = ActionRowBuilder.from(
+      interaction.message.components[0]
+    ) as ActionRowBuilder<MessageActionRowComponentBuilder>;
+    row.components[1] = row.components[1].setDisabled(true);
+    row.components[0] = row.components[0].setDisabled(false);
 
     await interaction.update({
       embeds: [AI],
-      components: interaction.message.components,
+      components: [row],
     });
   },
 });

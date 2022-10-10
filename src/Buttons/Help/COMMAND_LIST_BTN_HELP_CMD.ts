@@ -1,8 +1,7 @@
 import {
-  ButtonBuilder,
-  ButtonComponent,
+  ActionRowBuilder,
   EmbedBuilder,
-  MessageActionRowComponent,
+  MessageActionRowComponentBuilder,
 } from 'discord.js';
 import { Button } from '../../Structures/Button';
 
@@ -99,16 +98,15 @@ export default new Button({
       })
       .setColor(client.config.botColor);
 
-    interaction.message.components[0].components[0] = ButtonBuilder.from(
-      interaction.message.components[0].components[0] as ButtonComponent
-    ).setDisabled(true).data as MessageActionRowComponent;
+    let row = ActionRowBuilder.from(
+      interaction.message.components[0]
+    ) as ActionRowBuilder<MessageActionRowComponentBuilder>;
+    row.components[1] = row.components[1].setDisabled(false);
+    row.components[0] = row.components[0].setDisabled(true);
 
-    interaction.message.components[0].components[1] = ButtonBuilder.from(
-      interaction.message.components[0].components[1] as ButtonComponent
-    ).setDisabled(false).data as MessageActionRowComponent;
     interaction.update({
       embeds: [embed],
-      components: interaction.message.components,
+      components: [row],
     });
   },
 });
