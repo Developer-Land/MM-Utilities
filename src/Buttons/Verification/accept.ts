@@ -18,9 +18,15 @@ export default new Button({
       });
     }
 
-    const userId = interaction.customId.replace(/\D/g, '') as Snowflake;
+    let userId = interaction.customId.replace(/\D/g, '') as Snowflake;
 
-    (interaction.guild.members.cache.get(userId) as GuildMember).roles
+    let member = (await interaction.guild.members
+      .fetch({
+        user: userId,
+      })
+      .catch(() => {})) as GuildMember;
+
+    member.roles
       .add(
         '854647752197931038',
         `${interaction.user.tag} - Passed verification.`
