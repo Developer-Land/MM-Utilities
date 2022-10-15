@@ -6,7 +6,7 @@ import { ExtendedClient } from './Structures/Client';
 config();
 
 const client = new ExtendedClient({
-  intents: 32767,
+  intents: 3276799,
   allowedMentions: {
     parse: ['roles', 'users'],
     repliedUser: true,
