@@ -63,13 +63,12 @@ export default new Event(
           guildID: newState.guild.id,
         });
         let randomXp = (Math.floor(Math.random() * 4) + timeAsMins) * 40;
-        const xp = randomXp;
         if (!user) {
           const newUser = new leveling({
             userID: newState.member,
             guildID: newState.guild.id,
-            xp: xp,
-            level: Math.floor(0.1 * Math.sqrt(xp)),
+            xp: randomXp,
+            level: Math.floor(0.1 * Math.sqrt(randomXp)),
           });
           await newUser
             .save()
@@ -126,13 +125,12 @@ export default new Event(
         guildID: oldState.guild.id,
       });
       let randomXp = (Math.floor(Math.random() * 4) + timeAsMins) * 40;
-      const xp = randomXp;
       if (!user) {
         const newUser = new leveling({
           userID: oldState.member,
           guildID: oldState.guild.id,
-          xp: xp,
-          level: Math.floor(0.1 * Math.sqrt(xp)),
+          xp: randomXp,
+          level: Math.floor(0.1 * Math.sqrt(randomXp)),
         });
         await newUser
           .save()

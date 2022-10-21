@@ -60,7 +60,7 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
       ).message;
 
       message.reply({
-        content: `${reply.replace(/^undefined$/, 'A error occurred')}`,
+        content: `${reply.replace(/^undefined$/, 'An error occurred')}`,
         allowedMentions: { repliedUser: true },
       });
     }
@@ -206,7 +206,7 @@ export default new Event(client, 'messageCreate', async (message: Message) => {
       .then((res) => res.body.json())
       .catch(() => {});
     if (!data) {
-      message.reply('A error occurred');
+      message.reply('An error occurred');
     } else {
       if (data.matches.length > 25) return message.reply('Too many mistakes.');
       if (data.matches.length > 0) {
