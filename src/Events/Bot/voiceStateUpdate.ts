@@ -56,7 +56,7 @@ export default new Event(
         let time =
           new Date().valueOf() -
           memberJoinedDate.get(newState.member.id).valueOf();
-        let timeAsMins = moment.duration(time).asMinutes();
+        let timeAsMins = Math.floor(moment.duration(time).asMinutes());
         if (timeAsMins < 10) return;
         const user = await leveling.findOne({
           userID: newState.member.id,
@@ -119,7 +119,7 @@ export default new Event(
       let time =
         new Date().valueOf() -
         memberJoinedDate.get(oldState.member.id).valueOf();
-      let timeAsMins = moment.duration(time).asMinutes();
+      let timeAsMins = Math.floor(moment.duration(time).asMinutes());
       if (timeAsMins < 10) return;
       const user = await leveling.findOne({
         userID: oldState.member.id,
