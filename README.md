@@ -23,13 +23,13 @@ Simple Bot for [MM Gamer discord server](https://discord.com/invite/ASr2B3ZZSY)
 #### Requirements
 
 - Node.js (v16.9.0 or higher)
-- Discord.js (v13.8.0 or higher)
+- Discord.js (v14.x or higher)
 - Mongoose (v6.x or higher)
 - Express (4.x or higher)
 
 #### Setting up
 
-- **Need to make changes to code to make it work correctly**
+- **The code is not made for self hosting**
 - Clone the repository and go to the directory
 - run `npm install` to install all dependencies
 - Configure the `config.json` file

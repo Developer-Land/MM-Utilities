@@ -15,8 +15,9 @@ export default new Command({
   category: 'Moderation & Management',
   userPermissions: ['ManageNicknames'],
   run: async (client, interaction) => {
-    let confusables = (await import(`${__dirname}/../../Data/confusables.json`))
-      ?.default;
+    let confusables = (
+      await import(`${__dirname}/../../../data/confusables.json`)
+    )?.default;
     let user = interaction.options.getMentionable('user') as GuildMember;
     let displayName = user.displayName;
     let sanitizedName = [...displayName]

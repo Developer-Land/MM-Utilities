@@ -102,7 +102,7 @@ export default new Command({
           name: 'Account Created',
           value: `${moment(user.createdAt).format(
             'llll'
-          )} (${userCreatedString} ago)`,
+          )} (${userCreatedString.replace(/[^\S\r\n]{2,}/gi, '')} ago)`,
         }
       );
     if (target) {
@@ -172,7 +172,7 @@ export default new Command({
           name: 'Joined Server',
           value: `${moment(target.joinedAt).format(
             'llll'
-          )} (${userJoinedString} ago)`,
+          )} (${userJoinedString.replace(/[^\S\r\n]{2,}/gi, '')} ago)`,
           inline: false,
         },
         {
