@@ -71,7 +71,7 @@ export default new Command({
           (userCreated.months + ' months ')
             .replace(/\b0 months\b /, '')
             .replace(/\b1 months\b/, '1 month') +
-          (userCreated.days + ' days ')
+          (userCreated.days + ' days')
             .replace(/\b0 days\b /, '')
             .replace(/\b1 days\b/, '1 day')
         : (userCreated.hours + ' hours ')
