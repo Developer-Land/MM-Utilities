@@ -32,6 +32,7 @@ export default new Command({
     if (optionPage) {
       page = optionPage;
     }
+    let usablePage = (page - 1) * 10;
     let users = await leveling
       .find({ guildID: interaction.guildId })
       .sort({ xp: 'descending' })
@@ -60,13 +61,12 @@ export default new Command({
           current.length < 1
             ? 'Page not found!'
             : computedArray
-                .map((e) => {
-                  `**${e.position + (page - 1) * 10}.** <@${
-                    e.userID
-                  }>, Level: ${e.level} (${Math.floor(
-                    e.xp
-                  ).toLocaleString()} XP)`;
-                })
+                .map(
+                  (e) =>
+                    `**${e.position + start}.** <@${e.userID}>, Level: ${
+                      e.level
+                    } (${Math.floor(e.xp).toLocaleString()} XP)`
+                )
                 .join('\n'),
       });
     };
@@ -86,12 +86,16 @@ export default new Command({
     });
 
     interaction.editReply({
-      embeds: [await generateEmbed(page - 1)],
+      content: 'Leaderboard generated!',
+      embeds: [await generateEmbed(usablePage)],
       components: canFitOnOnePage
         ? []
         : [
             new ActionRowBuilder<MessageActionRowComponentBuilder>({
-              components: [forwardButton],
+              components: [
+                ...(usablePage ? [backButton] : []),
+                ...(usablePage + 10 < users.length ? [forwardButton] : []),
+              ],
             }),
           ],
     });
@@ -102,30 +106,29 @@ export default new Command({
       filter,
       time: 20000,
     });
-    let currentIndex = 0;
     collector.on('collect', async (i) => {
       if (i.customId === 'leaderboardBack') {
-        currentIndex -= 10;
+        usablePage -= 10;
         await i.update({
-          embeds: [await generateEmbed(currentIndex)],
+          embeds: [await generateEmbed(usablePage)],
           components: [
             new ActionRowBuilder<MessageActionRowComponentBuilder>({
               components: [
-                ...(currentIndex ? [backButton] : []),
-                ...(currentIndex + 10 < users.length ? [forwardButton] : []),
+                ...(usablePage ? [backButton] : []),
+                ...(usablePage + 10 < users.length ? [forwardButton] : []),
               ],
             }),
           ],
         });
       } else if (i.customId === 'leaderboardForward') {
-        currentIndex += 10;
+        usablePage += 10;
         await i.update({
-          embeds: [await generateEmbed(currentIndex)],
+          embeds: [await generateEmbed(usablePage)],
           components: [
             new ActionRowBuilder<MessageActionRowComponentBuilder>({
               components: [
-                ...(currentIndex ? [backButton] : []),
-                ...(currentIndex + 10 < users.length ? [forwardButton] : []),
+                ...(usablePage ? [backButton] : []),
+                ...(usablePage + 10 < users.length ? [forwardButton] : []),
               ],
             }),
           ],
