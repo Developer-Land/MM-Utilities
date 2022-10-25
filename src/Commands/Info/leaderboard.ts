@@ -1,4 +1,13 @@
-import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
+import {
+  ActionRowBuilder,
+  ApplicationCommandOptionType,
+  ButtonBuilder,
+  ButtonStyle,
+  ComponentType,
+  EmbedBuilder,
+  MessageActionRowComponentBuilder,
+  resolveColor,
+} from 'discord.js';
 import { leveling } from '../../Models/Leveling/leveling';
 import { Command } from '../../Structures/Command';
 
@@ -17,6 +26,7 @@ export default new Command({
 
   category: 'Info',
   run: async (client, interaction) => {
+    interaction.reply({ content: 'Generating leaderboard!' });
     let optionPage = interaction.options.getNumber('page');
     let page = 1;
     if (optionPage) {
@@ -26,48 +36,103 @@ export default new Command({
       .find({ guildID: interaction.guildId })
       .sort({ xp: 'descending' })
       .exec();
-    let leaderboard = users.slice((page - 1) * 10, 10 + (page - 1) * 10);
-    if (leaderboard.length < 1 && optionPage) {
-      return interaction.reply({
-        content: "That leaderboard page doesn't exist",
-      });
-    }
-    if (leaderboard.length < 1) {
-      return interaction.reply({ content: 'Nobody is in leaderboard yet.' });
-    }
-    let computedArray = [];
-    leaderboard.map((key) =>
-      computedArray.push({
-        guildID: key.guildID,
-        userID: key.userID,
-        xp: key.xp,
-        level: key.level,
-        position:
-          leaderboard.findIndex(
-            (i) => i.guildID === key.guildID && i.userID === key.userID
-          ) + 1,
-        username: client.users.cache.get(key.userID)
-          ? client.users.cache.get(key.userID).username
-          : 'Unknown',
-        discriminator: client.users.cache.get(key.userID)
-          ? client.users.cache.get(key.userID).discriminator
-          : '0000',
-      })
-    );
-    let lb = computedArray.map(
-      (e) =>
-        `**${e.position + (page - 1) * 10}.** [${e.username}#${
-          e.discriminator
-        }](https://mmgamer.ml), Level: ${e.level} (${e.xp.toLocaleString()} XP)`
-    );
-    let LBEmbed = new EmbedBuilder()
-      .setTitle('Leaderboard')
-      .setDescription(lb.join('\n'))
-      .setColor(client.config.botColor)
-      .setFooter({ text: `Page ${String(page)}` });
 
-    interaction.reply({
-      embeds: [LBEmbed],
+    let generateEmbed = async (start: number) => {
+      let current = users.slice(start, start + 10);
+      let computedArray = [];
+      current.map((key) =>
+        computedArray.push({
+          guildID: key.guildID,
+          userID: key.userID,
+          xp: key.xp,
+          level: key.level,
+          position:
+            current.findIndex(
+              (i) => i.guildID === key.guildID && i.userID === key.userID
+            ) + 1,
+        })
+      );
+
+      return new EmbedBuilder({
+        title: `Leaderboard`,
+        color: resolveColor(client.config.botColor),
+        description:
+          current.length < 1
+            ? 'Page not found!'
+            : computedArray
+                .map((e) => {
+                  `**${e.position + (page - 1) * 10}.** <@${
+                    e.userID
+                  }>, Level: ${e.level} (${Math.floor(
+                    e.xp
+                  ).toLocaleString()} XP)`;
+                })
+                .join('\n'),
+      });
+    };
+
+    let canFitOnOnePage = users.length <= 10;
+    let backButton = new ButtonBuilder({
+      style: ButtonStyle.Secondary,
+      label: 'Back',
+      emoji: '⬅️',
+      customId: 'leaderboardBack',
+    });
+    let forwardButton = new ButtonBuilder({
+      style: ButtonStyle.Secondary,
+      label: 'Forward',
+      emoji: '➡️',
+      customId: 'leaderboardForward',
+    });
+
+    interaction.editReply({
+      embeds: [await generateEmbed(page - 1)],
+      components: canFitOnOnePage
+        ? []
+        : [
+            new ActionRowBuilder<MessageActionRowComponentBuilder>({
+              components: [forwardButton],
+            }),
+          ],
+    });
+    if (canFitOnOnePage) return;
+    let filter = (i) => i.user.id === interaction.user.id;
+    let collector = interaction.channel.createMessageComponentCollector({
+      componentType: ComponentType.Button,
+      filter,
+      time: 20000,
+    });
+    let currentIndex = 0;
+    collector.on('collect', async (i) => {
+      if (i.customId === 'leaderboardBack') {
+        currentIndex -= 10;
+        await i.update({
+          embeds: [await generateEmbed(currentIndex)],
+          components: [
+            new ActionRowBuilder<MessageActionRowComponentBuilder>({
+              components: [
+                ...(currentIndex ? [backButton] : []),
+                ...(currentIndex + 10 < users.length ? [forwardButton] : []),
+              ],
+            }),
+          ],
+        });
+      } else if (i.customId === 'leaderboardForward') {
+        currentIndex += 10;
+        await i.update({
+          embeds: [await generateEmbed(currentIndex)],
+          components: [
+            new ActionRowBuilder<MessageActionRowComponentBuilder>({
+              components: [
+                ...(currentIndex ? [backButton] : []),
+                ...(currentIndex + 10 < users.length ? [forwardButton] : []),
+              ],
+            }),
+          ],
+        });
+      } else {
+        collector.stop('not valid button');
+      }
     });
   },
 });

@@ -60,7 +60,7 @@ export default new Command({
     let position = 100;
     if (rank) {
       level = rank.level;
-      xp = rank.xp - rank.level * rank.level * 100;
+      xp = Math.floor(rank.xp - rank.level * rank.level * 100);
       NextLevelxp =
         (rank.level + 1) * (rank.level + 1) * 100 -
         rank.level * rank.level * 100;
