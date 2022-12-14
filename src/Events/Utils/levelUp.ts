@@ -16,7 +16,7 @@ import {
 } from '../../Models/Leveling/usersettings';
 import { Event } from '../../Structures/Event';
 
-export default new Event(levelingEmitter, 'change', async (data) => {
+export default new Event<string>(levelingEmitter, 'change', async (data) => {
   if (data.updateDescription?.updatedFields?.level) {
     let RolesArray: string[] = [];
     let RemoveRolesArray: string[] = [];

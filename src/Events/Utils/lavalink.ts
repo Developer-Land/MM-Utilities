@@ -6,7 +6,7 @@ import { Events } from '../../Structures/Events';
 import { ExtendedPlayer } from '../../Structures/ExtendedPlayer';
 import { lavalink } from '../../Systems/lavalink';
 
-export default new Events(lavalink, [
+export default new Events<string>(lavalink, [
   {
     event: 'trackStart',
     run: async (player: Player, track: Track) => {

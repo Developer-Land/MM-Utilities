@@ -1,10 +1,10 @@
 import chalk from 'chalk';
-import { ActivityType } from 'discord.js';
+import { ActivityType, ClientEvents } from 'discord.js';
 import { client } from '../../index';
 import { Event } from '../../Structures/Event';
 import { lavalink } from '../../Systems/lavalink';
 
-export default new Event(client, 'ready', () => {
+export default new Event<keyof ClientEvents>(client, 'ready', () => {
   console.log(
     chalk.white.bold('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫') +
       chalk.blue.bold('Client Status') +

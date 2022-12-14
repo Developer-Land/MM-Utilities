@@ -1,5 +1,6 @@
 import {
   ApplicationCommandOptionType,
+  ClientEvents,
   ColorResolvable,
   EmbedBuilder,
   GuildMemberRoleManager,
@@ -15,7 +16,7 @@ import { ExtendedCommandInteraction } from '../../Typings/Command';
 import { ExtendedSelectMenuInteraction } from '../../Typings/SelectMenu';
 const { DeveloperIDs } = client.config;
 
-export default new Event(
+export default new Event<keyof ClientEvents>(
   client,
   'interactionCreate',
   async (interaction: Interaction) => {

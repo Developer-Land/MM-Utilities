@@ -1,4 +1,4 @@
-import { GuildMember, MessageReaction, User } from 'discord.js';
+import { ClientEvents, GuildMember, MessageReaction, User } from 'discord.js';
 import { client } from '../../index';
 import { leveling } from '../../Models/Leveling/leveling';
 import { levelingIgnore } from '../../Models/Leveling/levelingignore';
@@ -6,7 +6,7 @@ import { Events } from '../../Structures/Events';
 import { starboardClient } from '../../Systems/starboard';
 const earnedReactionXpRecently = new Set();
 
-export default new Events(client, [
+export default new Events<keyof ClientEvents>(client, [
   {
     event: 'messageReactionAdd',
     run: async (reaction: MessageReaction, user: User) => {

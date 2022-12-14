@@ -1,8 +1,7 @@
 import { client } from '../..';
 import { Duty, DutyEmitter } from '../../Models/Go/duty';
 import { Event } from '../../Structures/Event';
-
-export default new Event(DutyEmitter, 'change', async (data) => {
+export default new Event<string>(DutyEmitter, 'change', async (data) => {
   if (data.operationType === 'delete') {
     let duty = await Duty.find({ guildID: '485463924007763970' });
     let users: string[] = [];

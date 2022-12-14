@@ -52,7 +52,7 @@ export class ExtendedClient extends Client<true> {
     const eventFiles = await globPromise(`${__dirname}/../Events/*/*{.ts,.js}`);
     for await (const filePath of eventFiles) {
       delete require.cache[require.resolve(filePath)];
-      const event: Event | Events = await this.importFile(filePath);
+      const event: Event<any> | Events<any> = await this.importFile(filePath);
       if (event?.emitter?.removeAllListeners()) {
         event.emitter.removeAllListeners();
       } else {
@@ -212,7 +212,7 @@ export class ExtendedClient extends Client<true> {
       `${__dirname}/../Events/**/*{.ts,.js}`
     );
     eventFiles.forEach(async (filePath) => {
-      const event: Event | Events = await this.importFile(filePath);
+      const event: Event<any> | Events<any> = await this.importFile(filePath);
       if (event instanceof Event) {
         if (event.options?.once) {
           event.emitter.once(event.event, event.run);

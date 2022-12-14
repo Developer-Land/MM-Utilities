@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import mongoose from 'mongoose';
 import { Events } from '../../Structures/Events';
 
-export default new Events(mongoose.connection, [
+export default new Events<string>(mongoose.connection, [
   {
     event: 'connected',
     run: () => {

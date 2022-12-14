@@ -1,4 +1,4 @@
-import { VoiceState } from 'discord.js';
+import { ClientEvents, VoiceState } from 'discord.js';
 import moment from 'moment';
 import { client } from '../../index';
 import { leveling } from '../../Models/Leveling/leveling';
@@ -7,7 +7,7 @@ import { Event } from '../../Structures/Event';
 import { lavalink } from '../../Systems/lavalink';
 const memberJoinedDate = new Map<string, Date>();
 
-export default new Event(
+export default new Event<keyof ClientEvents>(
   client,
   'voiceStateUpdate',
   async (oldState: VoiceState | null, newState: VoiceState) => {
