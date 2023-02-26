@@ -1,15 +1,21 @@
 import chalk from 'chalk';
-import { GuildTextBasedChannel } from 'discord.js';
+import { GuildTextBasedChannel, Message } from 'discord.js';
 import { Node, Player, Track } from 'vulkava';
-import { client } from '../../index';
 import { Events } from '../../Structures/Events';
 import { ExtendedPlayer } from '../../Structures/ExtendedPlayer';
 import { lavalink } from '../../Systems/lavalink';
+import { client } from '../../index';
+
+let lastMessage: Message<boolean>;
 
 export default new Events<string>(lavalink, [
   {
     event: 'trackStart',
     run: async (player: Player, track: Track) => {
+      if (lastMessage && lastMessage?.channelId === player.textChannelId) {
+        if (!lastMessage.deletable) return;
+        await lastMessage.delete().catch(() => {});
+      }
       let channel: GuildTextBasedChannel = client.channels.cache.get(
         player.textChannelId
       ) as GuildTextBasedChannel;
@@ -18,7 +24,9 @@ export default new Events<string>(lavalink, [
         (player as ExtendedPlayer).setPreviousTrack =
           ExtendedPlayer.prototype.setPreviousTrack;
         (player as ExtendedPlayer).setPreviousTrack(track);
-        channel.send(`Now playing \`${track.title}\``);
+        lastMessage = (await channel
+          .send(`Now playing \`${track.title}\``)
+          .catch(() => {})) as Message;
         (player as ExtendedPlayer).autoplay = ExtendedPlayer.prototype.autoplay;
         await (player as ExtendedPlayer).autoplay(lavalink);
       }
