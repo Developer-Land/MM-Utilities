@@ -1,4 +1,5 @@
 import {
+  AutocompleteInteraction,
   ChatInputApplicationCommandData,
   ChatInputCommandInteraction,
   GuildMember,
@@ -20,6 +21,11 @@ export interface ExtendedCommandInteraction
   member: GuildMember;
 }
 
+export interface ExtendedAutocompleteInteraction
+  extends AutocompleteInteraction {
+  member: GuildMember;
+}
+
 export type CommandType = {
   userPermissions?: PermissionResolvable[];
   developersOnly?: boolean;
@@ -27,4 +33,8 @@ export type CommandType = {
   subcommands?: string[];
   init?: (client: ExtendedClient) => any;
   run: (client: ExtendedClient, interaction: ExtendedCommandInteraction) => any;
+  autocomplete?: (
+    client: ExtendedClient,
+    interaction: ExtendedAutocompleteInteraction
+  ) => any;
 } & ChatInputApplicationCommandData;

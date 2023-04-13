@@ -9,11 +9,14 @@ import {
   Message,
   PermissionsBitField,
 } from 'discord.js';
-import { client } from '../../index';
 import { Event } from '../../Structures/Event';
 import { ExtendedButtonInteraction } from '../../Typings/Button';
-import { ExtendedCommandInteraction } from '../../Typings/Command';
+import {
+  ExtendedAutocompleteInteraction,
+  ExtendedCommandInteraction,
+} from '../../Typings/Command';
 import { ExtendedSelectMenuInteraction } from '../../Typings/SelectMenu';
+import { client } from '../../index';
 const { DeveloperIDs } = client.config;
 
 export default new Event<keyof ClientEvents>(
@@ -129,6 +132,16 @@ export default new Event<keyof ClientEvents>(
         });
     }
 
+    // Autocomplete Handling
+    if (interaction.isAutocomplete()) {
+      let command = client.commands.get(interaction.commandName);
+      if (command?.autocomplete) {
+        command
+          .autocomplete(client, interaction as ExtendedAutocompleteInteraction)
+          .catch(() => {});
+      }
+    }
+
     // Button Handling
     if (interaction.isButton()) {
       let button = client.buttons.get(interaction.customId);
@@ -198,7 +211,7 @@ export default new Event<keyof ClientEvents>(
     }
 
     // Select Menu Handling
-    if (interaction.isSelectMenu()) {
+    if (interaction.isStringSelectMenu()) {
       const selectMenu = client.selectmenus.get(interaction.customId);
       if (selectMenu) {
         if (
